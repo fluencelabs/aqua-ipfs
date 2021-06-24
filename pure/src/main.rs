@@ -16,6 +16,10 @@
 
 #![allow(improper_ctypes)]
 
+mod results;
+
+use crate::results::IpfsResult;
+
 use marine_rs_sdk::marine;
 use marine_rs_sdk::module_manifest;
 use marine_rs_sdk::WasmLoggerBuilder;
@@ -23,9 +27,18 @@ use marine_rs_sdk::WasmLoggerBuilder;
 use std::fs;
 use std::path::PathBuf;
 
+const MULTIADDR_FILE_PATH: &str = "/tmp/multiaddr_config";
 const RPC_TMP_FILEPATH: &str = "/tmp/ipfs_rpc_file";
 
 module_manifest!();
+
+fn load_multiaddr() -> eyre::Result<String> {
+    Ok(fs::read_to_string(MULTIADDR_FILE_PATH)?)
+}
+
+fn save_multiaddr(multiaddr: String) -> eyre::Result<()> {
+    Ok(fs::write(MULTIADDR_FILE_PATH, multiaddr)?)
+}
 
 pub fn main() {
     WasmLoggerBuilder::new()
@@ -60,6 +73,21 @@ pub fn get(hash: String) -> Vec<u8> {
     let file_path = ipfs_get(hash);
     fs::read(file_path).unwrap_or_else(|_| b"error while reading file".to_vec())
 }
+
+#[marine]
+pub fn get_multiaddr() -> IpfsResult {
+    load_multiaddr().into()
+}
+
+pub fn set_multiaddr(multiaddr: String) -> IpfsResult {
+    let call_parameters = marine_rs_sdk::get_call_parameters();
+    if load_multiaddr().is_ok() || call_parameters.init_peer_id != call_parameters.service_creator_peer_id {
+        return eyre::Result::<()>::Err(eyre::eyre!("only service creator can set multiaddr only once")).into();
+    }
+
+    save_multiaddr(multiaddr).into()
+}
+
 
 #[marine]
 #[link(wasm_import_module = "ipfs_effector")]

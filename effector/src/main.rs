@@ -26,7 +26,6 @@ use marine_rs_sdk::MountedBinaryResult;
 use marine_rs_sdk::WasmLoggerBuilder;
 
 const RESULT_FILE_PATH: &str = "/tmp/ipfs_rpc_file";
-const IPFS_ADDR_ENV_NAME: &str = "IPFS_ADDR";
 const TIMEOUT_ENV_NAME: &str = "timeout";
 
 module_manifest!();
@@ -82,16 +81,7 @@ pub fn get(hash: String) -> String {
     RESULT_FILE_PATH.to_string()
 }
 
-#[marine]
-pub fn get_address() -> String {
-    match std::env::var(IPFS_ADDR_ENV_NAME) {
-        Ok(addr) => addr,
-        Err(e) => format!(
-            "getting {} env variable failed with error {:?}",
-            IPFS_ADDR_ENV_NAME, e
-        ),
-    }
-}
+
 
 #[marine]
 #[link(wasm_import_module = "host")]
