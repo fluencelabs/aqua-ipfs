@@ -4,8 +4,6 @@ on:
   push:
     tags:
       - "v*"
-    branches:
-      - "master"
 
 jobs:
   release:
@@ -20,6 +18,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+
+      - name: Install jq
+        run: |
+          sudo apt-get update && sudo apt-get --yes --force-yes install jq
 
       - name: Download marine
         run: bash $GITHUB_WORKSPACE/.github/download_marine.sh
