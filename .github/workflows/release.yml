@@ -54,8 +54,8 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          name: ipfs-adapter ${GITHUB_REF#refs/tags/}
-          tag_name: ${GITHUB_REF#refs/tags/}
+          name: ipfs-adapter ${{ GITHUB_REF#refs/tags/ }}
+          tag_name: ${{ GITHUB_REF#refs/tags/ }}
           files: |
             ipfs-adapter.tar.gz
           draft: false
