@@ -2,11 +2,13 @@ name: "publish-release"
 
 on:
   push:
+    tags:
+      - "v*"
     branches:
-      - "main"
+      - "master"
 
 jobs:
-  npm-publish:
+  release:
     name: "Publish"
     runs-on: ubuntu-latest
     container: rust
@@ -40,3 +42,21 @@ jobs:
       - name: Build ipfs-adapter
         working-directory: .
         run: ./build.sh
+
+      - name: Create distribution package
+        working-directory: .
+        run: |
+          tar -zcvf ipfs-adapter.tar.gz artifacts/
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: ipfs-adapter ${GITHUB_REF#refs/tags/}
+          tag_name: ${GITHUB_REF#refs/tags/}
+          files: |
+            ipfs-adapter.tar.gz
+          draft: false
+          prerelease: false
+          fail_on_unmatched_files: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
