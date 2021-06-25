@@ -12,5 +12,4 @@ Cargo.lock
 # Added by cargo
 .idea
 
-/artifacts
-g
+artifacts/*.wasm

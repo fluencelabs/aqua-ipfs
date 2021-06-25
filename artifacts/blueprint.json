@@ -1,0 +1,7 @@
+{
+  "name": "ipfs",
+  "dependencies": [
+    "name:ipfs_effector",
+    "name:ipfs_pure"
+  ]
+}
