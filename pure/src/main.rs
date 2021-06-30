@@ -16,19 +16,15 @@
 
 #![allow(improper_ctypes)]
 
-mod results;
-
-use crate::results::IpfsResult;
+use types::IpfsResult;
 
 use marine_rs_sdk::marine;
 use marine_rs_sdk::module_manifest;
 use marine_rs_sdk::WasmLoggerBuilder;
 
 use std::fs;
-use std::path::PathBuf;
 
 const MULTIADDR_FILE_PATH: &str = "/tmp/multiaddr_config";
-const RPC_TMP_FILEPATH: &str = "/tmp/ipfs_rpc_file";
 
 module_manifest!();
 
@@ -53,25 +49,25 @@ pub fn invoke() -> String {
 }
 
 #[marine]
-pub fn put(file_content: Vec<u8>) -> String {
-    log::info!("put called with {:?}", file_content);
+pub fn put(file_path: String) -> IpfsResult {
+    log::info!("put called with {:?}", file_path);
 
-    let rpc_tmp_filepath = RPC_TMP_FILEPATH.to_string();
-
-    let r = fs::write(PathBuf::from(rpc_tmp_filepath.clone()), file_content);
-    if let Err(e) = r {
-        return format!("file can't be written: {}", e);
-    }
-
-    ipfs_put(rpc_tmp_filepath)
+    ipfs_put(file_path)
 }
 
 #[marine]
-pub fn get(hash: String) -> Vec<u8> {
+pub fn get_from(hash: String, multiaddr: String) -> IpfsResult {
     log::info!("get called with hash: {}", hash);
+    let particle_id = marine_rs_sdk::get_call_parameters().particle_id;
+    let connect_result = ipfs_connect(multiaddr);
 
-    let file_path = ipfs_get(hash);
-    fs::read(file_path).unwrap_or_else(|_| b"error while reading file".to_vec())
+    if !connect_result.success {
+        return connect_result;
+    }
+
+    let particle_vault_path = format!("/tmp/vault/{}", particle_id);
+    let file_path = format!("{}/{}", particle_vault_path, hash);
+    ipfs_get(hash, file_path)
 }
 
 #[marine]
@@ -85,18 +81,39 @@ pub fn set_multiaddr(multiaddr: String) -> IpfsResult {
         return eyre::Result::<()>::Err(eyre::eyre!("only service creator can set multiaddr only once")).into();
     }
 
-    save_multiaddr(multiaddr).into()
+    let set_result = ipfs_set_external_multiaddr(multiaddr.clone());
+    if !set_result.success {
+        return set_result;
+    }
+
+    let peer_id_result = ipfs_get_peer_id();
+    if !peer_id_result.success {
+        return peer_id_result;
+    }
+
+    // trim trailing /
+    let multiaddr = if multiaddr.ends_with("/") { multiaddr[..multiaddr.len() - 1].to_string() } else { multiaddr.clone() };
+    save_multiaddr(format!("{}/{}", multiaddr, peer_id_result.result)).into()
 }
 
 
 #[marine]
 #[link(wasm_import_module = "ipfs_effector")]
 extern "C" {
+    #[link_name = "connect"]
+    pub fn ipfs_connect(multiaddr: String) -> IpfsResult;
+
     /// Put provided file to ipfs, return ipfs hash of the file.
     #[link_name = "put"]
-    pub fn ipfs_put(file_path: String) -> String;
+    pub fn ipfs_put(file_path: String) -> IpfsResult;
 
     /// Get file from ipfs by hash.
     #[link_name = "get"]
-    pub fn ipfs_get(hash: String) -> String;
+    pub fn ipfs_get(hash: String, file_path: String) -> IpfsResult;
+
+    #[link_name = "get_peer_id"]
+    pub fn ipfs_get_peer_id() -> IpfsResult;
+
+    #[link_name = "set_external_multiaddr"]
+    pub fn ipfs_set_external_multiaddr(multiaddr: String) -> IpfsResult;
 }

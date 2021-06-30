@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 use marine_rs_sdk::marine;
-
+use eyre::Result;
 
 #[marine]
 pub struct IpfsResult {
@@ -22,8 +22,8 @@ pub struct IpfsResult {
     pub result: String,
 }
 
-impl From<eyre::Result<String>> for IpfsResult {
-    fn from(result: eyre::Result<String>) -> Self {
+impl From<Result<String>> for IpfsResult {
+    fn from(result: Result<String>) -> Self {
         match result {
             Ok(result) => Self { success: true, result },
             Err(err) => Self { success: false, result: err.to_string() }
@@ -31,8 +31,8 @@ impl From<eyre::Result<String>> for IpfsResult {
     }
 }
 
-impl From<eyre::Result<()>> for IpfsResult {
-    fn from(result: eyre::Result<()>) -> Self {
+impl From<Result<()>> for IpfsResult {
+    fn from(result: Result<()>) -> Self {
         match result {
             Ok(_) => Self { success: true, result: "".to_string() },
             Err(err) => Self { success: false, result: err.to_string() }

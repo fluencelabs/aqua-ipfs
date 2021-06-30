@@ -13,3 +13,5 @@ path = "src/main.rs"
 marine-rs-sdk = { version = "0.6.10", features = ["logger"] }
 log = "0.4.14"
 eyre = "0.6.5"
+
+types = { path = "../types" }
