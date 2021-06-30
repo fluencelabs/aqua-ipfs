@@ -26,13 +26,14 @@ use marine_rs_sdk::WasmLoggerBuilder;
 
 use eyre::Result;
 
-const TIMEOUT_ENV_NAME: &str = "timeout";
-
 module_manifest!();
 
 fn unwrap_mounted_binary_result(result: MountedBinaryResult) -> Result<String> {
     result.into_std().ok_or(eyre::eyre!("stdout or stderr contains non valid UTF8 string"))?.map_err(|e| eyre::eyre!("ipfs cli call failed: {}", e))
 }
+
+#[inline]
+fn get_timeout_string(timeout: u64) -> String { format!("{}s", timeout) }
 
 pub fn main() {
     WasmLoggerBuilder::new()
@@ -42,15 +43,14 @@ pub fn main() {
 }
 
 #[marine]
-pub fn connect(multiaddr: String) -> IpfsResult {
+pub fn connect(multiaddr: String, timeout_sec: u64) -> IpfsResult {
     log::info!("connect called with multiaddr {}", multiaddr);
 
-    let timeout = std::env::var(TIMEOUT_ENV_NAME).unwrap_or_else(|_| "1s".to_string());
     let cmd = vec![
         String::from("swarm"),
         String::from("connect"),
         String::from("--timeout"),
-        timeout,
+        get_timeout_string(timeout_sec),
         multiaddr
     ];
 
@@ -59,14 +59,13 @@ pub fn connect(multiaddr: String) -> IpfsResult {
 
 /// Put file from specified path to IPFS and return its hash.
 #[marine]
-pub fn put(file_path: String) -> IpfsResult {
+pub fn put(file_path: String, timeout_sec: u64) -> IpfsResult {
     log::info!("put called with file path {}", file_path);
 
-    let timeout = std::env::var(TIMEOUT_ENV_NAME).unwrap_or_else(|_| "1s".to_string());
     let cmd = vec![
         String::from("add"),
         String::from("--timeout"),
-        timeout,
+        get_timeout_string(timeout_sec),
         String::from("-Q"),
     ];
 
@@ -75,14 +74,13 @@ pub fn put(file_path: String) -> IpfsResult {
 
 /// Get file by provided hash from IPFS, saves it to a temporary file and returns a path to it.
 #[marine]
-pub fn get(hash: String, file_path: String) -> IpfsResult {
+pub fn get(hash: String, file_path: String, timeout_sec: u64) -> IpfsResult {
     log::info!("get called with hash {}", hash);
 
-    let timeout = std::env::var(TIMEOUT_ENV_NAME).unwrap_or_else(|_| "1s".to_string());
     let cmd = vec![
         String::from("get"),
         String::from("--timeout"),
-        timeout,
+        get_timeout_string(timeout_sec),
         String::from("-o"),
         file_path,
         hash,
@@ -92,13 +90,12 @@ pub fn get(hash: String, file_path: String) -> IpfsResult {
 }
 
 #[marine]
-pub fn get_peer_id() -> IpfsResult {
-    let timeout = std::env::var(TIMEOUT_ENV_NAME).unwrap_or_else(|_| "1s".to_string());
+pub fn get_peer_id(timeout_sec: u64) -> IpfsResult {
     let result: Result<String> = try {
         let cmd = vec![
             String::from("id"),
             String::from("--timeout"),
-            timeout,
+            get_timeout_string(timeout_sec),
         ];
 
         let result: serde_json::Value = serde_json::from_str(&unwrap_mounted_binary_result(ipfs(cmd))?)?;
@@ -109,13 +106,12 @@ pub fn get_peer_id() -> IpfsResult {
 }
 
 #[marine]
-pub fn set_external_multiaddr(multiaddr: String) -> IpfsResult {
-    let timeout = std::env::var(TIMEOUT_ENV_NAME).unwrap_or_else(|_| "1s".to_string());
+pub fn set_external_multiaddr(multiaddr: String, timeout_sec: u64) -> IpfsResult {
 
     let cmd = vec![
         String::from("config"),
         String::from("--timeout"),
-        timeout,
+        get_timeout_string(timeout_sec),
         String::from("Addresses.Announce"),
         format!("[\"{}\"]", multiaddr),
         String::from("--json"),
