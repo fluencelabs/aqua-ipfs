@@ -13,3 +13,8 @@ Cargo.lock
 .idea
 
 artifacts/*.wasm
+
+**/node_modules
+**/dist
+.DS_store
+.bic_cache

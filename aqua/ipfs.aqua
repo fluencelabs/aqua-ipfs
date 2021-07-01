@@ -1,0 +1,11 @@
+data IpfsResult:
+  success: bool
+  result: string
+
+service Ipfs("ipfs"):
+  get_from(hash: string, multiaddr: string) -> IpfsResult
+  get_multiaddr() -> IpfsResult
+  put(file_path: string) -> IpfsResult
+  set_multiaddr(multiaddr: string) -> IpfsResult
+  set_timeout(timeout_sec: u64)  
+  

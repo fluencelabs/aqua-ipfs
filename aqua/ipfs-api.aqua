@@ -1,0 +1,7 @@
+import "@fluencelabs/aqua-lib/builtin.aqua"
+import "ipfs.aqua"
+
+func put(node: string):
+    on node:
+        Ipfs.put("/tmp/test")
+
