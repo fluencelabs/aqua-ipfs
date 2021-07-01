@@ -32,7 +32,7 @@ module_manifest!();
 #[derive(Deserialize, Serialize)]
 pub struct Config {
     pub timeout: u64,
-    pub multiaddr: Option<String>
+    pub multiaddr: Option<String>,
 }
 
 fn save_multiaddr(multiaddr: String) {
@@ -59,10 +59,11 @@ pub(crate) fn create_config() {
     if fs::metadata(CONFIG_FILE_PATH).is_err() {
         write_config(Config {
             timeout: DEFAULT_TIMEOUT_SEC,
-            multiaddr: None
+            multiaddr: None,
         });
     }
 }
+
 pub fn main() {
     WasmLoggerBuilder::new()
         .with_log_level(log::LevelFilter::Info)
@@ -97,7 +98,13 @@ pub fn get_from(hash: String, multiaddr: String) -> IpfsResult {
 
     let particle_vault_path = format!("/tmp/vault/{}", particle_id);
     let file_path = format!("{}/{}", particle_vault_path, hash);
-    ipfs_get(hash, file_path, timeout)
+    let get_result = ipfs_get(hash, file_path.clone(), timeout);
+
+    return if get_result.success {
+        IpfsResult { success: true, result: file_path }
+    } else {
+        get_result
+    }
 }
 
 #[marine]
