@@ -1,7 +1,15 @@
 import "@fluencelabs/aqua-lib/builtin.aqua"
 import "ipfs.aqua"
 
-func put(node: string):
-    on node:
-        Ipfs.put("/tmp/test")
+alias Multiaddr: string
+alias PeerId: string
 
+func put(node: PeerId) -> IpfsResult:
+    on node:
+        result <- Ipfs.put("/tmp/test")
+    <- result
+
+func get_from(node: PeerId, hash: string, from: Multiaddr) -> IpfsResult:
+    on node:
+        result <- Ipfs.get_from(hash, from)
+    <- result

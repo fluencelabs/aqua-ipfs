@@ -2,7 +2,7 @@ data IpfsResult:
   success: bool
   result: string
 
-service Ipfs("ipfs"):
+service Ipfs("ipfs-adapter"):
   get_from(hash: string, multiaddr: string) -> IpfsResult
   get_multiaddr() -> IpfsResult
   put(file_path: string) -> IpfsResult

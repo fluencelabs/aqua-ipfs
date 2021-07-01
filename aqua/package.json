@@ -9,16 +9,23 @@
     "ipfs-api.aqua",
     "dist/*"
   ],
-  "bic": ["typescript", "*.aqua"],
+  "bic": [
+    "typescript/*",
+    "*.aqua",
+    "package-lock.json"
+  ],
   "dependencies": {
     "@fluencelabs/aqua-lib": "^0.1.5",
     "@fluencelabs/fluence": "^0.9.50",
-    "@fluencelabs/fluence-network-environment": "^1.0.9"
+    "@fluencelabs/fluence-network-environment": "^1.0.9",
+    "ipfs-http-client": "^50.1.2",
+    "it-all": "^1.0.5",
+    "uint8arrays": "^2.1.5"
   },
   "scripts": {
     "compile-aqua": "aqua-cli -i . -o ./typescript",
     "prebuild": "npm run compile-aqua",
-    "build": "tsc --build ./typescript/tsconfig.json",
+    "build": "tsc",
     "prestart": "npx bic -s",
     "start": "node typescript/dist/index.js"
   },
