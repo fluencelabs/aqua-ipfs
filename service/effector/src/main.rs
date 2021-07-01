@@ -62,12 +62,18 @@ pub fn connect(multiaddr: String, timeout_sec: u64) -> IpfsResult {
 pub fn put(file_path: String, timeout_sec: u64) -> IpfsResult {
     log::info!("put called with file path {}", file_path);
 
+    if !std::path::Path::new(&file_path).exists() {
+        return IpfsResult { success: false, result: format!("path {} doesn't exist", file_path) }
+    }
+
     let cmd = vec![
         String::from("add"),
         String::from("--timeout"),
         get_timeout_string(timeout_sec),
         String::from("-Q"),
     ];
+
+    log::info!("ipfs put args {:?}", cmd);
 
     unwrap_mounted_binary_result(ipfs(cmd)).into()
 }
@@ -86,7 +92,11 @@ pub fn get(hash: String, file_path: String, timeout_sec: u64) -> IpfsResult {
         hash,
     ];
 
-    unwrap_mounted_binary_result(ipfs(cmd)).map(|_| ()).into()
+    log::info!("ipfs get args {:?}", cmd);
+
+    unwrap_mounted_binary_result(ipfs(cmd)).map(|output| {
+        log::info!("ipfs get output: {}", output);
+    }).into()
 }
 
 #[marine]
