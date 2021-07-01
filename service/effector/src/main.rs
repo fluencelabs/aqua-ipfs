@@ -71,7 +71,7 @@ pub fn put(file_path: String, timeout_sec: u64) -> IpfsResult {
         String::from("--timeout"),
         get_timeout_string(timeout_sec),
         String::from("-Q"),
-        to_full_path(file_path)
+        inject_vault_host_path(file_path)
     ];
 
     log::info!("ipfs put args {:?}", cmd);
@@ -89,7 +89,7 @@ pub fn get(hash: String, file_path: String, timeout_sec: u64) -> IpfsResult {
         String::from("--timeout"),
         get_timeout_string(timeout_sec),
         String::from("-o"),
-        to_full_path(file_path),
+        inject_vault_host_path(file_path),
         hash,
     ];
 
@@ -136,6 +136,16 @@ pub fn set_external_multiaddr(multiaddr: String, timeout_sec: u64) -> IpfsResult
 extern "C" {
     /// Execute provided cmd as a parameters of ipfs cli, return result.
     pub fn ipfs(cmd: Vec<String>) -> MountedBinaryResult;
+}
+
+fn inject_vault_host_path(path: String) -> String {
+    let vault = "/tmp/vault";
+    if let Some(stripped) = path.strip_prefix(&vault) {
+        let host_vault_path = std::env::var("/tmp/vault").expect("vault must be mapped to /tmp/vault");
+        format!("{}/{}", host_vault_path, stripped)
+    } else {
+        path
+    }
 }
 
 fn to_full_path<S>(cmd: S) -> String
