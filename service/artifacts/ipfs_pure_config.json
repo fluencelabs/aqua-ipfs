@@ -6,5 +6,6 @@
   ],
   "mapped_dirs": {
     "tmp": "./tmp"
-  }
+  },
+  "logger_enabled": true
 }

@@ -4,9 +4,9 @@ import "ipfs.aqua"
 alias Multiaddr: string
 alias PeerId: string
 
-func put(node: PeerId) -> IpfsResult:
+func put(node: PeerId, path: string) -> IpfsResult:
     on node:
-        result <- Ipfs.put("/tmp/test")
+        result <- Ipfs.put(path)
     <- result
 
 func get_from(node: PeerId, hash: string, from: Multiaddr) -> IpfsResult:

@@ -12,7 +12,7 @@ import { RequestFlow } from '@fluencelabs/fluence/dist/internal/RequestFlow';
 
 
 
-export async function put(client: FluenceClient, node: string, config?: {ttl?: number}): Promise<{result:string;success:boolean}> {
+export async function put(client: FluenceClient, node: string, path: string, config?: {ttl?: number}): Promise<{result:string;success:boolean}> {
     let request: RequestFlow;
     const promise = new Promise<{result:string;success:boolean}>((resolve, reject) => {
         request = new RequestFlowBuilder()
@@ -26,13 +26,16 @@ export async function put(client: FluenceClient, node: string, config?: {ttl?: n
    (seq
     (seq
      (seq
-      (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
-      (call %init_peer_id% ("getDataSrv" "node") [] node)
+      (seq
+       (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
+       (call %init_peer_id% ("getDataSrv" "node") [] node)
+      )
+      (call %init_peer_id% ("getDataSrv" "path") [] path)
      )
      (call -relay- ("op" "noop") [])
     )
     (xor
-     (call node ("ipfs-adapter" "put") ["/tmp/test"] result)
+     (call node ("ipfs-adapter" "put") [path] result)
      (seq
       (call -relay- ("op" "noop") [])
       (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])
@@ -56,6 +59,7 @@ export async function put(client: FluenceClient, node: string, config?: {ttl?: n
                     return client.relayPeerId!;
                 });
                 h.on('getDataSrv', 'node', () => {return node;});
+h.on('getDataSrv', 'path', () => {return path;});
                 h.onEvent('callbackSrv', 'response', (args) => {
   const [res] = args;
   resolve(res);
