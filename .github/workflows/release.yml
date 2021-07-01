@@ -52,7 +52,8 @@ jobs:
       - name: Create distribution package
         working-directory: .
         run: |
-          tar -zcvf ipfs-adapter.tar.gz -C artifacts .
+          mv artifacts ipfs-adapter
+          tar -zcvf ipfs-adapter.tar.gz ipfs-adapter
 
       - name: Release
         uses: softprops/action-gh-release@v1
