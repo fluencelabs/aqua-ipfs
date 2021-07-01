@@ -1,6 +1,6 @@
 {
   "name": "ipfs_effector",
-  "mountedBinaries":
+  "mounted_binaries":
   {
     "ipfs": "/usr/bin/ipfs"
   },
