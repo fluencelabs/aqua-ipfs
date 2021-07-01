@@ -60,8 +60,8 @@ async function main() {
         console.log("downloaded file of length ", content.length);
     }
 
-    console.log("file hash: ", file.cid.value);
-    let getResult = await get_from(fluence, local[2].peerId, file.cid.value, ipfsMultiaddr, { ttl: 10000 });
+    console.log("file hash: ", file.cid);
+    let getResult = await get_from(fluence, local[2].peerId, file.cid.toString(), ipfsMultiaddr, { ttl: 10000 });
     console.log("Ipfs.get", getResult);
 
     let putResult = await put(fluence, local[2].peerId, { ttl: 10000 });
