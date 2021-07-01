@@ -63,7 +63,6 @@ jobs:
             ./service/ipfs-adapter.tar.gz
           draft: false
           prerelease: false
-          fail_on_unmatched_files: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     
@@ -73,5 +72,6 @@ jobs:
         with:
           workflow: Publish Container
           repo: fluencelabs/node-distro
+          ref: 'main'
           token: ${{ secrets.PERSONAL_TOKEN }}
 #          inputs: '{ "version": "${{ env.VERSION }}" }'
