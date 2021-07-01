@@ -71,6 +71,7 @@ pub fn put(file_path: String, timeout_sec: u64) -> IpfsResult {
         String::from("--timeout"),
         get_timeout_string(timeout_sec),
         String::from("-Q"),
+        to_full_path(file_path)
     ];
 
     log::info!("ipfs put args {:?}", cmd);
@@ -88,7 +89,7 @@ pub fn get(hash: String, file_path: String, timeout_sec: u64) -> IpfsResult {
         String::from("--timeout"),
         get_timeout_string(timeout_sec),
         String::from("-o"),
-        file_path,
+        to_full_path(file_path),
         hash,
     ];
 
@@ -136,3 +137,41 @@ extern "C" {
     /// Execute provided cmd as a parameters of ipfs cli, return result.
     pub fn ipfs(cmd: Vec<String>) -> MountedBinaryResult;
 }
+
+fn to_full_path<S>(cmd: S) -> String
+where
+    S: Into<String>,
+{
+    use std::path::Path;
+    use std::path::Component;
+
+    let cmd = cmd.into();
+    let path = Path::new(&cmd);
+
+    let mut components = path.components();
+    let is_absolute = components.next() == Some(Component::RootDir);
+
+    if !is_absolute {
+        return cmd;
+    }
+
+    let parent = match components.next() {
+        Some(Component::Normal(path)) => path.to_str().unwrap(),
+        _ => return cmd,
+    };
+
+    match std::env::var(parent) {
+        Ok(to_dir) => {
+            let mut full_path = std::path::PathBuf::from(to_dir);
+
+            // TODO: optimize this
+            #[allow(clippy::while_let_on_iterator)]
+            while let Some(component) = components.next() {
+                full_path.push(component);
+            }
+            full_path.to_string_lossy().into_owned()
+        }
+        Err(_) => cmd,
+    }
+}
+
