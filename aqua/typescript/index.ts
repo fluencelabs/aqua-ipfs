@@ -26,6 +26,8 @@ async function main() {
     const client = await createClient(krasnodar[1]);
     console.log("created a client %s with relay %s", client.selfPeerId, client.relayPeerId);
     
+    
+
     return;
 }
 
