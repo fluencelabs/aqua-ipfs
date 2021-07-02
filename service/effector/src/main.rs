@@ -35,6 +35,16 @@ fn unwrap_mounted_binary_result(result: MountedBinaryResult) -> Result<String> {
 #[inline]
 fn get_timeout_string(timeout: u64) -> String { format!("{}s", timeout) }
 
+fn make_cmd_args(args: Vec<String>, local_multiaddr: String, timeout_sec: u64) -> Vec<String> {
+    args.into_iter().chain(
+        vec![
+            String::from("--timeout"),
+            get_timeout_string(timeout_sec),
+            String::from("--api"),
+            local_multiaddr
+        ]).collect()
+}
+
 pub fn main() {
     WasmLoggerBuilder::new()
         .with_log_level(log::LevelFilter::Info)
@@ -43,36 +53,33 @@ pub fn main() {
 }
 
 #[marine]
-pub fn connect(multiaddr: String, timeout_sec: u64) -> IpfsResult {
+pub fn connect(multiaddr: String, local_multiaddr: String, timeout_sec: u64) -> IpfsResult {
     log::info!("connect called with multiaddr {}", multiaddr);
 
-    let cmd = vec![
+    let args = vec![
         String::from("swarm"),
         String::from("connect"),
-        String::from("--timeout"),
-        get_timeout_string(timeout_sec),
-        multiaddr
-    ];
+        multiaddr];
+    let cmd = make_cmd_args(args, local_multiaddr, timeout_sec);
 
     unwrap_mounted_binary_result(ipfs(cmd)).map(|_| ()).into()
 }
 
 /// Put file from specified path to IPFS and return its hash.
 #[marine]
-pub fn put(file_path: String, timeout_sec: u64) -> IpfsResult {
+pub fn put(file_path: String, local_multiaddr: String, timeout_sec: u64) -> IpfsResult {
     log::info!("put called with file path {}", file_path);
 
     if !std::path::Path::new(&file_path).exists() {
-        return IpfsResult { success: false, result: format!("path {} doesn't exist", file_path) }
+        return IpfsResult { success: false, result: format!("path {} doesn't exist", file_path) };
     }
 
-    let cmd = vec![
+    let args = vec![
         String::from("add"),
-        String::from("--timeout"),
-        get_timeout_string(timeout_sec),
         String::from("-Q"),
         inject_vault_host_path(file_path)
     ];
+    let cmd = make_cmd_args(args, local_multiaddr, timeout_sec);
 
     log::info!("ipfs put args {:?}", cmd);
 
@@ -81,17 +88,16 @@ pub fn put(file_path: String, timeout_sec: u64) -> IpfsResult {
 
 /// Get file by provided hash from IPFS, saves it to a temporary file and returns a path to it.
 #[marine]
-pub fn get(hash: String, file_path: String, timeout_sec: u64) -> IpfsResult {
+pub fn get(hash: String, file_path: String, local_multiaddr: String, timeout_sec: u64) -> IpfsResult {
     log::info!("get called with hash {}", hash);
 
-    let cmd = vec![
+    let args = vec![
         String::from("get"),
-        String::from("--timeout"),
-        get_timeout_string(timeout_sec),
         String::from("-o"),
         inject_vault_host_path(file_path),
         hash,
     ];
+    let cmd = make_cmd_args(args, local_multiaddr, timeout_sec);
 
     log::info!("ipfs get args {:?}", cmd);
 
@@ -101,13 +107,9 @@ pub fn get(hash: String, file_path: String, timeout_sec: u64) -> IpfsResult {
 }
 
 #[marine]
-pub fn get_peer_id(timeout_sec: u64) -> IpfsResult {
+pub fn get_peer_id(local_multiaddr: String, timeout_sec: u64) -> IpfsResult {
     let result: Result<String> = try {
-        let cmd = vec![
-            String::from("id"),
-            String::from("--timeout"),
-            get_timeout_string(timeout_sec),
-        ];
+        let cmd = make_cmd_args(vec![String::from("id")], local_multiaddr, timeout_sec);
 
         let result: serde_json::Value = serde_json::from_str(&unwrap_mounted_binary_result(ipfs(cmd))?)?;
         result.get("ID").ok_or(eyre::eyre!("ID field not found in response"))?.as_str().ok_or(eyre::eyre!("ID value is not string"))?.to_string()
@@ -117,16 +119,14 @@ pub fn get_peer_id(timeout_sec: u64) -> IpfsResult {
 }
 
 #[marine]
-pub fn set_external_multiaddr(multiaddr: String, timeout_sec: u64) -> IpfsResult {
-
-    let cmd = vec![
+pub fn set_external_multiaddr(multiaddr: String, local_multiaddr: String, timeout_sec: u64) -> IpfsResult {
+    let args = vec![
         String::from("config"),
-        String::from("--timeout"),
-        get_timeout_string(timeout_sec),
         String::from("Addresses.Announce"),
         format!("[\"{}\"]", multiaddr),
         String::from("--json"),
     ];
+    let cmd = make_cmd_args(args, local_multiaddr, timeout_sec);
 
     unwrap_mounted_binary_result(ipfs(cmd)).map(|_| ()).into()
 }
@@ -147,41 +147,3 @@ fn inject_vault_host_path(path: String) -> String {
         path
     }
 }
-
-fn to_full_path<S>(cmd: S) -> String
-where
-    S: Into<String>,
-{
-    use std::path::Path;
-    use std::path::Component;
-
-    let cmd = cmd.into();
-    let path = Path::new(&cmd);
-
-    let mut components = path.components();
-    let is_absolute = components.next() == Some(Component::RootDir);
-
-    if !is_absolute {
-        return cmd;
-    }
-
-    let parent = match components.next() {
-        Some(Component::Normal(path)) => path.to_str().unwrap(),
-        _ => return cmd,
-    };
-
-    match std::env::var(parent) {
-        Ok(to_dir) => {
-            let mut full_path = std::path::PathBuf::from(to_dir);
-
-            // TODO: optimize this
-            #[allow(clippy::while_let_on_iterator)]
-            while let Some(component) = components.next() {
-                full_path.push(component);
-            }
-            full_path.to_string_lossy().into_owned()
-        }
-        Err(_) => cmd,
-    }
-}
-
