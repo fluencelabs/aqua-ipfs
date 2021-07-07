@@ -18,13 +18,13 @@ data IpfsResult:
   error: string
 
 service Ipfs("ipfs-adapter"):
-  get_external_multiaddr() -> IpfsMultiaddrResult
+  get_external_api_multiaddr() -> IpfsMultiaddrResult
   get_external_swarm_multiaddr() -> IpfsMultiaddrResult
   get_from(hash: string, swarm_multiaddr: string) -> IpfsGetFromResult
-  get_local_multiaddr() -> IpfsMultiaddrResult
+  get_local_api_multiaddr() -> IpfsMultiaddrResult
   invoke() -> string
   put(file_path: string) -> IpfsPutResult
-  set_external_multiaddr(multiaddr: string) -> IpfsResult
+  set_external_api_multiaddr(multiaddr: string) -> IpfsResult
   set_external_swarm_multiaddr(multiaddr: string) -> IpfsResult
-  set_local_multiaddr(multiaddr: string) -> IpfsResult
+  set_local_api_multiaddr(multiaddr: string) -> IpfsResult
   set_timeout(timeout_sec: u64)  

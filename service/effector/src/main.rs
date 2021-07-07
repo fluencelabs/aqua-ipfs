@@ -24,7 +24,7 @@ use marine_rs_sdk::module_manifest;
 use marine_rs_sdk::MountedBinaryResult;
 use marine_rs_sdk::WasmLoggerBuilder;
 
-use eyre::Result;
+use eyre::{Result, WrapErr};
 use multiaddr::Multiaddr;
 use std::str::FromStr;
 
@@ -73,7 +73,7 @@ pub fn put(file_path: String, local_multiaddr: String, timeout_sec: u64) -> Ipfs
     log::info!("put called with file path {}", file_path);
 
     if !std::path::Path::new(&file_path).exists() {
-        return IpfsPutResult { success: false, error: format!("path {} doesn't exist", file_path) , hash: "".to_string()};
+        return IpfsPutResult { success: false, error: format!("path {} doesn't exist", file_path), hash: "".to_string() };
     }
 
     let args = vec![
@@ -121,13 +121,13 @@ pub fn get_peer_id(local_multiaddr: String, timeout_sec: u64) -> IpfsGetPeerIdRe
 }
 
 #[marine]
-pub fn set_external_multiaddr(multiaddr: String, local_multiaddr: String, timeout_sec: u64) -> IpfsResult {
+pub fn set_external_api_multiaddr(multiaddr: String, local_multiaddr: String, timeout_sec: u64) -> IpfsResult {
     let result: Result<()> = try {
-        let multiaddr = Multiaddr::from_str(&multiaddr)?;
+        let multiaddr = Multiaddr::from_str(&multiaddr).wrap_err(format!("invalid multiaddr {}", multiaddr))?;
         let args = vec![
             String::from("config"),
             String::from("Addresses.Announce"),
-            format!("[\"{}\"]", multiaddr.to_string()),
+            format!(r#"["{}"]"#, multiaddr.to_string()),
             String::from("--json"),
         ];
         let cmd = make_cmd_args(args, local_multiaddr, timeout_sec);

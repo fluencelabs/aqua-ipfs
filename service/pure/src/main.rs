@@ -27,28 +27,29 @@ use std::fs;
 use serde::{Deserialize, Serialize};
 use multiaddr::{Multiaddr, Protocol, multihash::Multihash};
 use std::str::FromStr;
+use eyre::WrapErr;
 
 const CONFIG_FILE_PATH: &str = "/tmp/multiaddr_config";
 const DEFAULT_TIMEOUT_SEC: u64 = 1u64;
-const DEFAULT_LOCAL_MULTIADDR: &str = "/ip4/127.0.0.1/tcp/5001";
+const DEFAULT_LOCAL_API_MULTIADDR: &str = "/ip4/127.0.0.1/tcp/5001";
 module_manifest!();
 
 #[derive(Deserialize, Serialize)]
 pub struct Config {
     pub timeout: u64,
-    pub external_multiaddr: Option<Multiaddr>,
+    pub external_api_multiaddr: Option<Multiaddr>,
     pub external_swarm_multiaddr: Option<Multiaddr>,
-    pub local_multiaddr: Multiaddr,
+    pub local_api_multiaddr: Multiaddr,
 }
 
-fn save_external_multiaddr(multiaddr: Multiaddr) {
+fn save_external_api_multiaddr(multiaddr: Multiaddr) {
     let mut config = load_config();
-    config.external_multiaddr = Some(multiaddr);
+    config.external_api_multiaddr = Some(multiaddr);
     write_config(config);
 }
 
-fn load_external_multiaddr() -> eyre::Result<Multiaddr> {
-    load_config().external_multiaddr.ok_or(eyre::eyre!("multiaddr is not set"))
+fn load_external_api_multiaddr() -> eyre::Result<Multiaddr> {
+    load_config().external_api_multiaddr.ok_or(eyre::eyre!("multiaddr is not set"))
 }
 
 pub fn write_config(config: Config) {
@@ -65,9 +66,9 @@ pub(crate) fn create_config() {
     if fs::metadata(CONFIG_FILE_PATH).is_err() {
         write_config(Config {
             timeout: DEFAULT_TIMEOUT_SEC,
-            external_multiaddr: None,
+            external_api_multiaddr: None,
             external_swarm_multiaddr: None,
-            local_multiaddr: Multiaddr::from_str(DEFAULT_LOCAL_MULTIADDR).unwrap(),
+            local_api_multiaddr: Multiaddr::from_str(DEFAULT_LOCAL_API_MULTIADDR).unwrap(),
         });
     }
 }
@@ -89,7 +90,7 @@ pub fn invoke() -> String {
 pub fn put(file_path: String) -> IpfsPutResult {
     log::info!("put called with {:?}", file_path);
     let timeout = load_config().timeout;
-    ipfs_put(file_path, load_config().local_multiaddr.to_string(), timeout)
+    ipfs_put(file_path, load_config().local_api_multiaddr.to_string(), timeout)
 }
 
 #[marine]
@@ -97,7 +98,7 @@ pub fn get_from(hash: String, swarm_multiaddr: String) -> IpfsGetFromResult {
     log::info!("get called with hash: {}", hash);
     let config = load_config();
     let timeout = config.timeout;
-    let local_maddr = config.local_multiaddr.to_string();
+    let local_maddr = config.local_api_multiaddr.to_string();
 
     let particle_id = marine_rs_sdk::get_call_parameters().particle_id;
     let connect_result = ipfs_connect(swarm_multiaddr, local_maddr.clone(), timeout.clone());
@@ -118,13 +119,13 @@ pub fn get_from(hash: String, swarm_multiaddr: String) -> IpfsGetFromResult {
 }
 
 #[marine]
-pub fn get_external_multiaddr() -> IpfsMultiaddrResult {
-    load_external_multiaddr().map(|m| m.to_string()).into()
+pub fn get_external_api_multiaddr() -> IpfsMultiaddrResult {
+    load_external_api_multiaddr().map(|m| m.to_string()).into()
 }
 
 #[marine]
-pub fn set_external_multiaddr(multiaddr: String) -> IpfsResult {
-    if load_external_multiaddr().is_ok() {
+pub fn set_external_api_multiaddr(multiaddr: String) -> IpfsResult {
+    if load_external_api_multiaddr().is_ok() {
         return eyre::Result::<()>::Err(eyre::eyre!("external multiaddr can only be set once")).into();
     }
 
@@ -135,9 +136,9 @@ pub fn set_external_multiaddr(multiaddr: String) -> IpfsResult {
 
     let config = load_config();
     let timeout = config.timeout;
-    let local_maddr = config.local_multiaddr.to_string();
+    let local_maddr = config.local_api_multiaddr.to_string();
     let result: eyre::Result<()> = try {
-        let mut multiaddr = Multiaddr::from_str(&multiaddr)?;
+        let mut multiaddr = Multiaddr::from_str(&multiaddr).wrap_err(format!("invalid multiaddr {}", multiaddr))?;
         let mut passed_peer_id = None;
         match multiaddr.iter().count() {
             3 => {
@@ -147,7 +148,7 @@ pub fn set_external_multiaddr(multiaddr: String) -> IpfsResult {
             n => Err(eyre::eyre!("multiaddr should containt 2 or 3 components, {} given", n))?,
         }
 
-        let set_result = ipfs_set_external_multiaddr(multiaddr.to_string(), local_maddr.clone(), timeout.clone());
+        let set_result = ipfs_set_external_api_multiaddr(multiaddr.to_string(), local_maddr.clone(), timeout.clone());
         if !set_result.success {
             return set_result;
         }
@@ -163,7 +164,7 @@ pub fn set_external_multiaddr(multiaddr: String) -> IpfsResult {
         }
 
         multiaddr.push(peer_id);
-        save_external_multiaddr(multiaddr);
+        save_external_api_multiaddr(multiaddr);
         ()
     };
 
@@ -171,12 +172,12 @@ pub fn set_external_multiaddr(multiaddr: String) -> IpfsResult {
 }
 
 #[marine]
-pub fn get_local_multiaddr() -> IpfsMultiaddrResult {
-    Ok(load_config().local_multiaddr.to_string()).into()
+pub fn get_local_api_multiaddr() -> IpfsMultiaddrResult {
+    Ok(load_config().local_api_multiaddr.to_string()).into()
 }
 
 #[marine]
-pub fn set_local_multiaddr(multiaddr: String) -> IpfsResult {
+pub fn set_local_api_multiaddr(multiaddr: String) -> IpfsResult {
     let call_parameters = marine_rs_sdk::get_call_parameters();
     if call_parameters.init_peer_id != call_parameters.service_creator_peer_id {
         return eyre::Result::<()>::Err(eyre::eyre!("only service creator can set local multiaddr")).into();
@@ -184,7 +185,7 @@ pub fn set_local_multiaddr(multiaddr: String) -> IpfsResult {
 
     let result: eyre::Result<()> = try {
         let mut config = load_config();
-        config.local_multiaddr = Multiaddr::from_str(&multiaddr)?;
+        config.local_api_multiaddr = Multiaddr::from_str(&multiaddr).wrap_err(format!("invalid multiaddr {}", multiaddr))?;
         write_config(config);
         ()
     };
@@ -199,7 +200,7 @@ pub fn get_external_swarm_multiaddr() -> IpfsMultiaddrResult {
 
 #[marine]
 pub fn set_external_swarm_multiaddr(multiaddr: String) -> IpfsResult {
-    if  load_config().external_swarm_multiaddr.is_some() {
+    if load_config().external_swarm_multiaddr.is_some() {
         return eyre::Result::<()>::Err(eyre::eyre!("external swarm multiaddr can only be set once")).into();
     }
 
@@ -210,7 +211,7 @@ pub fn set_external_swarm_multiaddr(multiaddr: String) -> IpfsResult {
 
     let result: eyre::Result<()> = try {
         let mut config = load_config();
-        config.external_swarm_multiaddr = Some(Multiaddr::from_str(&multiaddr)?);
+        config.external_swarm_multiaddr = Some(Multiaddr::from_str(&multiaddr).wrap_err(format!("invalid multiaddr {}", multiaddr))?);
         write_config(config);
         ()
     };
@@ -243,6 +244,6 @@ extern "C" {
     #[link_name = "get_peer_id"]
     pub fn ipfs_get_peer_id(local_multiaddr: String, timeout_sec: u64) -> IpfsGetPeerIdResult;
 
-    #[link_name = "set_external_multiaddr"]
-    pub fn ipfs_set_external_multiaddr(external_multiaddr: String, local_multiaddr: String, timeout_sec: u64) -> IpfsResult;
+    #[link_name = "set_external_api_multiaddr"]
+    pub fn ipfs_set_external_api_multiaddr(external_multiaddr: String, local_multiaddr: String, timeout_sec: u64) -> IpfsResult;
 }
