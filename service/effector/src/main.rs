@@ -17,7 +17,7 @@
 #![allow(improper_ctypes)]
 #![feature(try_blocks)]
 
-use types::IpfsResult;
+use types::{IpfsResult, IpfsPutResult, IpfsGetPeerIdResult};
 
 use marine_rs_sdk::marine;
 use marine_rs_sdk::module_manifest;
@@ -69,11 +69,11 @@ pub fn connect(multiaddr: String, local_multiaddr: String, timeout_sec: u64) -> 
 
 /// Put file from specified path to IPFS and return its hash.
 #[marine]
-pub fn put(file_path: String, local_multiaddr: String, timeout_sec: u64) -> IpfsResult {
+pub fn put(file_path: String, local_multiaddr: String, timeout_sec: u64) -> IpfsPutResult {
     log::info!("put called with file path {}", file_path);
 
     if !std::path::Path::new(&file_path).exists() {
-        return IpfsResult { success: false, result: format!("path {} doesn't exist", file_path) };
+        return IpfsPutResult { success: false, error: format!("path {} doesn't exist", file_path) , hash: "".to_string()};
     }
 
     let args = vec![
@@ -109,7 +109,7 @@ pub fn get(hash: String, file_path: String, local_multiaddr: String, timeout_sec
 }
 
 #[marine]
-pub fn get_peer_id(local_multiaddr: String, timeout_sec: u64) -> IpfsResult {
+pub fn get_peer_id(local_multiaddr: String, timeout_sec: u64) -> IpfsGetPeerIdResult {
     let result: Result<String> = try {
         let cmd = make_cmd_args(vec![String::from("id")], local_multiaddr, timeout_sec);
 

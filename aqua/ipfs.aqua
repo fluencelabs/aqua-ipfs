@@ -1,13 +1,28 @@
+data IpfsGetFromResult:
+  success: bool
+  error: string
+  path: string
+
+data IpfsGetMultiaddrResult:
+  success: bool
+  error: string
+  multiaddr: string
+
+data IpfsPutResult:
+  success: bool
+  error: string
+  hash: string
+
 data IpfsResult:
   success: bool
-  result: string
+  error: string
 
 service Ipfs("ipfs-adapter"):
-  get_external_multiaddr() -> IpfsResult
-  get_from(hash: string, multiaddr: string) -> IpfsResult
+  get_external_multiaddr() -> IpfsGetMultiaddrResult
+  get_from(hash: string, multiaddr: string) -> IpfsGetFromResult
   get_local_multiaddr() -> IpfsResult
   invoke() -> string
-  put(file_path: string) -> IpfsResult
+  put(file_path: string) -> IpfsPutResult
   set_external_multiaddr(multiaddr: string) -> IpfsResult
   set_local_multiaddr(multiaddr: string) -> IpfsResult
   set_timeout(timeout_sec: u64)  

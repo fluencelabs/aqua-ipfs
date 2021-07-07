@@ -17,7 +17,7 @@
 #![allow(improper_ctypes)]
 #![feature(try_blocks)]
 
-use types::IpfsResult;
+use types::{IpfsResult, IpfsGetFromResult, IpfsPutResult, IpfsGetPeerIdResult, IpfsGetMultiaddrResult};
 
 use marine_rs_sdk::marine;
 use marine_rs_sdk::module_manifest;
@@ -84,14 +84,14 @@ pub fn invoke() -> String {
 }
 
 #[marine]
-pub fn put(file_path: String) -> IpfsResult {
+pub fn put(file_path: String) -> IpfsPutResult {
     log::info!("put called with {:?}", file_path);
     let timeout = load_config().timeout;
     ipfs_put(file_path, load_config().local_multiaddr.to_string(), timeout)
 }
 
 #[marine]
-pub fn get_from(hash: String, multiaddr: String) -> IpfsResult {
+pub fn get_from(hash: String, multiaddr: String) -> IpfsGetFromResult {
     log::info!("get called with hash: {}", hash);
     let config = load_config();
     let timeout = config.timeout;
@@ -101,22 +101,22 @@ pub fn get_from(hash: String, multiaddr: String) -> IpfsResult {
     let connect_result = ipfs_connect(multiaddr, local_maddr.clone(), timeout.clone());
 
     if !connect_result.success {
-        return connect_result;
+        return Err(eyre::eyre!(connect_result.error)).into();
     }
 
     let particle_vault_path = format!("/tmp/vault/{}", particle_id);
-    let file_path = format!("{}/{}", particle_vault_path, hash);
-    let get_result = ipfs_get(hash, file_path.clone(), local_maddr, timeout);
+    let path = format!("{}/{}", particle_vault_path, hash);
+    let get_result = ipfs_get(hash, path.clone(), local_maddr, timeout);
 
     if get_result.success {
-        IpfsResult { success: true, result: file_path }
+        Ok(path).into()
     } else {
-        get_result
+        Err(eyre::eyre!(get_result.error)).into()
     }
 }
 
 #[marine]
-pub fn get_external_multiaddr() -> IpfsResult {
+pub fn get_external_multiaddr() -> IpfsGetMultiaddrResult {
     load_external_multiaddr().map(|m| m.to_string()).into()
 }
 
@@ -152,10 +152,10 @@ pub fn set_external_multiaddr(multiaddr: String) -> IpfsResult {
 
         let peer_id_result = ipfs_get_peer_id(local_maddr, timeout);
         if !peer_id_result.success {
-            return peer_id_result;
+            Err(eyre::eyre!(peer_id_result.error.clone()))?;
         }
 
-        let peer_id = Protocol::P2p(Multihash::from_bytes(&bs58::decode(peer_id_result.result).into_vec()?)?);
+        let peer_id = Protocol::P2p(Multihash::from_bytes(&bs58::decode(peer_id_result.error).into_vec()?)?);
         if passed_peer_id.is_some() && passed_peer_id != Some(peer_id.clone()) {
             Err(eyre::eyre!("given peer id is different from node peer_id: given {}, actual {}", passed_peer_id.unwrap().to_string(), peer_id.to_string()))?;
         }
@@ -170,7 +170,7 @@ pub fn set_external_multiaddr(multiaddr: String) -> IpfsResult {
 
 #[marine]
 pub fn get_local_multiaddr() -> IpfsResult {
-    IpfsResult { success: true, result: load_config().local_multiaddr.to_string() }
+    IpfsResult { success: true, error: load_config().local_multiaddr.to_string() }
 }
 
 #[marine]
@@ -206,14 +206,14 @@ extern "C" {
 
     /// Put provided file to ipfs, return ipfs hash of the file.
     #[link_name = "put"]
-    pub fn ipfs_put(file_path: String, local_multiaddr: String, timeout_sec: u64) -> IpfsResult;
+    pub fn ipfs_put(file_path: String, local_multiaddr: String, timeout_sec: u64) -> IpfsPutResult;
 
     /// Get file from ipfs by hash.
     #[link_name = "get"]
     pub fn ipfs_get(hash: String, file_path: String, local_multiaddr: String, timeout_sec: u64) -> IpfsResult;
 
     #[link_name = "get_peer_id"]
-    pub fn ipfs_get_peer_id(local_multiaddr: String, timeout_sec: u64) -> IpfsResult;
+    pub fn ipfs_get_peer_id(local_multiaddr: String, timeout_sec: u64) -> IpfsGetPeerIdResult;
 
     #[link_name = "set_external_multiaddr"]
     pub fn ipfs_set_external_multiaddr(external_multiaddr: String, local_multiaddr: String, timeout_sec: u64) -> IpfsResult;
