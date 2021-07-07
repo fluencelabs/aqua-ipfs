@@ -15,6 +15,7 @@
  */
 
 #![allow(improper_ctypes)]
+#![feature(try_blocks)]
 
 use types::IpfsResult;
 
@@ -24,6 +25,8 @@ use marine_rs_sdk::WasmLoggerBuilder;
 
 use std::fs;
 use serde::{Deserialize, Serialize};
+use multiaddr::{Multiaddr, Protocol, multihash::Multihash};
+use std::str::FromStr;
 
 const CONFIG_FILE_PATH: &str = "/tmp/multiaddr_config";
 const DEFAULT_TIMEOUT_SEC: u64 = 1u64;
@@ -33,17 +36,17 @@ module_manifest!();
 #[derive(Deserialize, Serialize)]
 pub struct Config {
     pub timeout: u64,
-    pub external_multiaddr: Option<String>,
-    pub local_multiaddr: String,
+    pub external_multiaddr: Option<Multiaddr>,
+    pub local_multiaddr: Multiaddr,
 }
 
-fn save_external_multiaddr(multiaddr: String) {
+fn save_external_multiaddr(multiaddr: Multiaddr) {
     let mut config = load_config();
     config.external_multiaddr = Some(multiaddr);
     write_config(config);
 }
 
-fn load_external_multiaddr() -> eyre::Result<String> {
+fn load_external_multiaddr() -> eyre::Result<Multiaddr> {
     load_config().external_multiaddr.ok_or(eyre::eyre!("multiaddr is not set"))
 }
 
@@ -62,7 +65,7 @@ pub(crate) fn create_config() {
         write_config(Config {
             timeout: DEFAULT_TIMEOUT_SEC,
             external_multiaddr: None,
-            local_multiaddr: DEFAULT_LOCAL_MULTIADDR.to_string(),
+            local_multiaddr: Multiaddr::from_str(DEFAULT_LOCAL_MULTIADDR).unwrap(),
         });
     }
 }
@@ -84,7 +87,7 @@ pub fn invoke() -> String {
 pub fn put(file_path: String) -> IpfsResult {
     log::info!("put called with {:?}", file_path);
     let timeout = load_config().timeout;
-    ipfs_put(file_path, load_config().local_multiaddr, timeout)
+    ipfs_put(file_path, load_config().local_multiaddr.to_string(), timeout)
 }
 
 #[marine]
@@ -92,7 +95,7 @@ pub fn get_from(hash: String, multiaddr: String) -> IpfsResult {
     log::info!("get called with hash: {}", hash);
     let config = load_config();
     let timeout = config.timeout;
-    let local_maddr = config.local_multiaddr;
+    let local_maddr = config.local_multiaddr.to_string();
 
     let particle_id = marine_rs_sdk::get_call_parameters().particle_id;
     let connect_result = ipfs_connect(multiaddr, local_maddr.clone(), timeout.clone());
@@ -105,47 +108,69 @@ pub fn get_from(hash: String, multiaddr: String) -> IpfsResult {
     let file_path = format!("{}/{}", particle_vault_path, hash);
     let get_result = ipfs_get(hash, file_path.clone(), local_maddr, timeout);
 
-    return if get_result.success {
+    if get_result.success {
         IpfsResult { success: true, result: file_path }
     } else {
         get_result
-    };
+    }
 }
 
 #[marine]
 pub fn get_external_multiaddr() -> IpfsResult {
-    load_external_multiaddr().into()
+    load_external_multiaddr().map(|m| m.to_string()).into()
 }
 
 #[marine]
 pub fn set_external_multiaddr(multiaddr: String) -> IpfsResult {
+    if load_external_multiaddr().is_ok() {
+        return eyre::Result::<()>::Err(eyre::eyre!("external multiaddr can only be set once")).into();
+    }
+
     let call_parameters = marine_rs_sdk::get_call_parameters();
-    if load_external_multiaddr().is_ok() || call_parameters.init_peer_id != call_parameters.service_creator_peer_id {
-        return eyre::Result::<()>::Err(eyre::eyre!("only service creator can set external multiaddr only once")).into();
+    if call_parameters.init_peer_id != call_parameters.service_creator_peer_id {
+        return eyre::Result::<()>::Err(eyre::eyre!("only service creator can set external multiaddr")).into();
     }
 
     let config = load_config();
     let timeout = config.timeout;
-    let local_maddr = config.local_multiaddr;
-    let set_result = ipfs_set_external_multiaddr(multiaddr.clone(), local_maddr.clone(), timeout.clone());
-    if !set_result.success {
-        return set_result;
-    }
+    let local_maddr = config.local_multiaddr.to_string();
+    let result: eyre::Result<()> = try {
+        let mut multiaddr = Multiaddr::from_str(&multiaddr)?;
+        let mut passed_peer_id = None;
+        match multiaddr.iter().count() {
+            3 => {
+                passed_peer_id = multiaddr.pop();
+            }
+            2 => {}
+            n => Err(eyre::eyre!("multiaddr should containt 2 or 3 components, {} given", n))?,
+        }
 
-    let peer_id_result = ipfs_get_peer_id(local_maddr, timeout);
-    if !peer_id_result.success {
-        return peer_id_result;
-    }
+        let set_result = ipfs_set_external_multiaddr(multiaddr.to_string(), local_maddr.clone(), timeout.clone());
+        if !set_result.success {
+            return set_result;
+        }
 
-    // trim trailing /
-    let multiaddr = if multiaddr.ends_with("/") { multiaddr[..multiaddr.len() - 1].to_string() } else { multiaddr.clone() };
-    save_external_multiaddr(format!("{}/{}", multiaddr, peer_id_result.result));
-    Ok(()).into()
+        let peer_id_result = ipfs_get_peer_id(local_maddr, timeout);
+        if !peer_id_result.success {
+            return peer_id_result;
+        }
+
+        let peer_id = Protocol::P2p(Multihash::from_bytes(&bs58::decode(peer_id_result.result).into_vec()?)?);
+        if passed_peer_id.is_some() && passed_peer_id != Some(peer_id.clone()) {
+            Err(eyre::eyre!("given peer id is different from node peer_id: given {}, actual {}", passed_peer_id.unwrap().to_string(), peer_id.to_string()))?;
+        }
+
+        multiaddr.push(peer_id);
+        save_external_multiaddr(multiaddr);
+        ()
+    };
+
+    result.into()
 }
 
 #[marine]
 pub fn get_local_multiaddr() -> IpfsResult {
-    IpfsResult { success: true, result: load_config().local_multiaddr }
+    IpfsResult { success: true, result: load_config().local_multiaddr.to_string() }
 }
 
 #[marine]
@@ -155,10 +180,14 @@ pub fn set_local_multiaddr(multiaddr: String) -> IpfsResult {
         return eyre::Result::<()>::Err(eyre::eyre!("only service creator can set local multiaddr")).into();
     }
 
-    let mut config = load_config();
-    config.local_multiaddr = multiaddr;
-    write_config(config);
-    Ok(()).into()
+    let result: eyre::Result<()> = try {
+        let mut config = load_config();
+        config.local_multiaddr = Multiaddr::from_str(&multiaddr)?;
+        write_config(config);
+        ()
+    };
+
+    result.into()
 }
 
 #[marine]

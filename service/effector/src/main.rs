@@ -25,6 +25,8 @@ use marine_rs_sdk::MountedBinaryResult;
 use marine_rs_sdk::WasmLoggerBuilder;
 
 use eyre::Result;
+use multiaddr::Multiaddr;
+use std::str::FromStr;
 
 module_manifest!();
 
@@ -120,15 +122,20 @@ pub fn get_peer_id(local_multiaddr: String, timeout_sec: u64) -> IpfsResult {
 
 #[marine]
 pub fn set_external_multiaddr(multiaddr: String, local_multiaddr: String, timeout_sec: u64) -> IpfsResult {
-    let args = vec![
-        String::from("config"),
-        String::from("Addresses.Announce"),
-        format!("[\"{}\"]", multiaddr),
-        String::from("--json"),
-    ];
-    let cmd = make_cmd_args(args, local_multiaddr, timeout_sec);
+    let result: Result<()> = try {
+        let multiaddr = Multiaddr::from_str(&multiaddr)?;
+        let args = vec![
+            String::from("config"),
+            String::from("Addresses.Announce"),
+            format!("[\"{}\"]", multiaddr.to_string()),
+            String::from("--json"),
+        ];
+        let cmd = make_cmd_args(args, local_multiaddr, timeout_sec);
 
-    unwrap_mounted_binary_result(ipfs(cmd)).map(|_| ()).into()
+        unwrap_mounted_binary_result(ipfs(cmd)).map(|_| ())?
+    };
+
+    result.into()
 }
 
 #[marine]
