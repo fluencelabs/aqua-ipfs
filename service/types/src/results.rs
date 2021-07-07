@@ -81,13 +81,13 @@ impl From<Result<String>> for IpfsGetPeerIdResult {
 }
 
 #[marine]
-pub struct IpfsGetMultiaddrResult {
+pub struct IpfsMultiaddrResult {
     pub success: bool,
     pub error: String,
     pub multiaddr: String,
 }
 
-impl From<Result<String>> for IpfsGetMultiaddrResult {
+impl From<Result<String>> for IpfsMultiaddrResult {
     fn from(result: Result<String>) -> Self {
         match result {
             Ok(multiaddr) => Self { success: true, error: "".to_string(), multiaddr },
