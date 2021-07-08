@@ -1,17 +1,11 @@
 (seq
     (seq
         (xor
-            (seq
-                (call relay ("ipfs-adapter"  "set_local_api_multiaddr") [local_api_multiaddr])
-                (call %init_peer_id% ("op" "return") ["ok"])
-            )
+            (call relay ("ipfs-adapter"  "set_local_api_multiaddr") [local_api_multiaddr])
             (call %init_peer_id% ("op" "return") [%last_error%.$.instruction])
         )
         (xor
-            (seq
-                (call relay ("ipfs-adapter"  "set_external_api_multiaddr") [external_api_multiaddr])
-                (call %init_peer_id% ("op" "return") ["ok"])
-            )
+            (call relay ("ipfs-adapter"  "set_external_api_multiaddr") [external_api_multiaddr])
             (call %init_peer_id% ("op" "return") [%last_error%.$.instruction])
         )
     )
