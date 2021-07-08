@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -o errexit -o nounset -o pipefail
 
+# set current working directory to script directory to run script from everywhere
+cd "$(dirname "$0")"
+
 # This script builds all subprojects and puts all created Wasm modules in one dir
 cd effector
 cargo update --aggressive
@@ -15,3 +18,4 @@ mkdir -p artifacts
 rm -f artifacts/*.wasm
 cp effector/target/wasm32-wasi/release/ipfs_effector.wasm artifacts/
 cp pure/target/wasm32-wasi/release/ipfs_pure.wasm artifacts/
+marine aqua artifacts/ipfs_pure.wasm -s Ipfs -i ipfs-adapter > ../aqua/ipfs.aqua
