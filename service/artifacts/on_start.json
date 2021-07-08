@@ -1,0 +1,5 @@
+{
+  "external_swarm_multiaddr": "$FLUENCE_ENV_IPFS_ADAPTER_EXTERNAL_SWARM_MULTIADDR",
+  "local_api_multiaddr": "$FLUENCE_ENV_IPFS_ADAPTER_LOCAL_API_MULTIADDR",
+  "external_api_multiaddr": "$FLUENCE_ENV_IPFS_ADAPTER_EXTERNAL_API_MULTIADDR"
+}
