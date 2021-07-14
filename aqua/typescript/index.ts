@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { put, get_from } from './ipfs-api';
+import { put, get_from, set_timeout } from './ipfs-api';
 
-import {createClient, registerServiceFunction, setLogLevel, FluenceClient} from "@fluencelabs/fluence";
+import {createClient, setLogLevel} from "@fluencelabs/fluence";
 import {stage, krasnodar, Node, testNet} from "@fluencelabs/fluence-network-environment";
 const { create, globSource, urlSource } = require('ipfs-http-client');
 const all = require('it-all');
@@ -60,6 +60,9 @@ async function main(environment: Node[]) {
         const content = uint8ArrayConcat(await all(file.content));
         console.log("📗 downloaded file of length ", content.length);
     }
+
+    // default IPFS timeout is 1 sec, set to 10 secs to retrieve file from remote node
+    await set_timeout(fluence, environment[2].peerId, 10);
 
     console.log("📘 file hash: ", file.cid);
     let getResult = await get_from(fluence, environment[2].peerId, file.cid.toString(), ipfsMultiaddr, { ttl: 10000 });

@@ -13,3 +13,7 @@ func get_from(node: PeerId, hash: string, from: Multiaddr) -> IpfsGetFromResult:
     on node:
         result <- Ipfs.get_from(hash, from)
     <- result
+
+func set_timeout(node: PeerId, timeout_sec: u64):
+    on node:
+        Ipfs.set_timeout(timeout_sec)

@@ -26,8 +26,9 @@
     "compile-aqua": "aqua-cli -i . -o ./typescript",
     "prebuild": "npm run compile-aqua",
     "build": "tsc",
-    "prestart": "npm run build",
+    "prestart:local": "npm run build",
     "start:local": "node typescript/dist/index.js local",
+    "prestart:remote": "npm run build",
     "start:remote": "node typescript/dist/index.js testnet",
     "start": "npm run start:remote"
   },
