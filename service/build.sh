@@ -16,6 +16,6 @@ marine build --release
 cd ..
 mkdir -p artifacts
 rm -f artifacts/*.wasm
-cp effector/target/wasm32-wasi/release/ipfs_effector.wasm artifacts/
-cp pure/target/wasm32-wasi/release/ipfs_pure.wasm artifacts/
+cp target/wasm32-wasi/release/ipfs_effector.wasm artifacts/
+cp target/wasm32-wasi/release/ipfs_pure.wasm artifacts/
 marine aqua artifacts/ipfs_pure.wasm -s Ipfs -i ipfs-adapter > ../aqua/ipfs.aqua

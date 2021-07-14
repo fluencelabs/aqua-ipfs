@@ -64,7 +64,7 @@ pub fn connect(multiaddr: String, local_multiaddr: String, timeout_sec: u64) -> 
         multiaddr];
     let cmd = make_cmd_args(args, local_multiaddr, timeout_sec);
 
-    unwrap_mounted_binary_result(ipfs(cmd)).map(|_| ()).into()
+    unwrap_mounted_binary_result(unsafe { ipfs(cmd) }).map(|_| ()).into()
 }
 
 /// Put file from specified path to IPFS and return its hash.
@@ -85,7 +85,7 @@ pub fn put(file_path: String, local_multiaddr: String, timeout_sec: u64) -> Ipfs
 
     log::info!("ipfs put args {:?}", cmd);
 
-    unwrap_mounted_binary_result(ipfs(cmd)).into()
+    unwrap_mounted_binary_result(unsafe { ipfs(cmd) }).into()
 }
 
 /// Get file by provided hash from IPFS, saves it to a temporary file and returns a path to it.
@@ -103,7 +103,7 @@ pub fn get(hash: String, file_path: String, local_multiaddr: String, timeout_sec
 
     log::info!("ipfs get args {:?}", cmd);
 
-    unwrap_mounted_binary_result(ipfs(cmd)).map(|output| {
+    unwrap_mounted_binary_result(unsafe { ipfs(cmd) }).map(|output| {
         log::info!("ipfs get output: {}", output);
     }).into()
 }
@@ -113,7 +113,7 @@ pub fn get_peer_id(local_multiaddr: String, timeout_sec: u64) -> IpfsGetPeerIdRe
     let result: Result<String> = try {
         let cmd = make_cmd_args(vec![String::from("id")], local_multiaddr, timeout_sec);
 
-        let result: serde_json::Value = serde_json::from_str(&unwrap_mounted_binary_result(ipfs(cmd))?)?;
+        let result: serde_json::Value = serde_json::from_str(&unwrap_mounted_binary_result(unsafe { ipfs(cmd) })?)?;
         result.get("ID").ok_or(eyre::eyre!("ID field not found in response"))?.as_str().ok_or(eyre::eyre!("ID value is not string"))?.to_string()
     };
 
@@ -132,7 +132,7 @@ pub fn set_external_api_multiaddr(multiaddr: String, local_multiaddr: String, ti
         ];
         let cmd = make_cmd_args(args, local_multiaddr, timeout_sec);
 
-        unwrap_mounted_binary_result(ipfs(cmd)).map(|_| ())?
+        unwrap_mounted_binary_result(unsafe { ipfs(cmd) }).map(|_| ())?
     };
 
     result.into()
