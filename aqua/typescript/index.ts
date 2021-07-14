@@ -38,40 +38,50 @@ let local: Node[] = [
     },
 ];
 
-async function main() {
+async function main(environment: Node[]) {
     // setLogLevel('DEBUG');
-    const fluence = await createClient(testNet[1]);
-    console.log("created a fluence client %s with relay %s", fluence.selfPeerId, fluence.relayPeerId);
+    const fluence = await createClient(environment[1]);
+    console.log("📗 created a fluence client %s with relay %s", fluence.selfPeerId, fluence.relayPeerId);
     
     let ipfsAddr = 'https://stage.fluence.dev:15001';
     let ipfsMultiaddr = '/ip4/134.209.186.43/tcp/4001/p2p/12D3KooWEhCqQ9NBnmtSfNeXSNfhgccmH86xodkCUxZNEXab6pkw';
     const ipfs = create(ipfsAddr);
-    console.log("created ipfs client");
+    console.log("📗 created ipfs client");
 
     await ipfs.id();
-    console.log("connected to ipfs");
+    console.log("📗 connected to ipfs");
 
     let source = urlSource('https://images.adsttc.com/media/images/5ecd/d4ac/b357/65c6/7300/009d/large_jpg/02C.jpg?1590547607');
     const file = await ipfs.add(source);
-    console.log("uploaded file:", file);
+    console.log("📗 uploaded file:", file);
 
     let files = await ipfs.get(file.cid);
     for await (const file of files) {
         const content = uint8ArrayConcat(await all(file.content));
-        console.log("downloaded file of length ", content.length);
+        console.log("📗 downloaded file of length ", content.length);
     }
 
-    console.log("file hash: ", file.cid);
-    let getResult = await get_from(fluence, testNet[2].peerId, file.cid.toString(), ipfsMultiaddr, { ttl: 10000 });
-    console.log("Ipfs.get", getResult);
+    console.log("📘 file hash: ", file.cid);
+    let getResult = await get_from(fluence, environment[2].peerId, file.cid.toString(), ipfsMultiaddr, { ttl: 10000 });
+    console.log("📘 Ipfs.get", getResult);
 
-    let putResult = await put(fluence, testNet[2].peerId, getResult.path, { ttl: 10000 });
-    console.log("Ipfs.put", putResult);
+    let putResult = await put(fluence, environment[2].peerId, getResult.path, { ttl: 10000 });
+    console.log("📘 Ipfs.put", putResult);
 
     return;
 }
 
-main()
+let args = process.argv.slice(2);
+var environment: Node[];
+if (args.length >= 1 && args[0] == "local") {
+    environment = local;
+    console.log("📘 Will connect to local nodes");
+} else {
+    environment = testNet;
+    console.log("📘 Will connect to testNet");
+}
+
+main(environment)
   .then(() => process.exit(0))
   .catch(error => {
     console.error(error);
