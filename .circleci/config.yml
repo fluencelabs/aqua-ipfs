@@ -29,20 +29,20 @@ jobs:
             - ~/.rustup
           key: pfs-adapter00-{{ checksum "./service/pure/Cargo.lock" }}-{{ checksum "./service/effector/Cargo.lock" }}
 
-    Rust Tests:
-      docker:
-        - image: circleci/rust:latest
-      resource_class: xlarge
-      environment:
-        RUST_BACKTRACE: 1
-      steps:
-        - checkout
-        - attach_workspace:
-            at: .
-        - run: |
-            rustup default nightly-2021-04-24-x86_64-unknown-linux-gnu
-            cd ./service
-            cargo test --no-fail-fast --release --all-features --
+  Rust Tests:
+    docker:
+      - image: circleci/rust:latest
+    resource_class: xlarge
+    environment:
+      RUST_BACKTRACE: 1
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run: |
+          rustup default nightly-2021-04-24-x86_64-unknown-linux-gnu
+          cd ./service
+          cargo test --no-fail-fast --release --all-features --
 
 workflows:
   version: 2
