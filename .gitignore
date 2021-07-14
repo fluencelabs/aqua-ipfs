@@ -9,6 +9,7 @@
 .idea
 
 **/artifacts/*.wasm
+*.wasm
 
 **/node_modules
 **/dist

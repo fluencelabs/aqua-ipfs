@@ -17,3 +17,13 @@ func get_from(node: PeerId, hash: string, from: Multiaddr) -> IpfsGetFromResult:
 func set_timeout(node: PeerId, timeout_sec: u64):
     on node:
         Ipfs.set_timeout(timeout_sec)
+
+func get_external_api_multiaddr(node: PeerId) -> IpfsMultiaddrResult:
+    on node:
+        result <- Ipfs.get_external_api_multiaddr()
+    <- result
+
+func get_external_swarm_multiaddr(node: PeerId) -> IpfsMultiaddrResult:
+    on node:
+        result <- Ipfs.get_external_swarm_multiaddr()
+    <- result

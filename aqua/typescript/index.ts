@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { put, get_from, set_timeout } from './ipfs-api';
+import { put, get_from, set_timeout, get_external_swarm_multiaddr, get_external_api_multiaddr } from './ipfs-api';
 
 import {createClient, setLogLevel} from "@fluencelabs/fluence";
 import {stage, krasnodar, Node, testNet} from "@fluencelabs/fluence-network-environment";
-const { create, globSource, urlSource } = require('ipfs-http-client');
+const { create, globSource, urlSource, CID } = require('ipfs-http-client');
 const all = require('it-all');
 const uint8ArrayConcat = require('uint8arrays/concat')
 
@@ -38,15 +38,29 @@ let local: Node[] = [
     },
 ];
 
-async function main(environment: Node[]) {
-    // setLogLevel('DEBUG');
-    const fluence = await createClient(environment[1]);
-    console.log("📗 created a fluence client %s with relay %s", fluence.selfPeerId, fluence.relayPeerId);
-    
-    let ipfsAddr = 'https://stage.fluence.dev:15001';
-    let ipfsMultiaddr = '/ip4/134.209.186.43/tcp/4001/p2p/12D3KooWEhCqQ9NBnmtSfNeXSNfhgccmH86xodkCUxZNEXab6pkw';
-    const ipfs = create(ipfsAddr);
-    console.log("📗 created ipfs client");
+async function provideFile(url: string, host: Node): Promise<{ file: typeof CID, swarmAddr: string, rpcAddr: string }> {
+    const provider = await createClient(host);
+
+    var swarmAddr;
+    var result = await get_external_swarm_multiaddr(provider, provider.relayPeerId!);
+    if (result.success) {
+        swarmAddr = result.multiaddr;
+    } else {
+        console.error("Failed to retrieve external swarm multiaddr from %s: ", provider.relayPeerId);
+        throw result.error;
+    }
+
+    var rpcAddr;
+    var result = await get_external_api_multiaddr(provider, provider.relayPeerId!);
+    if (result.success) {
+        rpcAddr = result.multiaddr;
+    } else {
+        console.error("Failed to retrieve external api multiaddr from %s: ", provider.relayPeerId);
+        throw result.error;
+    }
+
+    const ipfs = create(rpcAddr);
+    console.log("📗 created ipfs client to %s", rpcAddr);
 
     await ipfs.id();
     console.log("📗 connected to ipfs");
@@ -61,11 +75,25 @@ async function main(environment: Node[]) {
         console.log("📗 downloaded file of length ", content.length);
     }
 
+    return { file, swarmAddr, rpcAddr };
+}
+
+async function main(environment: Node[]) {
+    // setLogLevel('DEBUG');
+    
+    let providerHost = environment[0];
+    console.log("uploading file from URL to node %s", providerHost.multiaddr);
+    let url = 'https://images.adsttc.com/media/images/5ecd/d4ac/b357/65c6/7300/009d/large_jpg/02C.jpg?1590547607';
+    let { file, swarmAddr, rpcAddr } = await provideFile(url, providerHost);
+
+    const fluence = await createClient(environment[1]);
+    console.log("📗 created a fluence client %s with relay %s", fluence.selfPeerId, fluence.relayPeerId);
+
     // default IPFS timeout is 1 sec, set to 10 secs to retrieve file from remote node
     await set_timeout(fluence, environment[2].peerId, 10);
 
     console.log("📘 file hash: ", file.cid);
-    let getResult = await get_from(fluence, environment[2].peerId, file.cid.toString(), ipfsMultiaddr, { ttl: 10000 });
+    let getResult = await get_from(fluence, environment[2].peerId, file.cid.toString(), swarmAddr, { ttl: 10000 });
     console.log("📘 Ipfs.get", getResult);
 
     let putResult = await put(fluence, environment[2].peerId, getResult.path, { ttl: 10000 });
