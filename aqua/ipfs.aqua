@@ -22,7 +22,6 @@ service Ipfs("ipfs-adapter"):
   get_external_swarm_multiaddr() -> IpfsMultiaddrResult
   get_from(hash: string, swarm_multiaddr: string) -> IpfsGetFromResult
   get_local_api_multiaddr() -> IpfsMultiaddrResult
-  invoke() -> string
   put(file_path: string) -> IpfsPutResult
   set_external_api_multiaddr(multiaddr: string) -> IpfsResult
   set_external_swarm_multiaddr(multiaddr: string) -> IpfsResult

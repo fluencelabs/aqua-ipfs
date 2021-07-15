@@ -82,11 +82,6 @@ pub fn main() {
 }
 
 #[marine]
-pub fn invoke() -> String {
-    "IPFS_RPC wasm example, it allows to:\ninvoke\nput\nget".to_string()
-}
-
-#[marine]
 pub fn put(file_path: String) -> IpfsPutResult {
     log::info!("put called with {:?}", file_path);
     let timeout = load_config().timeout;
@@ -137,8 +132,9 @@ pub fn set_external_api_multiaddr(multiaddr: String) -> IpfsResult {
     let config = load_config();
     let timeout = config.timeout;
     let local_maddr = config.local_api_multiaddr.to_string();
-    let result: eyre::Result<()> = try  {
+    let result: eyre::Result<()> = try {
         let mut multiaddr = Multiaddr::from_str(&multiaddr).wrap_err(format!("invalid multiaddr: {}", multiaddr))?;
+
         let mut passed_peer_id = None;
         match multiaddr.iter().count() {
             3 => {
@@ -152,13 +148,12 @@ pub fn set_external_api_multiaddr(multiaddr: String) -> IpfsResult {
         if !set_result.success {
             return set_result;
         }
-
         let peer_id_result = unsafe { ipfs_get_peer_id(local_maddr, timeout) };
         if !peer_id_result.success {
             Err(eyre::eyre!(peer_id_result.error.clone()))?;
         }
 
-        let peer_id = Protocol::P2p(Multihash::from_bytes(&bs58::decode(peer_id_result.error).into_vec()?)?);
+        let peer_id = Protocol::P2p(Multihash::from_bytes(&bs58::decode(peer_id_result.peer_id.clone()).into_vec()?).wrap_err(format!("peer_id parsing failed: {}", peer_id_result.peer_id))?);
         if passed_peer_id.is_some() && passed_peer_id != Some(peer_id.clone()) {
             Err(eyre::eyre!("given peer id is different from node peer_id: given {}, actual {}", passed_peer_id.unwrap().to_string(), peer_id.to_string()))?;
         }

@@ -113,7 +113,8 @@ pub fn get_peer_id(local_multiaddr: String, timeout_sec: u64) -> IpfsGetPeerIdRe
     let result: Result<String> = try {
         let cmd = make_cmd_args(vec![String::from("id")], local_multiaddr, timeout_sec);
 
-        let result: serde_json::Value = serde_json::from_str(&unwrap_mounted_binary_result(unsafe { ipfs(cmd) })?)?;
+        let result = unwrap_mounted_binary_result(unsafe { ipfs(cmd) })?;
+        let result: serde_json::Value = serde_json::from_str(&result).wrap_err("ipfs response parsing failed")?;
         result.get("ID").ok_or(eyre::eyre!("ID field not found in response"))?.as_str().ok_or(eyre::eyre!("ID value is not string"))?.to_string()
     };
 

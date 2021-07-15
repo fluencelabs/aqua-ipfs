@@ -1,2 +1,4 @@
 #!/bin/sh
+peer_id='{"ID": "12D3KooWF2hVw8p5W7iv1NWeKcjkqtJhYKSrWN6ZYq15idxkjEpm"}'
+echo $peer_id
 exit 0
