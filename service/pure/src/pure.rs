@@ -86,7 +86,7 @@ pub fn get_peer_id(api_multiaddr: String, timeout: u64) -> eyre::Result<Protocol
         Err(eyre::eyre!(peer_id_result.error.clone()))?;
     }
 
-    Ok(Protocol::P2p(Multihash::from_bytes(&bs58::decode(peer_id_result.peer_id.clone()).into_vec()?).wrap_err(format!("peer_id parsing failed: {}", peer_id_result.peer_id))?))
+    Ok(Protocol::P2p(Multihash::from_bytes(&bs58::decode(peer_id_result.peer_id.clone()).into_vec()?).wrap_err(format!("error parsing peer_id from 'ipfs id': {}", peer_id_result.peer_id))?))
 }
 
 #[marine]
