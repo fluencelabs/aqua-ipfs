@@ -16,6 +16,7 @@
 
 #![allow(improper_ctypes)]
 #![feature(try_blocks)]
+#![cfg(target_arch = "wasm32")]
 
 use types::{IpfsResult, IpfsPutResult, IpfsGetPeerIdResult};
 
@@ -47,6 +48,7 @@ fn make_cmd_args(args: Vec<String>, local_multiaddr: String, timeout_sec: u64) -
         ]).collect()
 }
 
+#[cfg((target_arch = "wasm32"), ignore)]
 pub fn main() {
     WasmLoggerBuilder::new()
         .with_log_level(log::LevelFilter::Info)
@@ -64,7 +66,7 @@ pub fn connect(multiaddr: String, local_multiaddr: String, timeout_sec: u64) -> 
         multiaddr];
     let cmd = make_cmd_args(args, local_multiaddr, timeout_sec);
 
-    unwrap_mounted_binary_result(unsafe { ipfs(cmd) }).map(|_| ()).into()
+    unwrap_mounted_binary_result(ipfs(cmd)).map(|_| ()).into()
 }
 
 /// Put file from specified path to IPFS and return its hash.
