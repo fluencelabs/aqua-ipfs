@@ -1,4 +1,4 @@
-data IpfsGetFromResult:
+data IpfsGetResult:
   success: bool
   error: string
   path: string
@@ -18,9 +18,11 @@ data IpfsResult:
   error: string
 
 service Ipfs("ipfs-adapter"):
+  connect(multiaddr: string) -> IpfsResult
+  get(hash: string) -> IpfsGetResult
   get_external_api_multiaddr() -> IpfsMultiaddrResult
   get_external_swarm_multiaddr() -> IpfsMultiaddrResult
-  get_from(hash: string, swarm_multiaddr: string) -> IpfsGetFromResult
+  get_from(hash: string, external_multiaddr: string) -> IpfsGetResult
   get_local_api_multiaddr() -> IpfsMultiaddrResult
   put(file_path: string) -> IpfsPutResult
   set_external_api_multiaddr(multiaddr: string) -> IpfsResult

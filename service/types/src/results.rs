@@ -33,13 +33,13 @@ impl From<Result<()>> for IpfsResult {
 }
 
 #[marine]
-pub struct IpfsGetFromResult {
+pub struct IpfsGetResult {
     pub success: bool,
     pub error: String,
     pub path: String,
 }
 
-impl From<Result<String>> for IpfsGetFromResult {
+impl From<Result<String>> for IpfsGetResult {
     fn from(result: Result<String>) -> Self {
         match result {
             Ok(path) => Self { success: true, error: "".to_string(), path },
