@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Fluence Labs Limited
+ * Copyright 2021 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-#![feature(try_blocks)]
+#[cfg(test)]
+mod tests {
+    use marine_rs_sdk_test::marine_test;
 
-#[cfg(target_arch = "wasm32")]
-mod pure;
-
-#[cfg(target_arch = "wasm32")]
-pub fn main() {
-    pure::main()
+    #[marine_test(config_path = "Config_error.toml", modules_dir = "../../artifacts")]
+    fn connect_failed() {
+        let result = ipfs_effector.connect("/ip4/127.0.0.1/tcp/5001".to_string(), "/ip4/127.0.0.1/tcp/5001".to_string(), 5u64);
+        assert!(!result.success);
+    }
 }
-
-#[cfg(not(target_arch = "wasm32"))]
-pub fn main() {}
