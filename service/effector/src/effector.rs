@@ -148,7 +148,7 @@ extern "C" {
 fn inject_vault_host_path(path: String) -> String {
     let vault = "/tmp/vault";
     if let Some(stripped) = path.strip_prefix(&vault) {
-        let host_vault_path = std::env::var("/tmp/vault").expect("vault must be mapped to /tmp/vault");
+        let host_vault_path = std::env::var(vault).expect("vault must be mapped to /tmp/vault");
         format!("/{}/{}", host_vault_path, stripped)
     } else {
         path
