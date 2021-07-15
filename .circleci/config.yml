@@ -23,39 +23,16 @@ jobs:
           rustup target add wasm32-wasi --toolchain nightly-2021-04-24-x86_64-unknown-linux-gnu
           cd ./service
           ./build.sh
-      - persist_to_workspace:
-         # Must be an absolute path, or relative path from working_directory.
-         # This is a directory on the container which is taken to be the root directory of the workspace.
-         root: .
-         # Must be relative path from root
-         paths:
-           - service/artifacts/
+          cargo test --no-fail-fast --release --all-features --
       - save_cache:
           paths:
             - ~/.cargo
             - ~/.rustup
           key: ipfs-adapter00-{{ checksum "./service/pure/Cargo.lock" }}-{{ checksum "./service/effector/Cargo.lock" }}
 
-  Rust Tests:
-    docker:
-      - image: circleci/rust:latest
-    resource_class: xlarge
-    environment:
-      RUST_BACKTRACE: 1
-    steps:
-      - checkout
-      - attach_workspace:
-          at: .
-      - run: |
-          rustup default nightly-2021-04-24-x86_64-unknown-linux-gnu
-          cd ./service
-          cargo test --no-fail-fast --release --all-features --
 
 workflows:
   version: 2
   CircleCI:
     jobs:
       - Build
-      - Rust Tests:
-          requires:
-            - Build

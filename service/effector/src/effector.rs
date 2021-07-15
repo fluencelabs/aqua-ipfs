@@ -29,6 +29,13 @@ use std::str::FromStr;
 
 module_manifest!();
 
+pub fn main() {
+    WasmLoggerBuilder::new()
+        .with_log_level(log::LevelFilter::Info)
+        .build()
+        .unwrap();
+}
+
 fn unwrap_mounted_binary_result(result: MountedBinaryResult) -> Result<String> {
     result.into_std().ok_or(eyre::eyre!("stdout or stderr contains non valid UTF8 string"))?.map_err(|e| eyre::eyre!("ipfs cli call failed: {}", e))
 }
@@ -44,13 +51,6 @@ fn make_cmd_args(args: Vec<String>, local_multiaddr: String, timeout_sec: u64) -
             String::from("--api"),
             local_multiaddr
         ]).collect()
-}
-
-pub fn main() {
-    WasmLoggerBuilder::new()
-        .with_log_level(log::LevelFilter::Info)
-        .build()
-        .unwrap();
 }
 
 #[marine]

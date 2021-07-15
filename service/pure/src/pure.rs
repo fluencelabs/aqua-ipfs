@@ -33,6 +33,14 @@ const DEFAULT_TIMEOUT_SEC: u64 = 1u64;
 const DEFAULT_LOCAL_API_MULTIADDR: &str = "/ip4/127.0.0.1/tcp/5001";
 module_manifest!();
 
+pub fn main() {
+    WasmLoggerBuilder::new()
+        .with_log_level(log::LevelFilter::Info)
+        .build()
+        .unwrap();
+    create_config();
+}
+
 #[derive(Deserialize, Serialize)]
 pub struct Config {
     pub timeout: u64,
@@ -72,14 +80,6 @@ pub(crate) fn create_config() {
     }
 }
 
-pub fn main() {
-    WasmLoggerBuilder::new()
-        .with_log_level(log::LevelFilter::Info)
-        .build()
-        .unwrap();
-    create_config();
-}
-
 #[marine]
 pub fn put(file_path: String) -> IpfsPutResult {
     log::info!("put called with {:?}", file_path);
@@ -95,7 +95,7 @@ pub fn get_from(hash: String, swarm_multiaddr: String) -> IpfsGetFromResult {
     let local_maddr = config.local_api_multiaddr.to_string();
 
     let particle_id = marine_rs_sdk::get_call_parameters().particle_id;
-    let connect_result = ipfs_connect(swarm_multiaddr, local_maddr.clone(), timeout.clone());
+    let connect_result = ipfs_connect(swarm_multiaddr, local_maddr.clone(), timeout);
 
     if !connect_result.success {
         return Err(eyre::eyre!(connect_result.error)).into();
@@ -143,7 +143,7 @@ pub fn set_external_api_multiaddr(multiaddr: String) -> IpfsResult {
             n => Err(eyre::eyre!("multiaddr should contain 2 or 3 components, {} given", n))?,
         }
 
-        let set_result = ipfs_set_external_api_multiaddr(multiaddr.to_string(), local_maddr.clone(), timeout.clone());
+        let set_result = ipfs_set_external_api_multiaddr(multiaddr.to_string(), local_maddr.clone(), timeout);
         if !set_result.success {
             return set_result;
         }
