@@ -625,6 +625,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "ipfs-effector"
+version = "0.1.0"
+dependencies = [
+ "eyre",
+ "fluence-fork-parity-multiaddr",
+ "log",
+ "marine-rs-sdk",
+ "marine-rs-sdk-test",
+ "serde_json",
+ "types",
+]
+
+[[package]]
 name = "ipfs-pure"
 version = "0.1.0"
 dependencies = [
