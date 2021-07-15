@@ -279,5 +279,5 @@ extern "C" {
     pub fn ipfs_get_peer_id(local_multiaddr: String, timeout_sec: u64) -> IpfsGetPeerIdResult;
 
     #[link_name = "set_external_swarm_multiaddr"]
-    pub fn ipfs_set_external_swarm_multiaddr(external_multiaddr: String, api_multiaddr: String, timeout_sec: u64) -> IpfsResult;
+    pub fn ipfs_set_external_swarm_multiaddr(swarm_multiaddr: String, api_multiaddr: String, timeout_sec: u64) -> IpfsResult;
 }

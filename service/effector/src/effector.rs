@@ -121,9 +121,9 @@ pub fn get_peer_id(api_multiaddr: String, timeout_sec: u64) -> IpfsGetPeerIdResu
 }
 
 #[marine]
-pub fn set_external_swarm_multiaddr(multiaddr: String, api_multiaddr: String, timeout_sec: u64) -> IpfsResult {
+pub fn set_external_swarm_multiaddr(swarm_multiaddr: String, api_multiaddr: String, timeout_sec: u64) -> IpfsResult {
     let result: Result<()> = try {
-        let multiaddr = Multiaddr::from_str(&multiaddr).wrap_err(format!("invalid multiaddr {}", multiaddr))?;
+        let multiaddr = Multiaddr::from_str(&swarm_multiaddr).wrap_err(format!("invalid multiaddr {}", swarm_multiaddr))?;
         let args = vec![
             String::from("config"),
             String::from("Addresses.Announce"),
