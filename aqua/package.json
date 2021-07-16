@@ -34,7 +34,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fluencelabs/aqua-dht.git"
+    "url": "git+https://github.com/fluencelabs/ipfs-adapter"
   },
   "keywords": [
     "aqua",
@@ -43,9 +43,9 @@
   "author": "Fluence Labs",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/fluencelabs/aqua-dht/issues"
+    "url": "https://github.com/fluencelabs/ipfs-adapter/issues"
   },
-  "homepage": "https://github.com/fluencelabs/aqua-dht#readme",
+  "homepage": "hhttps://github.com/fluencelabs/ipfs-adapter#readme",
   "devDependencies": {
     "@fluencelabs/aqua-cli": "0.1.9-163",
     "typescript": "^3.9.5"
