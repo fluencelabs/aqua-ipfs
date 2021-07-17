@@ -1,31 +1,31 @@
 (seq
     (seq
         (seq
-            (call relay ("ipfs-adapter" "set_local_api_multiaddr") [local_api_multiaddr] result)
+            (call relay ("ipfs-adapter" "set_local_api_multiaddr") [local_api_multiaddr] result1)
             (xor
-               (match result.$.success! true
+               (match result1.$.success! true
                     (null)
                )
-               (call %init_peer_id% ("op" "return") [result.$.error!])
+               (call %init_peer_id% ("op" "return") [result1.$.error!])
             )
         )
         (seq
-            (call relay ("ipfs-adapter"  "set_external_api_multiaddr") [external_api_multiaddr] result)
+            (call relay ("ipfs-adapter"  "set_external_api_multiaddr") [external_api_multiaddr] result2)
             (xor
-               (match result.$.success! true
+               (match result2.$.success! true
                     (null)
                )
-               (call %init_peer_id% ("op" "return") [result.$.error!])
+               (call %init_peer_id% ("op" "return") [result2.$.error!])
             )
         )
     )
     (seq
-        (call relay ("ipfs-adapter"  "set_external_swarm_multiaddr") [external_swarm_multiaddr] result)
+        (call relay ("ipfs-adapter"  "set_external_swarm_multiaddr") [external_swarm_multiaddr] result3)
         (xor
-            (match result.$.success! true
+            (match result3.$.success! true
                 (call %init_peer_id% ("op" "return") ["ok"])
             )
-            (call %init_peer_id% ("op" "return") [result.$.error!])
+            (call %init_peer_id% ("op" "return") [result3.$.error!])
         )
     )
 )
