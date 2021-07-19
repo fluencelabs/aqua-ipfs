@@ -18,6 +18,7 @@ import { put, get_from, set_timeout, get_external_swarm_multiaddr, get_external_
 
 import {createClient, setLogLevel} from "@fluencelabs/fluence";
 import {stage, krasnodar, Node, testNet} from "@fluencelabs/fluence-network-environment";
+import { Multiaddr, protocols } from 'multiaddr';
 const { create, globSource, urlSource, CID } = require('ipfs-http-client');
 const all = require('it-all');
 const uint8ArrayConcat = require('uint8arrays/concat')
@@ -38,7 +39,7 @@ let local: Node[] = [
     },
 ];
 
-async function provideFile(url: string, host: Node): Promise<{ file: typeof CID, swarmAddr: string, rpcAddr: string }> {
+async function provideFile(url: string, host: Node, locally: boolean): Promise<{ file: typeof CID, swarmAddr: string, rpcAddr: string }> {
     const provider = await createClient(host);
 
     var swarmAddr;
@@ -59,8 +60,13 @@ async function provideFile(url: string, host: Node): Promise<{ file: typeof CID,
         throw result.error;
     }
 
-    const ipfs = create(rpcAddr);
-    console.log("📗 created ipfs client to %s", rpcAddr);
+    var rpcMaddr = new Multiaddr(rpcAddr).decapsulateCode(protocols.names.p2p.code);
+    // if (locally) {
+    //     // convert '/dns4/fluence-0/tcp/5000' to '/ip4/127.0.0.1/tcp/5001' due to docker-compose networking limitations
+    //     rpcMaddr = new Multiaddr(`/ip4/127.0.0.1/tcp/5001`);
+    // }
+    const ipfs = create(rpcMaddr);
+    console.log("📗 created ipfs client to %s", rpcMaddr);
 
     await ipfs.id();
     console.log("📗 connected to ipfs");
@@ -78,13 +84,15 @@ async function provideFile(url: string, host: Node): Promise<{ file: typeof CID,
     return { file, swarmAddr, rpcAddr };
 }
 
-async function main(environment: Node[]) {
+async function main(environment: Node[], locally: boolean) {
     // setLogLevel('DEBUG');
     
     let providerHost = environment[0];
     console.log("uploading file from URL to node %s", providerHost.multiaddr);
     let url = 'https://images.adsttc.com/media/images/5ecd/d4ac/b357/65c6/7300/009d/large_jpg/02C.jpg?1590547607';
-    let { file, swarmAddr, rpcAddr } = await provideFile(url, providerHost);
+    let { file, swarmAddr, rpcAddr } = await provideFile(url, providerHost, locally);
+    console.log("swarmAddr", swarmAddr);
+    console.log("rpcAddr", rpcAddr);
 
     const fluence = await createClient(environment[1]);
     console.log("📗 created a fluence client %s with relay %s", fluence.selfPeerId, fluence.relayPeerId);
@@ -93,7 +101,7 @@ async function main(environment: Node[]) {
     await set_timeout(fluence, environment[2].peerId, 10);
 
     console.log("📘 file hash: ", file.cid);
-    let getResult = await get_from(fluence, environment[2].peerId, file.cid.toString(), swarmAddr, { ttl: 10000 });
+    let getResult = await get_from(fluence, environment[2].peerId, file.cid.toString(), rpcAddr, { ttl: 10000 });
     console.log("📘 Ipfs.get", getResult);
 
     let putResult = await put(fluence, environment[2].peerId, getResult.path, { ttl: 10000 });
@@ -104,15 +112,18 @@ async function main(environment: Node[]) {
 
 let args = process.argv.slice(2);
 var environment: Node[];
+var locally: boolean;
 if (args.length >= 1 && args[0] == "local") {
     environment = local;
+    locally = true;
     console.log("📘 Will connect to local nodes");
 } else {
     environment = testNet;
+    locally = false;
     console.log("📘 Will connect to testNet");
 }
 
-main(environment)
+main(environment, locally)
   .then(() => process.exit(0))
   .catch(error => {
     console.error(error);

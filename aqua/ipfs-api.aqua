@@ -4,25 +4,31 @@ import "ipfs.aqua"
 alias Multiaddr: string
 alias PeerId: string
 
+-- Upload file `path` to IPFS node running on `node`
+-- path should exist & be available to `ipfs-adapter`
 func put(node: PeerId, path: string) -> IpfsPutResult:
     on node:
         result <- Ipfs.put(path)
     <- result
 
+-- Download file `hash` from IPFS node `from` and save it to `node`
 func get_from(node: PeerId, hash: string, from: Multiaddr) -> IpfsGetFromResult:
     on node:
         result <- Ipfs.get_from(hash, from)
     <- result
 
+-- Set timeout for IPFS calls in `ipfs-adapter`
 func set_timeout(node: PeerId, timeout_sec: u64):
     on node:
         Ipfs.set_timeout(timeout_sec)
 
+-- Get multiaddress of IPFS's HTTP RPC endpoint (usually on port 5001)
 func get_external_api_multiaddr(node: PeerId) -> IpfsMultiaddrResult:
     on node:
         result <- Ipfs.get_external_api_multiaddr()
     <- result
 
+-- Get multiaddress of IPFS's Swarm endpoint (usually on port 4001)
 func get_external_swarm_multiaddr(node: PeerId) -> IpfsMultiaddrResult:
     on node:
         result <- Ipfs.get_external_swarm_multiaddr()
