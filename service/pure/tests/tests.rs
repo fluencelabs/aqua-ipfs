@@ -18,6 +18,13 @@
 mod tests {
     use marine_rs_sdk_test::marine_test;
 
+    macro_rules! set_default_local_api_multiaddr {
+        ($ipfs_pure:expr) => {
+            let result = $ipfs_pure.set_local_api_multiaddr("/ip4/127.0.0.1/tcp/9992".to_string());
+            assert!(result.success);
+        }
+    }
+
     #[marine_test(config_path = "Config.toml", modules_dir = "../../artifacts")]
     fn invalid_multiaddr() {
         let invalid_multiaddr = "invalid_multiaddr".to_string();
@@ -28,6 +35,7 @@ mod tests {
 
     #[marine_test(config_path = "Config.toml", modules_dir = "../../artifacts")]
     fn set_get_external_api_multiaddr() {
+        set_default_local_api_multiaddr!(ipfs_pure);
         let multiaddr = "/ip4/127.0.0.1/tcp/9992";
         let result = ipfs_pure.set_external_api_multiaddr(multiaddr.to_string());
         assert!(result.success);
@@ -41,6 +49,7 @@ mod tests {
 
     #[marine_test(config_path = "Config.toml", modules_dir = "../../artifacts")]
     fn set_get_external_swarm_multiaddr() {
+        set_default_local_api_multiaddr!(ipfs_pure);
         let multiaddr = "/ip4/127.0.0.1/tcp/9992";
         let result = ipfs_pure.set_external_swarm_multiaddr(multiaddr.to_string());
         assert!(result.success);
