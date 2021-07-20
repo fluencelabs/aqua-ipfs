@@ -12,7 +12,7 @@ func put(node: PeerId, path: string) -> IpfsPutResult:
     <- result
 
 -- Download file `hash` from IPFS node `from` and save it to `node`
-func get_from(node: PeerId, hash: string, from: Multiaddr) -> IpfsGetFromResult:
+func get_from(node: PeerId, hash: string, from: Multiaddr) -> IpfsGetResult:
     on node:
         result <- Ipfs.get_from(hash, from)
     <- result

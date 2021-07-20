@@ -43,32 +43,32 @@ fn unwrap_mounted_binary_result(result: MountedBinaryResult) -> Result<String> {
 #[inline]
 fn get_timeout_string(timeout: u64) -> String { format!("{}s", timeout) }
 
-fn make_cmd_args(args: Vec<String>, local_multiaddr: String, timeout_sec: u64) -> Vec<String> {
+fn make_cmd_args(args: Vec<String>, api_multiaddr: String, timeout_sec: u64) -> Vec<String> {
     args.into_iter().chain(
         vec![
             String::from("--timeout"),
             get_timeout_string(timeout_sec),
             String::from("--api"),
-            local_multiaddr
+            api_multiaddr
         ]).collect()
 }
 
 #[marine]
-pub fn connect(multiaddr: String, local_multiaddr: String, timeout_sec: u64) -> IpfsResult {
+pub fn connect(multiaddr: String, api_multiaddr: String, timeout_sec: u64) -> IpfsResult {
     log::info!("connect called with multiaddr {}", multiaddr);
 
     let args = vec![
         String::from("swarm"),
         String::from("connect"),
         multiaddr];
-    let cmd = make_cmd_args(args, local_multiaddr, timeout_sec);
+    let cmd = make_cmd_args(args, api_multiaddr, timeout_sec);
 
     unwrap_mounted_binary_result(ipfs(cmd)).map(|_| ()).into()
 }
 
 /// Put file from specified path to IPFS and return its hash.
 #[marine]
-pub fn put(file_path: String, local_multiaddr: String, timeout_sec: u64) -> IpfsPutResult {
+pub fn put(file_path: String, api_multiaddr: String, timeout_sec: u64) -> IpfsPutResult {
     log::info!("put called with file path {}", file_path);
 
     if !std::path::Path::new(&file_path).exists() {
@@ -80,7 +80,7 @@ pub fn put(file_path: String, local_multiaddr: String, timeout_sec: u64) -> Ipfs
         String::from("-Q"),
         inject_vault_host_path(file_path)
     ];
-    let cmd = make_cmd_args(args, local_multiaddr, timeout_sec);
+    let cmd = make_cmd_args(args, api_multiaddr, timeout_sec);
 
     log::info!("ipfs put args {:?}", cmd);
 
@@ -89,7 +89,7 @@ pub fn put(file_path: String, local_multiaddr: String, timeout_sec: u64) -> Ipfs
 
 /// Get file by provided hash from IPFS, saves it to a temporary file and returns a path to it.
 #[marine]
-pub fn get(hash: String, file_path: String, local_multiaddr: String, timeout_sec: u64) -> IpfsResult {
+pub fn get(hash: String, file_path: String, api_multiaddr: String, timeout_sec: u64) -> IpfsResult {
     log::info!("get called with hash {}", hash);
 
     let args = vec![
@@ -98,7 +98,7 @@ pub fn get(hash: String, file_path: String, local_multiaddr: String, timeout_sec
         inject_vault_host_path(file_path),
         hash,
     ];
-    let cmd = make_cmd_args(args, local_multiaddr, timeout_sec);
+    let cmd = make_cmd_args(args, api_multiaddr, timeout_sec);
 
     log::info!("ipfs get args {:?}", cmd);
 
@@ -108,9 +108,9 @@ pub fn get(hash: String, file_path: String, local_multiaddr: String, timeout_sec
 }
 
 #[marine]
-pub fn get_peer_id(local_multiaddr: String, timeout_sec: u64) -> IpfsGetPeerIdResult {
+pub fn get_peer_id(api_multiaddr: String, timeout_sec: u64) -> IpfsGetPeerIdResult {
     let result: Result<String> = try {
-        let cmd = make_cmd_args(vec![String::from("id")], local_multiaddr, timeout_sec);
+        let cmd = make_cmd_args(vec![String::from("id")], api_multiaddr, timeout_sec);
 
         let result = unwrap_mounted_binary_result(ipfs(cmd))?;
         let result: serde_json::Value = serde_json::from_str(&result).wrap_err("ipfs response parsing failed")?;
@@ -121,16 +121,16 @@ pub fn get_peer_id(local_multiaddr: String, timeout_sec: u64) -> IpfsGetPeerIdRe
 }
 
 #[marine]
-pub fn set_external_api_multiaddr(multiaddr: String, local_multiaddr: String, timeout_sec: u64) -> IpfsResult {
+pub fn set_external_swarm_multiaddr(swarm_multiaddr: String, api_multiaddr: String, timeout_sec: u64) -> IpfsResult {
     let result: Result<()> = try {
-        let multiaddr = Multiaddr::from_str(&multiaddr).wrap_err(format!("invalid multiaddr {}", multiaddr))?;
+        let multiaddr = Multiaddr::from_str(&swarm_multiaddr).wrap_err(format!("invalid multiaddr {}", swarm_multiaddr))?;
         let args = vec![
             String::from("config"),
             String::from("Addresses.Announce"),
             format!(r#"["{}"]"#, multiaddr.to_string()),
             String::from("--json"),
         ];
-        let cmd = make_cmd_args(args, local_multiaddr, timeout_sec);
+        let cmd = make_cmd_args(args, api_multiaddr, timeout_sec);
 
         unwrap_mounted_binary_result(ipfs(cmd)).map(|_| ())?
     };

@@ -38,4 +38,17 @@ mod tests {
         assert!(result.success);
         assert_eq!(format!("{}/p2p/{}", multiaddr, peer_id), result.multiaddr);
     }
+
+    #[marine_test(config_path = "Config.toml", modules_dir = "../../artifacts")]
+    fn set_get_external_swarm_multiaddr() {
+        let multiaddr = "/ip4/127.0.0.1/tcp/9992";
+        let result = ipfs_pure.set_external_swarm_multiaddr(multiaddr.to_string());
+        assert!(result.success);
+
+        let peer_id = ipfs_effector.get_peer_id("/ip4/127.0.0.1/tcp/5001".to_string(), 0).peer_id;
+
+        let result = ipfs_pure.get_external_swarm_multiaddr();
+        assert!(result.success);
+        assert_eq!(format!("{}/p2p/{}", multiaddr, peer_id), result.multiaddr);
+    }
 }

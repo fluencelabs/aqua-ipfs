@@ -1,22 +1,21 @@
 {
   "name": "@fluencelabs/aqua-ipfs",
-  "version": "0.1.0",
+  "version": "0.1.8",
   "description": "Aqua IPFS library",
-  "main": "./dist/index.js",
-  "typings": "./dist/index.d.ts",
+  "main": "./typescript/dist/index.js",
+  "typings": "./typescript/dist/index.d.ts",
   "files": [
     "ipfs.aqua",
     "ipfs-api.aqua",
-    "dist/*"
+    "typescript/dist/index.d.ts",
+    "typescript/dist/index.js",
+    "typescript/dist/ipfs-api.d.ts",
+    "typescript/dist/ipfs-api.js"
   ],
   "dependencies": {
     "@fluencelabs/aqua-lib": "^0.1.9",
     "@fluencelabs/fluence": "^0.9.53",
-    "@fluencelabs/fluence-network-environment": "^1.0.10",
-    "ipfs-http-client": "^50.1.2",
-    "multiaddr": "10.0.0",
-    "it-all": "^1.0.5",
-    "uint8arrays": "^2.1.5"
+    "@fluencelabs/fluence-network-environment": "^1.0.10"
   },
   "scripts": {
     "generate-aqua": "../service/build.sh",
@@ -24,14 +23,15 @@
     "prebuild": "npm run compile-aqua",
     "build": "tsc",
     "prestart:local": "npm run build",
-    "start:local": "node typescript/dist/index.js local",
+    "start:local": "node typescript/dist/demo.js local",
     "prestart:remote": "npm run build",
-    "start:remote": "node typescript/dist/index.js testnet",
-    "start": "npm run start:remote"
+    "start:remote": "node typescript/dist/demo.js testnet",
+    "start": "npm run start:remote",
+    "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fluencelabs/aqua-dht.git"
+    "url": "git+https://github.com/fluencelabs/ipfs-adapter"
   },
   "keywords": [
     "aqua",
@@ -40,11 +40,14 @@
   "author": "Fluence Labs",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/fluencelabs/aqua-dht/issues"
+    "url": "https://github.com/fluencelabs/ipfs-adapter/issues"
   },
-  "homepage": "https://github.com/fluencelabs/aqua-dht#readme",
+  "homepage": "hhttps://github.com/fluencelabs/ipfs-adapter#readme",
   "devDependencies": {
-    "@fluencelabs/aqua-cli": "0.1.9-163",
-    "typescript": "^3.9.5"
+    "@fluencelabs/aqua-cli": "0.1.9-164",
+    "typescript": "^3.9.5",
+    "ipfs-http-client": "^50.1.2",
+    "it-all": "^1.0.5",
+    "uint8arrays": "^2.1.5"
   }
 }
