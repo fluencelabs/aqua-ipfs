@@ -9,7 +9,7 @@ func put(node: PeerId, path: string) -> IpfsPutResult:
         result <- Ipfs.put(path)
     <- result
 
-func get_from(node: PeerId, hash: string, from: Multiaddr) -> IpfsGetFromResult:
+func get_from(node: PeerId, hash: string, from: Multiaddr) -> IpfsGetResult:
     on node:
         result <- Ipfs.get_from(hash, from)
     <- result

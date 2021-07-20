@@ -44,7 +44,7 @@ async function main(environment: Node[]) {
     console.log("📗 created a fluence client %s with relay %s", fluence.selfPeerId, fluence.relayPeerId);
     
     let ipfsAddr = 'https://stage.fluence.dev:15001';
-    let ipfsMultiaddr = '/ip4/134.209.186.43/tcp/4001/p2p/12D3KooWEhCqQ9NBnmtSfNeXSNfhgccmH86xodkCUxZNEXab6pkw';
+    let ipfsMultiaddr = '/ip4/134.209.186.43/tcp/5001/p2p/12D3KooWEhCqQ9NBnmtSfNeXSNfhgccmH86xodkCUxZNEXab6pkw';
     const ipfs = create(ipfsAddr);
     console.log("📗 created ipfs client");
 
