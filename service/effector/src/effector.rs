@@ -84,7 +84,7 @@ pub fn put(file_path: String, api_multiaddr: String, timeout_sec: u64) -> IpfsPu
 
     log::info!("ipfs put args {:?}", cmd);
 
-    unwrap_mounted_binary_result(ipfs(cmd)).into()
+    unwrap_mounted_binary_result(ipfs(cmd)).map(|res| res.trim().to_string()).into()
 }
 
 /// Get file by provided hash from IPFS, saves it to a temporary file and returns a path to it.
