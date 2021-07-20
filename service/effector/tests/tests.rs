@@ -23,4 +23,10 @@ mod tests {
         let result = ipfs_effector.connect("/ip4/127.0.0.1/tcp/5001".to_string(), "/ip4/127.0.0.1/tcp/5001".to_string(), 5u64);
         assert!(!result.success);
     }
+
+    #[marine_test(config_path = "Config_put.toml", modules_dir = "../../artifacts")]
+    fn put_result() {
+        let result = ipfs_effector.put("tmp".to_string(), "api_multiaddr".to_string(), 1);
+        assert_eq!("hash", result.hash);
+    }
 }
