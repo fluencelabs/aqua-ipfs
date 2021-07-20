@@ -177,7 +177,7 @@ pub fn set_external_api_multiaddr(multiaddr: String) -> IpfsResult {
 
     let result: eyre::Result<()> = try {
         let mut multiaddr = Multiaddr::from_str(&multiaddr).wrap_err(format!("invalid multiaddr: {}", multiaddr))?;
-        let local_maddr= load_local_api_multiaddr()?;
+        let local_maddr = load_local_api_multiaddr()?;
         let mut passed_peer_id = None;
         match multiaddr.iter().count() {
             3 => {
