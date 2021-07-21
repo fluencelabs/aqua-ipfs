@@ -6,11 +6,11 @@ cd "$(dirname "$0")"
 
 # This script builds all subprojects and puts all created Wasm modules in one dir
 cd effector
-# cargo update --aggressive
+cargo update --aggressive
 marine build --release
 
 cd ../pure
-# cargo update --aggressive
+cargo update --aggressive
 marine build --release
 
 cd ..
