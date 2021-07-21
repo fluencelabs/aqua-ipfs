@@ -18,4 +18,4 @@ mkdir -p artifacts
 rm -f artifacts/*.wasm
 cp target/wasm32-wasi/release/ipfs_effector.wasm artifacts/
 cp target/wasm32-wasi/release/ipfs_pure.wasm artifacts/
-marine aqua artifacts/ipfs_pure.wasm -s Ipfs -i ipfs-adapter > ../aqua/ipfs.aqua
+marine aqua artifacts/ipfs_pure.wasm -s Ipfs -i ipfs-adapter >../aqua/ipfs.aqua

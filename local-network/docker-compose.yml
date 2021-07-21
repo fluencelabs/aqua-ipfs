@@ -11,7 +11,8 @@ services:
     ports:
       - 7770:7770 # tcp
       - 9990:9990 # ws
-      - 5000:5001 # ipfs
+      - 5000:5001 # ipfs rpc
+      - 4000:4001 # ipfs swarm
       - 18080:18080 # /metrics
     restart: always
     volumes:
@@ -31,7 +32,8 @@ services:
     ports:
       - 7771:7771 # tcp
       - 9991:9991 # ws
-      - 5001:5001 # ipfs
+      - 5001:5001 # ipfs rpc
+      - 4001:4001 # ipfs swarm
       - 18081:18080 # /metrics
     restart: always
     volumes:
@@ -51,7 +53,8 @@ services:
     ports:
       - 7772:7772 # tcp
       - 9992:9992 # ws
-      - 5002:5001 # ipfs
+      - 5002:5001 # ipfs rpc
+      - 4002:4001 # ipfs swarm
       - 18082:18080 # /metrics
     restart: always
     volumes:
