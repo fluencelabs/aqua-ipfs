@@ -4,15 +4,15 @@
 - `aqua` Aqua API of IPFS-adapter, read below
 
 ## Aqua API of IPFS-adapter
-Public API is defined in [ipfs-api.aqua](./ipfs-api.aqua).
+Public API is defined in [ipfs-api.aqua](/aqua/ipfs-api.aqua).
 
-ipfs-adapter service API is defined in [ipfs.aqua](./ipfs.aqua).
+ipfs-adapter service API is defined in [ipfs.aqua](/aqua/ipfs.aqua).
 
 ### How to use Aqua API in TypeScript
-There's a simple example in [demo.ts](typescript/demo.ts)
+There's a simple example in [demo.ts](/aqua/typescript/demo.ts)
 
-## Run index.ts example on TestNet
-While in `aqua` directory, `npm start` will run `index.ts` against Fluence TestNet
+## Run demo.ts example on TestNet
+While in `aqua` directory, `npm start` will run `demo.ts` against Fluence TestNet
 
 ### Run demo.ts example locally
 1. Go to `local-network` 

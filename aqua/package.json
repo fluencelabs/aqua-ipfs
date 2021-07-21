@@ -1,6 +1,6 @@
 {
   "name": "@fluencelabs/aqua-ipfs",
-  "version": "0.1.8",
+  "version": "0.1.11",
   "description": "Aqua IPFS library",
   "main": "./typescript/dist/index.js",
   "typings": "./typescript/dist/index.d.ts",
