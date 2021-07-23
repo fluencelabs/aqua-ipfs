@@ -45,9 +45,6 @@
   "homepage": "hhttps://github.com/fluencelabs/ipfs-adapter#readme",
   "devDependencies": {
     "@fluencelabs/aqua-cli": "0.1.9-164",
-    "typescript": "^3.9.5",
-    "ipfs-http-client": "^50.1.2",
-    "it-all": "^1.0.5",
-    "uint8arrays": "^2.1.5"
+    "typescript": "^3.9.5"
   }
 }

@@ -1,0 +1,20 @@
+{
+  "name": "ipfs-aqua-example",
+  "version": "1.0.0",
+  "description": "A simple example of how to use ipfs-aqua in TS",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "prestart": "npm run build"
+  },
+  "author": "Fluence Labs",
+  "license": "MIT",
+  "dependencies": {
+    "@fluencelabs/aqua-ipfs": "file:../aqua",
+    "@fluencelabs/fluence": "0.9.53",
+    "ipfs-http-client": "^50.1.2",
+    "it-all": "^1.0.5",
+    "uint8arrays": "^2.1.5"
+  }
+}

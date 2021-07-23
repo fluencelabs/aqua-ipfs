@@ -15,7 +15,3 @@
 **/dist
 .DS_store
 .bic_cache
-
-aqua/typescript/
-!aqua/typescript/index.ts
-!aqua/typescript/demo.ts
