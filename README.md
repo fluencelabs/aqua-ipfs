@@ -6,16 +6,20 @@ Native IPFS integration to Aqua language. Orchestrate IPFS file transfer with Aq
    - `@fluencelabs/aqua-ipfs`
    - `@fluencelabs/fluence` 
    - `@fluencelabs/fluence-network-environment`
+
 2. Import and call
 ```typescript
 import { put, get_from } from '@fluencelabs/aqua-ipfs';
 import { createClient } from "@fluencelabs/fluence";
 import { krasnodar } from "@fluencelabs/fluence-network-environment";
 
+// connect to the Fluence network
 const fluence = await createClient(krasnodar[1]);
+// get some file's or dir's IPFS CID
 let cid = "Qm...";
-let ipfs = "/ip4/x.x.x.x/tcp/5001/"
-let getResult = await get_from(fluence, fluence.relayPeerId, cid, ipfs, { ttl: 10000 });
+let ipfsMultiaddr = "/ip4/x.x.x.x/tcp/5001/"
+// And cache it on the IPFS node running along the Fluence node we've connected to
+let path = await get_and_cache(fluence, fluence.relayPeerId, cid, ipfs, { ttl: 10000 });
 ```
 
 ## Directory structure
