@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { put, get_from, set_timeout } from './ipfs-api';
+import { put, get_from, set_timeout } from '@fluencelabs/aqua-ipfs';
+import {createClient} from "@fluencelabs/fluence";
+import { Node, testNet} from "@fluencelabs/fluence-network-environment";
 
-import {createClient, setLogLevel} from "@fluencelabs/fluence";
-import {stage, krasnodar, Node, testNet} from "@fluencelabs/fluence-network-environment";
-const { create, globSource, urlSource } = require('ipfs-http-client');
+const { create, urlSource } = require('ipfs-http-client');
 const all = require('it-all');
 const uint8ArrayConcat = require('uint8arrays/concat')
 

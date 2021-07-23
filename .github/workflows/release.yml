@@ -54,6 +54,14 @@ jobs:
           mv artifacts ipfs-adapter
           tar -zcvf ipfs-adapter.tar.gz ipfs-adapter
 
+      - name: Build Changelog
+        id: github_release
+        uses: mikepenz/release-changelog-builder-action@v1
+        with:
+          configuration: ".github/workflows/changelog_config.json"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
@@ -61,6 +69,7 @@ jobs:
           tag_name: ${{ env.RELEASE_VERSION }}
           files: |
             ./service/ipfs-adapter.tar.gz
+          body: ${{steps.github_release.outputs.changelog}}
           draft: false
           prerelease: false
         env:
@@ -74,4 +83,16 @@ jobs:
           repo: fluencelabs/node-distro
           ref: 'main'
           token: ${{ secrets.PERSONAL_TOKEN }}
-#          inputs: '{ "version": "${{ env.VERSION }}" }'
+
+    ### Publish to NPM registry
+      - uses: actions/setup-node@v1
+        with:
+          node-version: "14"
+          registry-url: "https://registry.npmjs.org"
+
+      - run: |
+          npm version ${{ env.RELEASE_VERSION }}
+          npm publish --access public
+        env:
+            NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        working-directory: ./aqua
