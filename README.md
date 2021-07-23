@@ -1,4 +1,4 @@
-# Fluence IPFS adapter
+# Aqua IPFS bindings
 
 ## How to use it in TypeScript
 1. Add the following to your dependencies
