@@ -74,4 +74,16 @@ jobs:
           repo: fluencelabs/node-distro
           ref: 'main'
           token: ${{ secrets.PERSONAL_TOKEN }}
-#          inputs: '{ "version": "${{ env.VERSION }}" }'
+
+    ### Publish to NPM registry
+      - uses: actions/setup-node@v1
+        with:
+          node-version: "14"
+          registry-url: "https://registry.npmjs.org"
+
+      - run: |
+          npm version ${{ env.RELEASE_VERSION }}
+          npm publish --access public
+          env:
+            NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        working-directory: ./aqua
