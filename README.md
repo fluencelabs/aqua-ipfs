@@ -2,9 +2,9 @@
 
 ## How to use it in TypeScript
 1. Add the following to your dependencies
-   1. `@fluencelabs/aqua-ipfs`
-   2. `@fluencelabs/fluence` 
-   3. `@fluencelabs/fluence-network-environment`
+   - `@fluencelabs/aqua-ipfs`
+   - `@fluencelabs/fluence` 
+   - `@fluencelabs/fluence-network-environment`
 2. Import and call
 ```typescript
 import { put, get_from } from '@fluencelabs/aqua-ipfs';
