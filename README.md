@@ -9,7 +9,7 @@ Native IPFS integration to Aqua language. Orchestrate IPFS file transfer with Aq
 
 2. Import and call
 ```typescript
-import { put, get_from } from '@fluencelabs/aqua-ipfs';
+import { get_and_cache } from '@fluencelabs/aqua-ipfs';
 import { createClient } from "@fluencelabs/fluence";
 import { krasnodar } from "@fluencelabs/fluence-network-environment";
 
