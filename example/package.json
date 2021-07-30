@@ -11,7 +11,7 @@
   "author": "Fluence Labs",
   "license": "MIT",
   "dependencies": {
-    "@fluencelabs/aqua-ipfs": "file:../aqua",
+    "@fluencelabs/aqua-ipfs-ts": "file:../aqua/target/typescript",
     "@fluencelabs/fluence": "0.9.53",
     "ipfs-http-client": "^50.1.2",
     "it-all": "^1.0.5",
