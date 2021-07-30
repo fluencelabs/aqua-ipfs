@@ -1,6 +1,9 @@
 # Aqua IPFS bindings
 Native IPFS integration to Aqua language. Orchestrate IPFS file transfer with Aqua scripts.
 
+## Documentation
+See [Aqua Book](https://fluence.dev/aqua-book/libraries/aqua-ipfs).
+
 ## How to use it in TypeScript
 1. Add the following to your dependencies
    - `@fluencelabs/aqua-ipfs`
