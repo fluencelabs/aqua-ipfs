@@ -1,5 +1,6 @@
 {
-    "template": "${{CHANGELOG}}\n\n${{UNCATEGORIZED}}",
+    "template": "## Changes since ${{FROM_TAG}}\n\n${{CHANGELOG}}\n\n${{UNCATEGORIZED}}",
     "pr_template": "- #${{NUMBER}} ${{TITLE}}",
-    "empty_template": "- no changes"
+    "empty_template": "## No changes since ${{FROM_TAG}}",
+    "sort": "DESC"
 }

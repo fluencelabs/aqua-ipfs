@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { put, get_from, set_timeout } from '@fluencelabs/aqua-ipfs';
+import { put, get_from, set_timeout } from '@fluencelabs/aqua-ipfs-ts';
 import {createClient} from "@fluencelabs/fluence";
 import { Node, testNet} from "@fluencelabs/fluence-network-environment";
 

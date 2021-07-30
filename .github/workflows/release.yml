@@ -65,7 +65,7 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          name: ipfs-adapter ${{ env.RELEASE_VERSION }}
+          name: aqua-ipfs ${{ env.RELEASE_VERSION }}
           tag_name: ${{ env.RELEASE_VERSION }}
           files: |
             ./service/ipfs-adapter.tar.gz
@@ -84,15 +84,26 @@ jobs:
           ref: 'main'
           token: ${{ secrets.PERSONAL_TOKEN }}
 
-    ### Publish to NPM registry
+    ### Setup NodeJS registry
       - uses: actions/setup-node@v1
         with:
           node-version: "14"
           registry-url: "https://registry.npmjs.org"
 
-      - run: |
+    ### Publish Aqua API
+      - name: Publish Aqua API to NPM
+        run: |
           npm version ${{ env.RELEASE_VERSION }}
           npm publish --access public
         env:
             NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         working-directory: ./aqua
+      
+    ### Publish TS API
+      - name: Publish TS API to NPM
+        run: |
+          npm version ${{ env.RELEASE_VERSION }}
+          npm publish --access public
+        env:
+            NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        working-directory: ./aqua/target/typescript

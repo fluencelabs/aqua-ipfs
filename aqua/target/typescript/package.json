@@ -1,23 +1,24 @@
 {
-  "name": "@fluencelabs/aqua-ipfs",
-  "version": "0.1.12",
-  "description": "Aqua IPFS library",
+  "name": "@fluencelabs/aqua-ipfs-ts",
+  "version": "0.0.1",
+  "description": "Aqua IPFS library compiled to TS",
+  "main": "./dist/index.js",
+  "typings": "./dist/index.d.ts",
   "files": [
-    "*.aqua"
+    "dist/index.d.ts",
+    "dist/index.js",
+    "dist/ipfs-api.d.ts",
+    "dist/ipfs-api.js"
   ],
-  "dependencies": {
-    "@fluencelabs/aqua-lib": "^0.1.10"
-  },
+  "dependencies": {},
   "scripts": {
-    "generate-aqua": "../service/build.sh",
-    "compile-aqua": "aqua-cli -i . -o ./target/typescript",
-    "build": "npm run compile-aqua",
+    "build": "tsc",
     "prepare": "npm run build"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/fluencelabs/aqua-ipfs",
-    "directory": "aqua"
+    "directory": "aqua/target/typescript"
   },
   "keywords": [
     "aqua",
@@ -32,6 +33,6 @@
   },
   "homepage": "https://github.com/fluencelabs/aqua-ipfs#readme",
   "devDependencies": {
-    "@fluencelabs/aqua-cli": "0.1.10-188"
+    "typescript": "^3.9.5"
   }
 }
