@@ -30,10 +30,10 @@ jobs:
     #     run: bash $GITHUB_WORKSPACE/.github/download_marine.sh
 
     ### Setup NodeJS registry
-    - uses: actions/setup-node@v1
-      with:
-        node-version: "15"
-        registry-url: "https://registry.npmjs.org"
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "15"
+          registry-url: "https://registry.npmjs.org"
 
     #   - name: Cache cargo
     #     uses: actions/cache@v2
@@ -80,7 +80,7 @@ jobs:
     #     env:
     #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    #   - name: Release
+    #   - name: Release to GitHub
     #     uses: softprops/action-gh-release@v1
     #     with:
     #       name: aqua-ipfs ${{ env.RELEASE_VERSION }}
