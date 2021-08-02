@@ -22,7 +22,8 @@ const fluence = await createClient(krasnodar[1]);
 let cid = "Qm...";
 let ipfsMultiaddr = "/ip4/x.x.x.x/tcp/5001/"
 // And cache it on the IPFS node running along the Fluence node we've connected to
-let path = await get_and_cache(fluence, fluence.relayPeerId, cid, ipfs, { ttl: 10000 });
+let localCID = await get_and_cache(fluence, fluence.relayPeerId, cid, ipfs, { ttl: 10000 });
+cid === localCID // true
 ```
 
 ## Directory structure

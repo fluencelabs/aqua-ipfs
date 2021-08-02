@@ -15,6 +15,7 @@ jobs:
         shell: bash
 
     steps:
+### Setup
       - name: Checkout repository
         uses: actions/checkout@v2
 
@@ -29,6 +30,24 @@ jobs:
       - name: Download marine
         run: bash $GITHUB_WORKSPACE/.github/download_marine.sh
 
+      - uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+
+      - name: Cache npm
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-v03-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-v03-
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "15"
+          registry-url: "https://registry.npmjs.org"
+
       - name: Cache cargo
         uses: actions/cache@v2
         with:
@@ -39,11 +58,14 @@ jobs:
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Install Rust
+        working-directory: ./service
         run: |
           rustup toolchain install nightly-2021-04-24-x86_64-unknown-linux-gnu
           rustup default nightly-2021-04-24-x86_64-unknown-linux-gnu
+          rustup override set nightly-2021-04-24-x86_64-unknown-linux-gnu
           rustup target add wasm32-wasi --toolchain nightly-2021-04-24-x86_64-unknown-linux-gnu
 
+### Build
       - name: Build ipfs-adapter
         working-directory: ./service
         run: ./build.sh
@@ -54,6 +76,18 @@ jobs:
           mv artifacts ipfs-adapter
           tar -zcvf ipfs-adapter.tar.gz ipfs-adapter
 
+      - name: Compile Aqua to TypeScript
+        working-directory: ./aqua
+        run: |
+          npm i
+          npm run build
+
+      - name: Compile TypeScript to .js + .d.ts
+        working-directory: ./aqua/target/typescript
+        run: |        
+          npm i
+          npm run build
+
       - name: Build Changelog
         id: github_release
         uses: mikepenz/release-changelog-builder-action@v1
@@ -62,7 +96,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Release
+### Publish
+      - name: Release to GitHub
         uses: softprops/action-gh-release@v1
         with:
           name: aqua-ipfs ${{ env.RELEASE_VERSION }}
@@ -83,12 +118,6 @@ jobs:
           repo: fluencelabs/node-distro
           ref: 'main'
           token: ${{ secrets.PERSONAL_TOKEN }}
-
-    ### Setup NodeJS registry
-      - uses: actions/setup-node@v1
-        with:
-          node-version: "14"
-          registry-url: "https://registry.npmjs.org"
 
     ### Publish Aqua API
       - name: Publish Aqua API to NPM

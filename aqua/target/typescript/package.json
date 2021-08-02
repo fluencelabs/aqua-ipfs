@@ -10,7 +10,9 @@
     "dist/ipfs-api.d.ts",
     "dist/ipfs-api.js"
   ],
-  "dependencies": {},
+  "dependencies": {
+    "@fluencelabs/fluence": "0.9.53"
+  },
   "scripts": {
     "build": "tsc",
     "prepare": "npm run build"

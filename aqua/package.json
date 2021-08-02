@@ -10,9 +10,8 @@
   },
   "scripts": {
     "generate-aqua": "../service/build.sh",
-    "compile-aqua": "aqua-cli -i . -o ./target/typescript",
-    "build": "npm run compile-aqua",
-    "prepare": "npm run build"
+    "compile-aqua": "aqua-cli -i . -o ./target/typescript/src",
+    "build": "npm run compile-aqua"
   },
   "repository": {
     "type": "git",
