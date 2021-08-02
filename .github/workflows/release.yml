@@ -60,17 +60,17 @@ jobs:
     #       mv artifacts ipfs-adapter
     #       tar -zcvf ipfs-adapter.tar.gz ipfs-adapter
 
-        - name: Compile Aqua to TypeScript
-          working-directory: ./aqua
-          run: |
-            npm i
-            npm run build
+      - name: Compile Aqua to TypeScript
+        working-directory: ./aqua
+        run: |
+          npm i
+          npm run build
 
-        - name: Compile TypeScript to .js + .d.ts
-          working-directory: ./aqua/target/typescript
-          run: |        
-            npm i
-            npm run build
+      - name: Compile TypeScript to .js + .d.ts
+        working-directory: ./aqua/target/typescript
+        run: |        
+          npm i
+          npm run build
 
     #   - name: Build Changelog
     #     id: github_release
