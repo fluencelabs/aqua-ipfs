@@ -29,6 +29,12 @@ jobs:
     #   - name: Download marine
     #     run: bash $GITHUB_WORKSPACE/.github/download_marine.sh
 
+    ### Setup NodeJS registry
+    - uses: actions/setup-node@v1
+      with:
+        node-version: "15"
+        registry-url: "https://registry.npmjs.org"
+
     #   - name: Cache cargo
     #     uses: actions/cache@v2
     #     with:
@@ -53,6 +59,18 @@ jobs:
     #     run: |
     #       mv artifacts ipfs-adapter
     #       tar -zcvf ipfs-adapter.tar.gz ipfs-adapter
+
+        - name: Compile Aqua to TypeScript
+          working-directory: ./aqua
+          run: |
+            npm i
+            npm run build
+
+        - name: Compile TypeScript to .js + .d.ts
+          working-directory: ./aqua/target/typescript
+          run: |        
+            npm i
+            npm run build
 
     #   - name: Build Changelog
     #     id: github_release
@@ -84,19 +102,11 @@ jobs:
     #       ref: 'main'
     #       token: ${{ secrets.PERSONAL_TOKEN }}
 
-    ### Setup NodeJS registry
-      - uses: actions/setup-node@v1
-        with:
-          node-version: "14"
-          registry-url: "https://registry.npmjs.org"
-
     ### Publish Aqua API
       - name: Publish Aqua API to NPM
         run: |
-          npm i
-          npm run build
-          # npm version ${{ env.RELEASE_VERSION }}
-          # npm publish --access public
+          npm version ${{ env.RELEASE_VERSION }}
+          npm publish --access public
         env:
             NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         working-directory: ./aqua
@@ -104,10 +114,8 @@ jobs:
     ### Publish TS API
       - name: Publish TS API to NPM
         run: |
-          npm i
-          npm run build
-          # npm version ${{ env.RELEASE_VERSION }}
-          # npm publish --access public
+          npm version ${{ env.RELEASE_VERSION }}
+          npm publish --access public
         env:
             NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         working-directory: ./aqua/target/typescript
