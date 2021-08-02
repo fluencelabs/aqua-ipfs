@@ -2,8 +2,8 @@ name: "publish-release"
 
 on:
   push:
-    # tags:
-    #   - "v*"
+    tags:
+      - "v*"
 
 jobs:
   release:
@@ -48,33 +48,33 @@ jobs:
           node-version: "15"
           registry-url: "https://registry.npmjs.org"
 
-      # - name: Cache cargo
-      #   uses: actions/cache@v2
-      #   with:
-      #     path: |
-      #       ~/.cargo/registry
-      #       ~/.cargo/git
-      #       ~/.cargo/bin
-      #     key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+      - name: Cache cargo
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            ~/.cargo/bin
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
-      # - name: Install Rust
-      #   working-directory: ./service
-      #   run: |
-      #     rustup toolchain install nightly-2021-04-24-x86_64-unknown-linux-gnu
-      #     rustup default nightly-2021-04-24-x86_64-unknown-linux-gnu
-      #     rustup override set nightly-2021-04-24-x86_64-unknown-linux-gnu
-      #     rustup target add wasm32-wasi --toolchain nightly-2021-04-24-x86_64-unknown-linux-gnu
+      - name: Install Rust
+        working-directory: ./service
+        run: |
+          rustup toolchain install nightly-2021-04-24-x86_64-unknown-linux-gnu
+          rustup default nightly-2021-04-24-x86_64-unknown-linux-gnu
+          rustup override set nightly-2021-04-24-x86_64-unknown-linux-gnu
+          rustup target add wasm32-wasi --toolchain nightly-2021-04-24-x86_64-unknown-linux-gnu
 
 ### Build
-    #   - name: Build ipfs-adapter
-    #     working-directory: ./service
-    #     run: ./build.sh
+      - name: Build ipfs-adapter
+        working-directory: ./service
+        run: ./build.sh
 
-    #   - name: Create distribution package
-    #     working-directory: ./service
-    #     run: |
-    #       mv artifacts ipfs-adapter
-    #       tar -zcvf ipfs-adapter.tar.gz ipfs-adapter
+      - name: Create distribution package
+        working-directory: ./service
+        run: |
+          mv artifacts ipfs-adapter
+          tar -zcvf ipfs-adapter.tar.gz ipfs-adapter
 
       - name: Compile Aqua to TypeScript
         working-directory: ./aqua
@@ -88,36 +88,36 @@ jobs:
           npm i
           npm run build
 
-    #   - name: Build Changelog
-    #     id: github_release
-    #     uses: mikepenz/release-changelog-builder-action@v1
-    #     with:
-    #       configuration: ".github/workflows/changelog_config.json"
-    #     env:
-    #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build Changelog
+        id: github_release
+        uses: mikepenz/release-changelog-builder-action@v1
+        with:
+          configuration: ".github/workflows/changelog_config.json"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 ## Publish
-    #   - name: Release to GitHub
-    #     uses: softprops/action-gh-release@v1
-    #     with:
-    #       name: aqua-ipfs ${{ env.RELEASE_VERSION }}
-    #       tag_name: ${{ env.RELEASE_VERSION }}
-    #       files: |
-    #         ./service/ipfs-adapter.tar.gz
-    #       body: ${{steps.github_release.outputs.changelog}}
-    #       draft: false
-    #       prerelease: false
-    #     env:
-    #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Release to GitHub
+        uses: softprops/action-gh-release@v1
+        with:
+          name: aqua-ipfs ${{ env.RELEASE_VERSION }}
+          tag_name: ${{ env.RELEASE_VERSION }}
+          files: |
+            ./service/ipfs-adapter.tar.gz
+          body: ${{steps.github_release.outputs.changelog}}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     
     # ### Rebuild node-distro
-    #   - name: Trigger new node-distro container
-    #     uses: benc-uk/workflow-dispatch@v1
-    #     with:
-    #       workflow: Publish Container
-    #       repo: fluencelabs/node-distro
-    #       ref: 'main'
-    #       token: ${{ secrets.PERSONAL_TOKEN }}
+      - name: Trigger new node-distro container
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: Publish Container
+          repo: fluencelabs/node-distro
+          ref: 'main'
+          token: ${{ secrets.PERSONAL_TOKEN }}
 
     ### Publish Aqua API
       - name: Publish Aqua API to NPM
