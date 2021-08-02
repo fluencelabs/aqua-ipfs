@@ -26,8 +26,9 @@ func get_and_cache(
     cid: CID,
     from: Multiaddr,
     error: string, string -> ()
-) -> ?Path:
-    path: *Path
+) -> ?CID:
+    -- localCid will be the same as cid
+    localCid: *CID
     on node:
         -- Download file from remote IPFS to local filesystem
         get <- Ipfs.get_from(cid, from)
@@ -35,14 +36,14 @@ func get_and_cache(
             -- Put file to local IPFS node
             put <- Ipfs.put(get.path)
             if put.success:
-                path <- put.path
+                localCid <<- put.hash
             else:
                 -- report error in background co-routine
                 co error("Ipfs.put failed", put.error)
         else:
             -- report error in background co-routine
             co error("Ipfs.get failed", get.error)
-    <- path
+    <- localCid
 
 -- Upload file `path` to IPFS node running on `node`
 -- path should exist & be available to `ipfs-adapter`
