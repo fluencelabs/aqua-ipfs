@@ -46,7 +46,7 @@ func get_and_cache(
     <- localCid
 
 -- Upload file `path` to IPFS node running on `node`
--- path should exist & be available to `ipfs-adapter`
+-- path should exist & be available to `aqua-ipfs`
 func put(node: PeerId, path: string) -> IpfsPutResult:
     on node:
         result <- Ipfs.put(path)
@@ -58,7 +58,7 @@ func get_from(node: PeerId, cid: CID, from: Multiaddr) -> IpfsGetResult:
         result <- Ipfs.get_from(cid, from)
     <- result
 
--- Set timeout for IPFS calls in `ipfs-adapter`
+-- Set timeout for IPFS calls in `aqua-ipfs`
 func set_timeout(node: PeerId, timeout_sec: u64):
     on node:
         Ipfs.set_timeout(timeout_sec)

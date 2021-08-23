@@ -66,15 +66,15 @@ jobs:
           rustup target add wasm32-wasi --toolchain nightly-2021-04-24-x86_64-unknown-linux-gnu
 
 ### Build
-      - name: Build ipfs-adapter
+      - name: Build aqua-ipfs
         working-directory: ./service
         run: ./build.sh
 
       - name: Create distribution package
         working-directory: ./service
         run: |
-          mv artifacts ipfs-adapter
-          tar -zcvf ipfs-adapter.tar.gz ipfs-adapter
+          mv artifacts aqua-ipfs
+          tar -zcvf aqua-ipfs.tar.gz aqua-ipfs
 
       - name: Compile Aqua to TypeScript
         working-directory: ./aqua
@@ -98,12 +98,13 @@ jobs:
 
 ### Publish
       - name: Release to GitHub
+        id: release
         uses: softprops/action-gh-release@v1
         with:
           name: aqua-ipfs ${{ env.RELEASE_VERSION }}
           tag_name: ${{ env.RELEASE_VERSION }}
           files: |
-            ./service/ipfs-adapter.tar.gz
+            ./service/aqua-ipfs.tar.gz
           body: ${{steps.github_release.outputs.changelog}}
           draft: false
           prerelease: false
@@ -136,3 +137,55 @@ jobs:
         env:
             NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         working-directory: ./aqua/target/typescript
+
+## Update Builtin Services repo
+      - name: Get tar.gz URL
+        id: package-url
+        uses: actions/github-script@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          result-encoding: string
+          script: |
+            try {
+                let assets = await github.repos.listReleaseAssets({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  release_id: "${{ steps.release.outputs.id }}",
+                });
+                console.dir(assets);
+                let package = assets.data.find((a) => a.name === 'aqua-ipfs.tar.gz');
+                let url = package.browser_download_url;
+                console.log("URL: " + url);
+                return url;
+            } catch (e) {
+              console.log("Err: " + e);
+              throw e;
+            }
+
+      - name: Calculate SHA256
+        run: |
+          du -hs ./service/aqua-ipfs.tar.gz
+          echo $(sha256sum ./service/aqua-ipfs.tar.gz)
+          echo "SHA256=$(sha256sum ./service/aqua-ipfs.tar.gz | awk '{ print $1 }')" >> $GITHUB_ENV
+
+      - name: Update version in builtins repo
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: update_service
+          repo: fluencelabs/builtin-services
+          ref: 'main'
+          token: ${{ secrets.PERSONAL_TOKEN }}
+          inputs: '{ 
+            "name": "aqua-ipfs",
+            "version": "${{ env.RELEASE_VERSION }}",
+            "url": "${{ steps.package-url.outputs.result }}",
+            "sha256": "${{ env.SHA256 }}"
+          }'
+
+      - name: Log notice
+        uses: actions/github-script@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+              console.dir(core);
+              core.info("aqua-ipfs was updated to ${{ env.RELEASE_VERSION }} in Builtin Services Repo");

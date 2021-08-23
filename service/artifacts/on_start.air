@@ -1,7 +1,7 @@
 (seq
     (seq
         (seq
-            (call relay ("ipfs-adapter" "set_local_api_multiaddr") [local_api_multiaddr] local_api_res)
+            (call relay ("aqua-ipfs" "set_local_api_multiaddr") [local_api_multiaddr] local_api_res)
             (xor
                (match local_api_res.$.success! true
                     (null)
@@ -10,7 +10,7 @@
             )
         )
         (seq
-            (call relay ("ipfs-adapter" "set_external_api_multiaddr") [external_api_multiaddr] external_api_res)
+            (call relay ("aqua-ipfs" "set_external_api_multiaddr") [external_api_multiaddr] external_api_res)
             (xor
                (match external_api_res.$.success! true
                     (null)
@@ -20,7 +20,7 @@
         )
     )
     (seq
-        (call relay ("ipfs-adapter" "set_external_swarm_multiaddr") [external_swarm_multiaddr] external_swarm_res)
+        (call relay ("aqua-ipfs" "set_external_swarm_multiaddr") [external_swarm_multiaddr] external_swarm_res)
         (xor
             (match external_swarm_res.$.success! true
                 (call %init_peer_id% ("op" "return") [true])

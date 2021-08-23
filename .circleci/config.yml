@@ -16,7 +16,7 @@ jobs:
           sudo bash .github/download_marine.sh
       - restore_cache:
           keys:
-            - ipfs-adapter00-{{ checksum "./service/pure/Cargo.lock" }}-{{ checksum "./service/effector/Cargo.lock" }}
+            - aqua-ipfs00-{{ checksum "./service/pure/Cargo.lock" }}-{{ checksum "./service/effector/Cargo.lock" }}
       - run: |
           rustup toolchain install nightly-2021-04-24-x86_64-unknown-linux-gnu
           rustup default nightly-2021-04-24-x86_64-unknown-linux-gnu
@@ -28,7 +28,7 @@ jobs:
           paths:
             - ~/.cargo
             - ~/.rustup
-          key: ipfs-adapter00-{{ checksum "./service/pure/Cargo.lock" }}-{{ checksum "./service/effector/Cargo.lock" }}
+          key: aqua-ipfs00-{{ checksum "./service/pure/Cargo.lock" }}-{{ checksum "./service/effector/Cargo.lock" }}
 
 
 workflows:
