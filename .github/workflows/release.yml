@@ -66,15 +66,15 @@ jobs:
           rustup target add wasm32-wasi --toolchain nightly-2021-04-24-x86_64-unknown-linux-gnu
 
 ### Build
-      - name: Build ipfs-adapter
+      - name: Build aqua-ipfs
         working-directory: ./service
         run: ./build.sh
 
       - name: Create distribution package
         working-directory: ./service
         run: |
-          mv artifacts ipfs-adapter
-          tar -zcvf ipfs-adapter.tar.gz ipfs-adapter
+          mv artifacts aqua-ipfs
+          tar -zcvf aqua-ipfs.tar.gz aqua-ipfs
 
       - name: Compile Aqua to TypeScript
         working-directory: ./aqua
@@ -104,7 +104,7 @@ jobs:
           name: aqua-ipfs ${{ env.RELEASE_VERSION }}
           tag_name: ${{ env.RELEASE_VERSION }}
           files: |
-            ./service/ipfs-adapter.tar.gz
+            ./service/aqua-ipfs.tar.gz
           body: ${{steps.github_release.outputs.changelog}}
           draft: false
           prerelease: false
