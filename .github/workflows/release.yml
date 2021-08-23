@@ -98,6 +98,7 @@ jobs:
 
 ### Publish
       - name: Release to GitHub
+        id: release
         uses: softprops/action-gh-release@v1
         with:
           name: aqua-ipfs ${{ env.RELEASE_VERSION }}
