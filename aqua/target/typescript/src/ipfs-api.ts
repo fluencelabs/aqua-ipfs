@@ -32,7 +32,7 @@ export async function set_timeout(client: FluenceClient, node: string, timeout_s
    (call -relay- ("op" "noop") [])
   )
   (xor
-   (call node ("ipfs-adapter" "set_timeout") [timeout_sec])
+   (call node ("aqua-ipfs" "set_timeout") [timeout_sec])
    (seq
     (call -relay- ("op" "noop") [])
     (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])
@@ -101,12 +101,12 @@ export async function get_and_cache(client: FluenceClient, node: string, cid: st
     )
     (xor
      (seq
-      (call node ("ipfs-adapter" "get_from") [cid from] get)
+      (call node ("aqua-ipfs" "get_from") [cid from] get)
       (xor
        (match get.$.success! true
         (xor
          (seq
-          (call node ("ipfs-adapter" "put") [get.$.path!] put)
+          (call node ("aqua-ipfs" "put") [get.$.path!] put)
           (xor
            (match put.$.success! true
             (xor
@@ -228,7 +228,7 @@ export async function get_from(client: FluenceClient, node: string, cid: string,
      (call -relay- ("op" "noop") [])
     )
     (xor
-     (call node ("ipfs-adapter" "get_from") [cid from] result)
+     (call node ("aqua-ipfs" "get_from") [cid from] result)
      (seq
       (call -relay- ("op" "noop") [])
       (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])
@@ -299,7 +299,7 @@ export async function get_local_api_multiaddr(client: FluenceClient, node: strin
      (call -relay- ("op" "noop") [])
     )
     (xor
-     (call node ("ipfs-adapter" "get_local_api_multiaddr") [] result)
+     (call node ("aqua-ipfs" "get_local_api_multiaddr") [] result)
      (seq
       (call -relay- ("op" "noop") [])
       (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])
@@ -368,7 +368,7 @@ export async function get_external_swarm_multiaddr(client: FluenceClient, node: 
      (call -relay- ("op" "noop") [])
     )
     (xor
-     (call node ("ipfs-adapter" "get_external_swarm_multiaddr") [] result)
+     (call node ("aqua-ipfs" "get_external_swarm_multiaddr") [] result)
      (seq
       (call -relay- ("op" "noop") [])
       (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])
@@ -440,7 +440,7 @@ export async function put(client: FluenceClient, node: string, path: string, con
      (call -relay- ("op" "noop") [])
     )
     (xor
-     (call node ("ipfs-adapter" "put") [path] result)
+     (call node ("aqua-ipfs" "put") [path] result)
      (seq
       (call -relay- ("op" "noop") [])
       (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])
@@ -510,7 +510,7 @@ export async function get_external_api_multiaddr(client: FluenceClient, node: st
      (call -relay- ("op" "noop") [])
     )
     (xor
-     (call node ("ipfs-adapter" "get_external_api_multiaddr") [] result)
+     (call node ("aqua-ipfs" "get_external_api_multiaddr") [] result)
      (seq
       (call -relay- ("op" "noop") [])
       (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])

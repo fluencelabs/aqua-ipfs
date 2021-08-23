@@ -17,7 +17,7 @@ data IpfsResult:
   success: bool
   error: string
 
-service Ipfs("ipfs-adapter"):
+service Ipfs("aqua-ipfs"):
   connect(multiaddr: string) -> IpfsResult
   get(hash: string) -> IpfsGetResult
   get_external_api_multiaddr() -> IpfsMultiaddrResult
