@@ -31,6 +31,6 @@
   },
   "homepage": "https://github.com/fluencelabs/aqua-ipfs#readme",
   "devDependencies": {
-    "@fluencelabs/aqua-cli": "0.1.10-188"
+    "@fluencelabs/aqua-cli": "0.2.0-208"
   }
 }
