@@ -11,7 +11,7 @@
     "dist/ipfs-api.js"
   ],
   "dependencies": {
-    "@fluencelabs/fluence": "0.9.53"
+    "@fluencelabs/fluence": "^0.10.0"
   },
   "scripts": {
     "build": "tsc",
