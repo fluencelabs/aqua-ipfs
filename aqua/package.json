@@ -6,7 +6,7 @@
     "*.aqua"
   ],
   "dependencies": {
-    "@fluencelabs/aqua-lib": "^0.1.10"
+    "@fluencelabs/aqua-lib": "^0.1.14"
   },
   "scripts": {
     "generate-aqua": "../service/build.sh",
@@ -31,6 +31,6 @@
   },
   "homepage": "https://github.com/fluencelabs/aqua-ipfs#readme",
   "devDependencies": {
-    "@fluencelabs/aqua-cli": "0.2.0-208"
+    "@fluencelabs/aqua-cli": "^0.2.0-208"
   }
 }
