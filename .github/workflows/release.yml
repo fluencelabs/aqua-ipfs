@@ -89,7 +89,7 @@ jobs:
           npm run build
 
       - name: Build Changelog
-        id: github_release
+        id: changelog
         uses: mikepenz/release-changelog-builder-action@v1
         with:
           configuration: ".github/workflows/changelog_config.json"
@@ -105,20 +105,11 @@ jobs:
           tag_name: ${{ env.RELEASE_VERSION }}
           files: |
             ./service/aqua-ipfs.tar.gz
-          body: ${{steps.github_release.outputs.changelog}}
+          body: ${{steps.changelog.outputs.changelog}}
           draft: false
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    
-    ### Rebuild node-distro
-      - name: Trigger new node-distro container
-        uses: benc-uk/workflow-dispatch@v1
-        with:
-          workflow: Publish Container
-          repo: fluencelabs/node-distro
-          ref: 'main'
-          token: ${{ secrets.PERSONAL_TOKEN }}
 
     ### Publish Aqua API
       - name: Publish Aqua API to NPM
@@ -138,7 +129,7 @@ jobs:
             NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         working-directory: ./aqua/target/typescript
 
-## Update Builtin Services repo
+## Update node-distro repo
       - name: Get tar.gz URL
         id: package-url
         uses: actions/github-script@v4
@@ -168,11 +159,11 @@ jobs:
           echo $(sha256sum ./service/aqua-ipfs.tar.gz)
           echo "SHA256=$(sha256sum ./service/aqua-ipfs.tar.gz | awk '{ print $1 }')" >> $GITHUB_ENV
 
-      - name: Update version in builtins repo
+      - name: Update version in node-distro repo
         uses: benc-uk/workflow-dispatch@v1
         with:
           workflow: update_service
-          repo: fluencelabs/builtin-services
+          repo: fluencelabs/node-distro
           ref: 'main'
           token: ${{ secrets.PERSONAL_TOKEN }}
           inputs: '{ 
@@ -188,4 +179,4 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
               console.dir(core);
-              core.info("aqua-ipfs was updated to ${{ env.RELEASE_VERSION }} in Builtin Services Repo");
+              core.info("aqua-ipfs was updated to ${{ env.RELEASE_VERSION }} in node-distro repo");
