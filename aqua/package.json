@@ -10,7 +10,7 @@
   },
   "scripts": {
     "generate-aqua": "../service/build.sh",
-    "compile-aqua": "aqua-cli -i . -o ./target/typescript/src",
+    "compile-aqua": "aqua -i . -o ./target/typescript/src",
     "build": "npm run compile-aqua"
   },
   "repository": {
@@ -31,6 +31,6 @@
   },
   "homepage": "https://github.com/fluencelabs/aqua-ipfs#readme",
   "devDependencies": {
-    "@fluencelabs/aqua-cli": "^0.2.0-208"
+    "@fluencelabs/aqua": "^0.3.0-224"
   }
 }

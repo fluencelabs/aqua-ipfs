@@ -14,80 +14,95 @@
  * limitations under the License.
  */
 
-import { put, get_from, set_timeout } from '@fluencelabs/aqua-ipfs-ts';
-import {createClient} from "@fluencelabs/fluence";
-import { Node, testNet} from "@fluencelabs/fluence-network-environment";
+import { put, get_from, set_timeout } from "@fluencelabs/aqua-ipfs-ts";
+import { FluencePeer } from "@fluencelabs/fluence";
+import { Node, testNet } from "@fluencelabs/fluence-network-environment";
 
-const { create, urlSource } = require('ipfs-http-client');
-const all = require('it-all');
-const uint8ArrayConcat = require('uint8arrays/concat')
-
+const { create, urlSource } = require("ipfs-http-client");
+const all = require("it-all");
+const uint8ArrayConcat = require("uint8arrays/concat");
 
 let local: Node[] = [
-    {
-        peerId: "12D3KooWHBG9oaVx4i3vi6c1rSBUm7MLBmyGmmbHoZ23pmjDCnvK",
-        multiaddr: "/ip4/127.0.0.1/tcp/9990/ws/p2p/12D3KooWHBG9oaVx4i3vi6c1rSBUm7MLBmyGmmbHoZ23pmjDCnvK"
-    },
-    {
-        peerId: "12D3KooWRABanQHUn28dxavN9ZS1zZghqoZVAYtFpoN7FdtoGTFv",
-        multiaddr: "/ip4/127.0.0.1/tcp/9991/ws/p2p/12D3KooWRABanQHUn28dxavN9ZS1zZghqoZVAYtFpoN7FdtoGTFv"
-    },
-    {
-        peerId: "12D3KooWFpQ7LHxcC9FEBUh3k4nSCC12jBhijJv3gJbi7wsNYzJ5",
-        multiaddr: "/ip4/127.0.0.1/tcp/9992/ws/p2p/12D3KooWFpQ7LHxcC9FEBUh3k4nSCC12jBhijJv3gJbi7wsNYzJ5"
-    },
+  {
+    peerId: "12D3KooWHBG9oaVx4i3vi6c1rSBUm7MLBmyGmmbHoZ23pmjDCnvK",
+    multiaddr:
+      "/ip4/127.0.0.1/tcp/9990/ws/p2p/12D3KooWHBG9oaVx4i3vi6c1rSBUm7MLBmyGmmbHoZ23pmjDCnvK",
+  },
+  {
+    peerId: "12D3KooWRABanQHUn28dxavN9ZS1zZghqoZVAYtFpoN7FdtoGTFv",
+    multiaddr:
+      "/ip4/127.0.0.1/tcp/9991/ws/p2p/12D3KooWRABanQHUn28dxavN9ZS1zZghqoZVAYtFpoN7FdtoGTFv",
+  },
+  {
+    peerId: "12D3KooWFpQ7LHxcC9FEBUh3k4nSCC12jBhijJv3gJbi7wsNYzJ5",
+    multiaddr:
+      "/ip4/127.0.0.1/tcp/9992/ws/p2p/12D3KooWFpQ7LHxcC9FEBUh3k4nSCC12jBhijJv3gJbi7wsNYzJ5",
+  },
 ];
 
 async function main(environment: Node[]) {
-    // setLogLevel('DEBUG');
-    const fluence = await createClient(environment[1]);
-    console.log("📗 created a fluence client %s with relay %s", fluence.selfPeerId, fluence.relayPeerId);
-    
-    let ipfsAddr = 'https://stage.fluence.dev:15001';
-    let ipfsMultiaddr = '/ip4/134.209.186.43/tcp/5001/p2p/12D3KooWEhCqQ9NBnmtSfNeXSNfhgccmH86xodkCUxZNEXab6pkw';
-    const ipfs = create(ipfsAddr);
-    console.log("📗 created ipfs client");
+  // setLogLevel('DEBUG');
+  await FluencePeer.default.init({ connectTo: environment[1] });
+  console.log(
+    "📗 created a fluence peer %s with relay %s",
+    FluencePeer.default.connectionInfo.selfPeerId,
+    FluencePeer.default.connectionInfo.connectedRelay
+  );
 
-    await ipfs.id();
-    console.log("📗 connected to ipfs");
+  let ipfsAddr = "https://stage.fluence.dev:15001";
+  let ipfsMultiaddr =
+    "/ip4/134.209.186.43/tcp/5001/p2p/12D3KooWEhCqQ9NBnmtSfNeXSNfhgccmH86xodkCUxZNEXab6pkw";
+  const ipfs = create(ipfsAddr);
+  console.log("📗 created ipfs client");
 
-    let source = urlSource('https://images.adsttc.com/media/images/5ecd/d4ac/b357/65c6/7300/009d/large_jpg/02C.jpg?1590547607');
-    const file = await ipfs.add(source);
-    console.log("📗 uploaded file:", file);
+  await ipfs.id();
+  console.log("📗 connected to ipfs");
 
-    let files = await ipfs.get(file.cid);
-    for await (const file of files) {
-        const content = uint8ArrayConcat(await all(file.content));
-        console.log("📗 downloaded file of length ", content.length);
-    }
+  let source = urlSource(
+    "https://images.adsttc.com/media/images/5ecd/d4ac/b357/65c6/7300/009d/large_jpg/02C.jpg?1590547607"
+  );
+  const file = await ipfs.add(source);
+  console.log("📗 uploaded file:", file);
 
-    // default IPFS timeout is 1 sec, set to 10 secs to retrieve file from remote node
-    await set_timeout(fluence, environment[2].peerId, 10);
+  let files = await ipfs.get(file.cid);
+  for await (const file of files) {
+    const content = uint8ArrayConcat(await all(file.content));
+    console.log("📗 downloaded file of length ", content.length);
+  }
 
-    console.log("📘 file hash: ", file.cid);
-    let getResult = await get_from(fluence, environment[2].peerId, file.cid.toString(), ipfsMultiaddr, { ttl: 10000 });
-    console.log("📘 Ipfs.get", getResult);
+  // default IPFS timeout is 1 sec, set to 10 secs to retrieve file from remote node
+  await set_timeout(environment[2].peerId, 10);
 
-    let putResult = await put(fluence, environment[2].peerId, getResult.path, { ttl: 10000 });
-    console.log("📘 Ipfs.put", putResult);
+  console.log("📘 file hash: ", file.cid);
+  let getResult = await get_from(
+    environment[2].peerId,
+    file.cid.toString(),
+    ipfsMultiaddr,
+    { ttl: 10000 }
+  );
+  console.log("📘 Ipfs.get", getResult);
 
-    return;
+  let putResult = await put(environment[2].peerId, getResult.path, {
+    ttl: 10000,
+  });
+  console.log("📘 Ipfs.put", putResult);
+
+  return;
 }
 
 let args = process.argv.slice(2);
 var environment: Node[];
 if (args.length >= 1 && args[0] == "local") {
-    environment = local;
-    console.log("📘 Will connect to local nodes");
+  environment = local;
+  console.log("📘 Will connect to local nodes");
 } else {
-    environment = testNet;
-    console.log("📘 Will connect to testNet");
+  environment = testNet;
+  console.log("📘 Will connect to testNet");
 }
 
 main(environment)
   .then(() => process.exit(0))
-  .catch(error => {
+  .catch((error) => {
     console.error(error);
     process.exit(1);
   });
-
