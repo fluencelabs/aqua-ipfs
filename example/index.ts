@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { put, get_from, set_timeout } from "@fluencelabs/aqua-ipfs-ts";
-import { FluencePeer } from "@fluencelabs/fluence";
+import { put, get_from, set_timeout } from "./generated/export";
+import { Fluence } from "@fluencelabs/fluence";
 import { Node, testNet } from "@fluencelabs/fluence-network-environment";
 
 const { create, urlSource } = require("ipfs-http-client");
@@ -42,11 +42,11 @@ let local: Node[] = [
 
 async function main(environment: Node[]) {
   // setLogLevel('DEBUG');
-  await FluencePeer.default.init({ connectTo: environment[1] });
+  await Fluence.start({ connectTo: environment[1] });
   console.log(
     "📗 created a fluence peer %s with relay %s",
-    FluencePeer.default.connectionInfo.selfPeerId,
-    FluencePeer.default.connectionInfo.connectedRelay
+    Fluence.getStatus().peerId,
+    Fluence.getStatus().relayPeerId
   );
 
   let ipfsAddr = "https://stage.fluence.dev:15001";
