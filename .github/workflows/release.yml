@@ -76,15 +76,9 @@ jobs:
           mv artifacts aqua-ipfs
           tar -zcvf aqua-ipfs.tar.gz aqua-ipfs
 
-      - name: Compile Aqua to TypeScript
+      - name: Check Aqua compiles
         working-directory: ./aqua
         run: |
-          npm i
-          npm run build
-
-      - name: Compile TypeScript to .js + .d.ts
-        working-directory: ./aqua/target/typescript
-        run: |        
           npm i
           npm run build
 
@@ -120,15 +114,6 @@ jobs:
             NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         working-directory: ./aqua
       
-    ### Publish TS API
-      - name: Publish TS API to NPM
-        run: |
-          npm version ${{ env.RELEASE_VERSION }}
-          npm publish --access public
-        env:
-            NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        working-directory: ./aqua/target/typescript
-
 ## Update node-distro repo
       - name: Get tar.gz URL
         id: package-url
