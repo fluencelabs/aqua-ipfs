@@ -73,7 +73,7 @@ jobs:
       - name: Create distribution package
         working-directory: ./service
         run: |
-          ./buitin-package/package.sh
+          ./builtin-package/package.sh
 
       - name: Check Aqua compiles
         working-directory: ./aqua
@@ -112,7 +112,7 @@ jobs:
         env:
             NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         working-directory: ./aqua
-      
+
 ## Update node-distro repo
       - name: Get tar.gz URL
         id: package-url
@@ -150,7 +150,7 @@ jobs:
           repo: fluencelabs/node-distro
           ref: 'main'
           token: ${{ secrets.PERSONAL_TOKEN }}
-          inputs: '{ 
+          inputs: '{
             "name": "aqua-ipfs",
             "version": "${{ env.RELEASE_VERSION }}",
             "url": "${{ steps.package-url.outputs.result }}",
