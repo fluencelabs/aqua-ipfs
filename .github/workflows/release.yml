@@ -73,8 +73,7 @@ jobs:
       - name: Create distribution package
         working-directory: ./service
         run: |
-          mv artifacts aqua-ipfs
-          tar -zcvf aqua-ipfs.tar.gz aqua-ipfs
+          ./buitin-package/package.sh
 
       - name: Check Aqua compiles
         working-directory: ./aqua

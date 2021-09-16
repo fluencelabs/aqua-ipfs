@@ -1,3 +1,5 @@
+module Ipfs declares *
+
 data IpfsGetResult:
   success: bool
   error: string
