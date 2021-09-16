@@ -11,10 +11,12 @@ example/generated/**
 # Added by cargo
 .idea
 
-**/artifacts/*.wasm
-*.wasm
+service/artifacts/*
+builtin-package/*.wasm
 
 **/node_modules
 **/dist
 .DS_store
 .bic_cache
+
+aqua-ipfs.tar.gz
