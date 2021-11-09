@@ -114,6 +114,12 @@ jobs:
         working-directory: ./aqua
 
 ## Update node-distro repo
+      - name: Calculate SHA256
+        run: |
+          du -hs ./aqua-ipfs.tar.gz
+          echo $(sha256sum ./aqua-ipfs.tar.gz)
+          echo "SHA256=$(sha256sum ./aqua-ipfs.tar.gz | awk '{ print $1 }')" >> $GITHUB_ENV
+
       - name: Get tar.gz URL
         id: package-url
         uses: actions/github-script@v4
@@ -136,12 +142,6 @@ jobs:
               console.log("Err: " + e);
               throw e;
             }
-
-      - name: Calculate SHA256
-        run: |
-          du -hs ./service/aqua-ipfs.tar.gz
-          echo $(sha256sum ./service/aqua-ipfs.tar.gz)
-          echo "SHA256=$(sha256sum ./service/aqua-ipfs.tar.gz | awk '{ print $1 }')" >> $GITHUB_ENV
 
       - name: Update version in node-distro repo
         uses: benc-uk/workflow-dispatch@v1
