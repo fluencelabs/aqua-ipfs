@@ -15,8 +15,9 @@ SCRIPT_DIR="$(pwd)"
     echo "*** create builtin distribution package ***"
     cd ..
     mv builtin-package aqua-ipfs
-    tar --exclude="package.sh" -f aqua-ipfs.tar.gz -zcv ./aqua-ipfs
+    tar --exclude="package.sh" -f aqua-ipfs.tar.gz -zcvv ./aqua-ipfs
     mv aqua-ipfs builtin-package
+    echo "*** package created ***"
 )
 
 echo "*** done ***"

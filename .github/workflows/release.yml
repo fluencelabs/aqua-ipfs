@@ -96,10 +96,11 @@ jobs:
           name: aqua-ipfs ${{ env.RELEASE_VERSION }}
           tag_name: ${{ env.RELEASE_VERSION }}
           files: |
-            ./service/aqua-ipfs.tar.gz
+            ./aqua-ipfs.tar.gz
           body: ${{steps.changelog.outputs.changelog}}
           draft: false
           prerelease: false
+          fail_on_unmatched_files: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
