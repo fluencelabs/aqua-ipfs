@@ -5,26 +5,7 @@ Native IPFS integration to Aqua language. Orchestrate IPFS file transfer with Aq
 See [Aqua Book](https://fluence.dev/aqua-book/libraries/aqua-ipfs).
 
 ## How to use it in TypeScript
-1. Add the following to your dependencies
-   - `@fluencelabs/aqua-ipfs`
-   - `@fluencelabs/fluence` 
-   - `@fluencelabs/fluence-network-environment`
-
-2. Import and call
-```typescript
-import { get_and_cache } from '@fluencelabs/aqua-ipfs';
-import { createClient } from "@fluencelabs/fluence";
-import { krasnodar } from "@fluencelabs/fluence-network-environment";
-
-// connect to the Fluence network
-const fluence = await createClient(krasnodar[1]);
-// get some file's or dir's IPFS CID
-let cid = "Qm...";
-let ipfsMultiaddr = "/ip4/x.x.x.x/tcp/5001/"
-// And cache it on the IPFS node running along the Fluence node we've connected to
-let localCID = await get_and_cache(fluence, fluence.relayPeerId, cid, ipfs, { ttl: 10000 });
-cid === localCID // true
-```
+There's a simple example in [example](/example/index.ts)
 
 ## Directory structure
 - `aqua` Aqua API of AquaIPFS. See [aqua/README](/aqua/README.md)
