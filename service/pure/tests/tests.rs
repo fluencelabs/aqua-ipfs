@@ -35,7 +35,10 @@ mod tests {
         assert_eq!(format!("invalid multiaddr: {}", invalid_multiaddr), result.error);
     }
 
-    #[marine_test(ipfs_pure(config_path = "Config.toml", modules_dir = "../../artifacts"))]
+    #[marine_test(
+        ipfs_pure(config_path = "Config.toml", modules_dir = "../../artifacts"),
+        ipfs_effector(config_path = "Config.toml", modules_dir = "../../artifacts")
+    )]
     fn set_get_external_api_multiaddr() {
         set_default_local_api_multiaddr!(ipfs_pure);
         let multiaddr = "/ip4/127.0.0.1/tcp/9992";
@@ -43,15 +46,18 @@ mod tests {
         let result = ipfs_pure.set_external_api_multiaddr(multiaddr.to_string());
         assert!(result.success);
 
-        let peer_id = ipfs_pure.get_peer_id("/ip4/127.0.0.1/tcp/5001".to_string(), 0).peer_id;
+        let mut ipfs_effector = marine_test_env::ipfs_effector::ServiceInterface::new();
+        let peer_id = ipfs_effector.get_peer_id("/ip4/127.0.0.1/tcp/5001".to_string(), 0).peer_id;
 
-        let mut ipfs_pure = marine_test_env::ipfs_pure::ServiceInterface::new();
         let result = ipfs_pure.get_external_api_multiaddr();
         assert!(result.success);
         assert_eq!(format!("{}/p2p/{}", multiaddr, peer_id), result.multiaddr);
     }
 
-    #[marine_test(ipfs_pure(config_path = "Config.toml", modules_dir = "../../artifacts"))]
+    #[marine_test(
+        ipfs_pure(config_path = "Config.toml", modules_dir = "../../artifacts"),
+        ipfs_effector(config_path = "Config.toml", modules_dir = "../../artifacts")
+    )]
     fn set_get_external_swarm_multiaddr() {
         set_default_local_api_multiaddr!(ipfs_pure);
         let multiaddr = "/ip4/127.0.0.1/tcp/9992";
@@ -59,9 +65,9 @@ mod tests {
         let result = ipfs_pure.set_external_swarm_multiaddr(multiaddr.to_string());
         assert!(result.success);
 
-        let peer_id = ipfs_pure.get_peer_id("/ip4/127.0.0.1/tcp/5001".to_string(), 0).peer_id;
+        let mut ipfs_effector = marine_test_env::ipfs_effector::ServiceInterface::new();
+        let peer_id = ipfs_effector.get_peer_id("/ip4/127.0.0.1/tcp/5001".to_string(), 0).peer_id;
 
-        let mut ipfs_pure = marine_test_env::ipfs_pure::ServiceInterface::new();
         let result = ipfs_pure.get_external_swarm_multiaddr();
         assert!(result.success);
         assert_eq!(format!("{}/p2p/{}", multiaddr, peer_id), result.multiaddr);
