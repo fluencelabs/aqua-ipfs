@@ -18,15 +18,27 @@
 mod tests {
     use marine_rs_sdk_test::marine_test;
 
-    #[marine_test(config_path = "Config_error.toml", modules_dir = "../../artifacts")]
+    #[marine_test(
+        ipfs_effector(
+            config_path = "Config_error.toml", 
+            modules_dir = "../../artifacts"
+        )
+    )]
     fn connect_failed() {
-        let result = ipfs_effector.connect("/ip4/127.0.0.1/tcp/5001".to_string(), "/ip4/127.0.0.1/tcp/5001".to_string(), 5u64);
+        let mut effector = marine_test_env::ipfs_effector::ServiceInterface::new();
+        let result = effector.connect("/ip4/127.0.0.1/tcp/5001".to_string(), "/ip4/127.0.0.1/tcp/5001".to_string(), 5u64);
         assert!(!result.success);
     }
 
-    #[marine_test(config_path = "Config_put.toml", modules_dir = "../../artifacts")]
+    #[marine_test(
+        ipfs_effector(
+            config_path = "Config_put.toml", 
+            modules_dir = "../../artifacts"
+        )
+    )]
     fn put_result() {
-        let result = ipfs_effector.put("tmp".to_string(), "api_multiaddr".to_string(), 1);
+        let mut effector = marine_test_env::ipfs_effector::ServiceInterface::new();
+        let result = effector.put("tmp".to_string(), "api_multiaddr".to_string(), 1);
         assert_eq!("hash", result.hash);
     }
 }
