@@ -59,16 +59,15 @@ jobs:
           override: true
           components: rustfmt, clippy
 
+      - run: cd service
       - name: Run cargo fmt
         uses: actions-rs/cargo@v1
-        working-directory: ./service
         with:
           command: fmt
           args: --all -- --check
 
       - name: Run cargo clippy
         uses: actions-rs/cargo@v1
-        working-directory: ./service
         with:
           command: clippy
           args: -Z unstable-options --all
