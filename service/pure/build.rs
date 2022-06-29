@@ -15,6 +15,7 @@
  */
 use marine_rs_sdk_test::generate_marine_test_env;
 use marine_rs_sdk_test::ServiceDescription;
+
 fn main() {
     let services = vec![(
         "ipfs".to_string(),
@@ -31,5 +32,4 @@ fn main() {
     }
 
     println!("cargo:rerun-if-changed=tests.rs");
-
 }

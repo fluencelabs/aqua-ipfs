@@ -15,21 +15,22 @@
  */
 use marine_rs_sdk_test::generate_marine_test_env;
 use marine_rs_sdk_test::ServiceDescription;
+
 fn main() {
     let services = vec![(
-        "ipfs_put".to_string(),
-        ServiceDescription {
-            config_path: "tests/Config_put.toml".to_string(),
-            modules_dir: Some("../artifacts".to_string()),
-        },
-    ),
-    (
-        "ipfs_error".to_string(),
-        ServiceDescription {
-            config_path: "tests/Config_error.toml".to_string(),
-            modules_dir: Some("../artifacts".to_string()),
-        },
-    )
+            "ipfs_put".to_string(),
+            ServiceDescription {
+                config_path: "tests/Config_put.toml".to_string(),
+                modules_dir: Some("../artifacts".to_string()),
+            },
+        ),
+        (
+            "ipfs_error".to_string(),
+            ServiceDescription {
+                config_path: "tests/Config_error.toml".to_string(),
+                modules_dir: Some("../artifacts".to_string()),
+            },
+        ),
     ];
 
     let target = std::env::var("CARGO_CFG_TARGET_ARCH").unwrap();
@@ -38,5 +39,4 @@ fn main() {
     }
 
     println!("cargo:rerun-if-changed=tests.rs");
-
 }
