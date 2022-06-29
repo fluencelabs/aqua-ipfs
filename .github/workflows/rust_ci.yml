@@ -13,7 +13,7 @@ jobs:
     runs-on: builder
     defaults:
       run:
-        working-directory: scripts
+        working-directory: service
     steps:
       - name: Checkout sources
         uses: actions/checkout@v2
