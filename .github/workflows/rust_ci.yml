@@ -31,7 +31,7 @@ jobs:
 
       - name: Build
         working-directory: ./service
-        - run: |
+        run: |
           cd service
           ./build.sh
 
