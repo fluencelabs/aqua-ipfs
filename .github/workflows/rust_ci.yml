@@ -32,6 +32,9 @@ jobs:
           toolchain: nightly
           override: true
 
+      - name: Download marine
+        run: bash $GITHUB_WORKSPACE/.github/download_marine.sh
+
       - name: Build
         run: ./build.sh
 
@@ -41,6 +44,9 @@ jobs:
   lints:
     name: Lints
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: service
     steps:
       - name: Checkout sources
         uses: actions/checkout@v2
