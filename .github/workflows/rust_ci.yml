@@ -16,7 +16,6 @@ jobs:
         working-directory: service
         shell: bash
     steps:
-      - run: echo "~/.bin" >> $GITHUB_PATH
       - name: Checkout sources
         uses: actions/checkout@v2
 
@@ -26,6 +25,8 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - run: echo "~/.bin" >> $GITHUB_PATH
 
       - name: Install toolchain
         uses: actions-rs/toolchain@v1
