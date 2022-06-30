@@ -23,8 +23,7 @@ fn main() {
             config_path: "tests/Config.toml".to_string(),
             modules_dir: Some("../artifacts".to_string()),
         },
-    )
-    ];
+    )];
 
     let target = std::env::var("CARGO_CFG_TARGET_ARCH").unwrap();
     if target != "wasm32" {

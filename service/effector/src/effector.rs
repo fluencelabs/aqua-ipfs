@@ -16,7 +16,7 @@
 
 #![allow(improper_ctypes)]
 
-use types::{IpfsResult, IpfsPutResult, IpfsGetPeerIdResult};
+use types::{IpfsGetPeerIdResult, IpfsPutResult, IpfsResult};
 
 use marine_rs_sdk::marine;
 use marine_rs_sdk::module_manifest;
@@ -37,30 +37,35 @@ pub fn main() {
 }
 
 fn unwrap_mounted_binary_result(result: MountedBinaryResult) -> Result<String> {
-    result.into_std().ok_or(eyre::eyre!("stdout or stderr contains non valid UTF8 string"))?.map_err(|e| eyre::eyre!("ipfs cli call failed: {}", e))
+    result
+        .into_std()
+        .ok_or(eyre::eyre!(
+            "stdout or stderr contains non valid UTF8 string"
+        ))?
+        .map_err(|e| eyre::eyre!("ipfs cli call failed: {}", e))
 }
 
 #[inline]
-fn get_timeout_string(timeout: u64) -> String { format!("{}s", timeout) }
+fn get_timeout_string(timeout: u64) -> String {
+    format!("{}s", timeout)
+}
 
 fn make_cmd_args(args: Vec<String>, api_multiaddr: String, timeout_sec: u64) -> Vec<String> {
-    args.into_iter().chain(
-        vec![
+    args.into_iter()
+        .chain(vec![
             String::from("--timeout"),
             get_timeout_string(timeout_sec),
             String::from("--api"),
-            api_multiaddr
-        ]).collect()
+            api_multiaddr,
+        ])
+        .collect()
 }
 
 #[marine]
 pub fn connect(multiaddr: String, api_multiaddr: String, timeout_sec: u64) -> IpfsResult {
     log::info!("connect called with multiaddr {}", multiaddr);
 
-    let args = vec![
-        String::from("swarm"),
-        String::from("connect"),
-        multiaddr];
+    let args = vec![String::from("swarm"), String::from("connect"), multiaddr];
     let cmd = make_cmd_args(args, api_multiaddr, timeout_sec);
 
     unwrap_mounted_binary_result(ipfs(cmd)).map(|_| ()).into()
@@ -72,19 +77,25 @@ pub fn put(file_path: String, api_multiaddr: String, timeout_sec: u64) -> IpfsPu
     log::info!("put called with file path {}", file_path);
 
     if !std::path::Path::new(&file_path).exists() {
-        return IpfsPutResult { success: false, error: format!("path {} doesn't exist", file_path), hash: "".to_string() };
+        return IpfsPutResult {
+            success: false,
+            error: format!("path {} doesn't exist", file_path),
+            hash: "".to_string(),
+        };
     }
 
     let args = vec![
         String::from("add"),
         String::from("-Q"),
-        inject_vault_host_path(file_path)
+        inject_vault_host_path(file_path),
     ];
     let cmd = make_cmd_args(args, api_multiaddr, timeout_sec);
 
     log::info!("ipfs put args {:?}", cmd);
 
-    unwrap_mounted_binary_result(ipfs(cmd)).map(|res| res.trim().to_string()).into()
+    unwrap_mounted_binary_result(ipfs(cmd))
+        .map(|res| res.trim().to_string())
+        .into()
 }
 
 /// Get file by provided hash from IPFS, saves it to a temporary file and returns a path to it.
@@ -102,9 +113,11 @@ pub fn get(hash: String, file_path: String, api_multiaddr: String, timeout_sec: 
 
     log::info!("ipfs get args {:?}", cmd);
 
-    unwrap_mounted_binary_result(ipfs(cmd)).map(|output| {
-        log::info!("ipfs get output: {}", output);
-    }).into()
+    unwrap_mounted_binary_result(ipfs(cmd))
+        .map(|output| {
+            log::info!("ipfs get output: {}", output);
+        })
+        .into()
 }
 
 #[marine]
@@ -113,17 +126,30 @@ pub fn get_peer_id(api_multiaddr: String, timeout_sec: u64) -> IpfsGetPeerIdResu
         let cmd = make_cmd_args(vec![String::from("id")], api_multiaddr, timeout_sec);
 
         let result = unwrap_mounted_binary_result(ipfs(cmd))?;
-        let result: serde_json::Value = serde_json::from_str(&result).wrap_err("ipfs response parsing failed")?;
-        result.get("ID").ok_or(eyre::eyre!("ID field not found in response"))?.as_str().ok_or(eyre::eyre!("ID value is not string"))?.to_string()
+        let result: serde_json::Value =
+            serde_json::from_str(&result).wrap_err("ipfs response parsing failed")?;
+        result
+            .get("ID")
+            .ok_or(eyre::eyre!("ID field not found in response"))?
+            .as_str()
+            .ok_or(eyre::eyre!("ID value is not string"))?
+            .to_string()
     };
 
-    result.map_err(|e| eyre::eyre!("get_peer_id: {:?}", e)).into()
+    result
+        .map_err(|e| eyre::eyre!("get_peer_id: {:?}", e))
+        .into()
 }
 
 #[marine]
-pub fn set_external_swarm_multiaddr(swarm_multiaddr: String, api_multiaddr: String, timeout_sec: u64) -> IpfsResult {
+pub fn set_external_swarm_multiaddr(
+    swarm_multiaddr: String,
+    api_multiaddr: String,
+    timeout_sec: u64,
+) -> IpfsResult {
     let result: Result<()> = try {
-        let multiaddr = Multiaddr::from_str(&swarm_multiaddr).wrap_err(format!("invalid multiaddr {}", swarm_multiaddr))?;
+        let multiaddr = Multiaddr::from_str(&swarm_multiaddr)
+            .wrap_err(format!("invalid multiaddr {}", swarm_multiaddr))?;
         let args = vec![
             String::from("config"),
             String::from("Addresses.Announce"),

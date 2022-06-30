@@ -30,7 +30,10 @@ mod tests {
         let invalid_multiaddr = "invalid_multiaddr".to_string();
         let result = ipfs.set_local_api_multiaddr(invalid_multiaddr.clone());
         assert!(!result.success);
-        assert_eq!(format!("invalid multiaddr: {}", invalid_multiaddr), result.error);
+        assert_eq!(
+            format!("invalid multiaddr: {}", invalid_multiaddr),
+            result.error
+        );
     }
 
     #[test]
@@ -41,7 +44,11 @@ mod tests {
         let result = ipfs.set_external_api_multiaddr(multiaddr.to_string());
         assert!(result.success);
 
-        let peer_id = ipfs.modules.ipfs_effector.get_peer_id("/ip4/127.0.0.1/tcp/5001".to_string(), 0).peer_id;
+        let peer_id = ipfs
+            .modules
+            .ipfs_effector
+            .get_peer_id("/ip4/127.0.0.1/tcp/5001".to_string(), 0)
+            .peer_id;
 
         let result = ipfs.get_external_api_multiaddr();
         assert!(result.success);
@@ -56,7 +63,11 @@ mod tests {
         let result = ipfs.set_external_swarm_multiaddr(multiaddr.to_string());
         assert!(result.success);
 
-        let peer_id = ipfs.modules.ipfs_effector.get_peer_id("/ip4/127.0.0.1/tcp/5001".to_string(), 0).peer_id;
+        let peer_id = ipfs
+            .modules
+            .ipfs_effector
+            .get_peer_id("/ip4/127.0.0.1/tcp/5001".to_string(), 0)
+            .peer_id;
 
         let result = ipfs.get_external_swarm_multiaddr();
         assert!(result.success);

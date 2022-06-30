@@ -21,7 +21,11 @@ mod tests {
     #[test]
     fn connect_failed() {
         let mut effector = marine_test_env::ipfs_error::ServiceInterface::new();
-        let result = effector.connect("/ip4/127.0.0.1/tcp/5001".to_string(), "/ip4/127.0.0.1/tcp/5001".to_string(), 5u64);
+        let result = effector.connect(
+            "/ip4/127.0.0.1/tcp/5001".to_string(),
+            "/ip4/127.0.0.1/tcp/5001".to_string(),
+            5u64,
+        );
         assert!(!result.success);
     }
 
