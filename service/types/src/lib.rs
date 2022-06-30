@@ -1,3 +1,5 @@
 mod results;
 
-pub use results::{IpfsGetResult, IpfsResult, IpfsPutResult, IpfsGetPeerIdResult, IpfsMultiaddrResult};
+pub use results::{
+    IpfsGetPeerIdResult, IpfsGetResult, IpfsMultiaddrResult, IpfsPutResult, IpfsResult,
+};

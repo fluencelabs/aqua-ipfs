@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-use marine_rs_sdk::marine;
 use eyre::Result;
+use marine_rs_sdk::marine;
 
 #[marine]
 pub struct IpfsResult {
@@ -26,8 +26,14 @@ pub struct IpfsResult {
 impl From<Result<()>> for IpfsResult {
     fn from(result: Result<()>) -> Self {
         match result {
-            Ok(_) => Self { success: true, error: "".to_string() },
-            Err(err) => Self { success: false, error: err.to_string() }
+            Ok(_) => Self {
+                success: true,
+                error: "".to_string(),
+            },
+            Err(err) => Self {
+                success: false,
+                error: err.to_string(),
+            },
         }
     }
 }
@@ -42,8 +48,16 @@ pub struct IpfsGetResult {
 impl From<Result<String>> for IpfsGetResult {
     fn from(result: Result<String>) -> Self {
         match result {
-            Ok(path) => Self { success: true, error: "".to_string(), path },
-            Err(err) => Self { success: false, error: err.to_string(), path: "".to_string() }
+            Ok(path) => Self {
+                success: true,
+                error: "".to_string(),
+                path,
+            },
+            Err(err) => Self {
+                success: false,
+                error: err.to_string(),
+                path: "".to_string(),
+            },
         }
     }
 }
@@ -58,8 +72,16 @@ pub struct IpfsPutResult {
 impl From<Result<String>> for IpfsPutResult {
     fn from(result: Result<String>) -> Self {
         match result {
-            Ok(hash) => Self { success: true, error: "".to_string(), hash },
-            Err(err) => Self { success: false, error: err.to_string(), hash: "".to_string() }
+            Ok(hash) => Self {
+                success: true,
+                error: "".to_string(),
+                hash,
+            },
+            Err(err) => Self {
+                success: false,
+                error: err.to_string(),
+                hash: "".to_string(),
+            },
         }
     }
 }
@@ -74,8 +96,16 @@ pub struct IpfsGetPeerIdResult {
 impl From<Result<String>> for IpfsGetPeerIdResult {
     fn from(result: Result<String>) -> Self {
         match result {
-            Ok(peer_id) => Self { success: true, error: "".to_string(), peer_id },
-            Err(err) => Self { success: false, error: err.to_string(), peer_id: "".to_string() }
+            Ok(peer_id) => Self {
+                success: true,
+                error: "".to_string(),
+                peer_id,
+            },
+            Err(err) => Self {
+                success: false,
+                error: err.to_string(),
+                peer_id: "".to_string(),
+            },
         }
     }
 }
@@ -90,8 +120,16 @@ pub struct IpfsMultiaddrResult {
 impl From<Result<String>> for IpfsMultiaddrResult {
     fn from(result: Result<String>) -> Self {
         match result {
-            Ok(multiaddr) => Self { success: true, error: "".to_string(), multiaddr },
-            Err(err) => Self { success: false, error: err.to_string(), multiaddr: "".to_string() }
+            Ok(multiaddr) => Self {
+                success: true,
+                error: "".to_string(),
+                multiaddr,
+            },
+            Err(err) => Self {
+                success: false,
+                error: err.to_string(),
+                multiaddr: "".to_string(),
+            },
         }
     }
 }

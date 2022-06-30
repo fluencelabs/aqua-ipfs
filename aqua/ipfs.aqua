@@ -30,4 +30,4 @@ service Ipfs("aqua-ipfs"):
   set_external_api_multiaddr(multiaddr: string) -> IpfsResult
   set_external_swarm_multiaddr(multiaddr: string) -> IpfsResult
   set_local_api_multiaddr(multiaddr: string) -> IpfsResult
-  set_timeout(timeout_sec: u64)  
+  set_timeout(timeout_sec: u64)
