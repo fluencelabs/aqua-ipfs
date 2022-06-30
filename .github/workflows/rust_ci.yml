@@ -11,6 +11,7 @@ jobs:
   check:
     name: cargo nextest
     runs-on: builder
+    container: rust
     defaults:
       run:
         working-directory: service
