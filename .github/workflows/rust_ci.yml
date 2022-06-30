@@ -26,6 +26,7 @@ jobs:
             ~/.cargo/git
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
+      - run: mkdir -p ~/.bin
       - run: echo "~/.bin" >> $GITHUB_PATH
 
       - name: Install toolchain
