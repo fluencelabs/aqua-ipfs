@@ -16,6 +16,7 @@ jobs:
         working-directory: service
         shell: bash
     steps:
+      - run: echo "~/.bin" >> $GITHUB_PATH
       - name: Checkout sources
         uses: actions/checkout@v2
 
@@ -35,8 +36,8 @@ jobs:
 
       - name: Download jq
         run: |
-          curl -L https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 -o /usr/local/bin/jq
-          chmod +x /usr/local/bin/jq
+          curl -L https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 -o ~/.bin/jq
+          chmod +x ~/.bin/jq
 
       - name: Download marine
         run: bash $GITHUB_WORKSPACE/.github/download_marine.sh
@@ -50,9 +51,6 @@ jobs:
   lints:
     name: Lints
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: service
     steps:
       - name: Checkout sources
         uses: actions/checkout@v2
@@ -77,11 +75,11 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: fmt
-          args: --all -- --check
+          args: --all --manifest-path service/Cargo.toml -- --check
 
       - name: Run cargo clippy
         uses: actions-rs/cargo@v1
         with:
           command: clippy
-          args: -Z unstable-options --all
+          args: -Z unstable-options --all --manifest-path service/Cargo.toml
         continue-on-error: true # do not fail for now
