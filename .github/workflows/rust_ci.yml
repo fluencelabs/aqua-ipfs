@@ -29,12 +29,13 @@ jobs:
       - run: mkdir -p ~/.bin
       - run: echo "~/.bin" >> $GITHUB_PATH
 
-      - name: Install toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: nightly
-          override: true
+      - name: Install Rust
+        working-directory: ./service
+        run: |
+          rustup toolchain install nightly-2022-01-16-x86_64-unknown-linux-gnu
+          rustup default nightly-2022-01-16-x86_64-unknown-linux-gnu
+          rustup override set nightly-2022-01-16-x86_64-unknown-linux-gnu
+          rustup target add wasm32-wasi --toolchain nightly-2022-01-16-x86_64-unknown-linux-gnu
 
       - name: Download jq
         run: |
