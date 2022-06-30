@@ -49,7 +49,7 @@ jobs:
       - name: Build
         run: ./build.sh
 
-      - run: cargo install --locked cargo-nextest@0.9.22
+      - run: cargo install --locked cargo-nextest --version 0.9.22
       - run: cargo nextest run --release --all-features --no-fail-fast --retries 10 --test-threads 10
 
   lints:
