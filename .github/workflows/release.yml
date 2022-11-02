@@ -8,7 +8,7 @@ on:
 jobs:
   release:
     name: "Publish"
-    runs-on: builder
+    runs-on: ubuntu-latest
     container: rust
     defaults:
       run:
