@@ -1,5 +1,4 @@
 {
-  "external_swarm_multiaddr": "$FLUENCE_ENV_AQUA_IPFS_EXTERNAL_SWARM_MULTIADDR",
   "local_api_multiaddr": "$FLUENCE_ENV_AQUA_IPFS_LOCAL_API_MULTIADDR",
   "external_api_multiaddr": "$FLUENCE_ENV_AQUA_IPFS_EXTERNAL_API_MULTIADDR"
 }
