@@ -6,4 +6,4 @@ mem_pages_count = 100
 logger_enabled = true
 
 [module.mounted_binaries]
-ipfs = "./tests/ipfs_broken"
+ipfs = "./tests/ipfs_error"
