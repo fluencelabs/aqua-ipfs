@@ -13,7 +13,7 @@ env:
 
 jobs:
   aqua-ipfs:
-    name: "Run aqua-ipfs tests"
+    name: "Run tests"
     runs-on: builder
 
     permissions:
