@@ -21,7 +21,7 @@ bs58 = "0.4.0"
 types = { path = "../types" }
 
 [dev-dependencies]
-marine-rs-sdk-test = "0.6.0"
+marine-rs-sdk-test = "0.8.1"
 
 [build-dependencies]
-marine-rs-sdk-test = "0.6.0"
+marine-rs-sdk-test = "0.8.1"
