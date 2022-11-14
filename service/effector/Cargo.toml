@@ -19,7 +19,7 @@ serde_json = "1.0.64"
 types = { path = "../types" }
 
 [dev-dependencies]
-marine-rs-sdk-test = "0.6.0"
+marine-rs-sdk-test = "0.8.1"
 
 [build-dependencies]
-marine-rs-sdk-test = "0.6.0"
+marine-rs-sdk-test = "0.8.1"
