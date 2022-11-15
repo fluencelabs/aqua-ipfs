@@ -6,7 +6,8 @@ on:
       rust-peer-image:
         description: "rust-peer image tag"
         type: string
-        default: "fluencelabs/fluence:minimal"
+        # default: "fluencelabs/fluence:minimal"
+        default: "docker.fluence.dev/rust-peer:minimal-ipfs"
 
 env:
   RUST_PEER_IMAGE: "${{ inputs.rust-peer-image }}"
