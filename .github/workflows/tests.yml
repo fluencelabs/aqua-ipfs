@@ -6,8 +6,7 @@ on:
       rust-peer-image:
         description: "rust-peer image tag"
         type: string
-        # default: "fluencelabs/fluence:minimal"
-        default: "docker.fluence.dev/rust-peer:minimal-ipfs"
+        default: "fluencelabs/fluence:minimal"
 
 env:
   RUST_PEER_IMAGE: "${{ inputs.rust-peer-image }}"
@@ -71,30 +70,3 @@ jobs:
         with:
           name: aqua-ipfs
           path: aqua-ipfs.tar.gz
-
-      - name: Unpack aqua-ipfs
-        run: tar xvf aqua-ipfs.tar.gz
-
-      - name: Login to DockerHub
-        uses: docker/login-action@v2
-        with:
-          registry: docker.fluence.dev
-          username: ${{ env.DOCKER_USERNAME }}
-          password: ${{ env.DOCKER_PASSWORD }}
-
-      - name: Pull rust-peer image
-        run: docker pull $RUST_PEER_IMAGE
-
-      - name: Run rust-peer
-        uses: isbang/compose-action@v1.1.0
-        with:
-          compose-file: ".github/e2e/docker-compose.yml"
-          down-flags: "--volumes"
-
-      - name: Dump rust-peer logs on failure
-        if: always()
-        uses: jwalton/gh-docker-logs@v1
-
-      - name: Remove aqua-ipfs directory
-        if: always()
-        run: sudo rm -rf aqua-ipfs
