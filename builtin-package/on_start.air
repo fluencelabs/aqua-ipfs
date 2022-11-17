@@ -1,22 +1,20 @@
 (seq
     (seq
-        (seq
-            (call relay ("aqua-ipfs" "set_local_api_multiaddr") [local_api_multiaddr] local_api_res)
-            (xor
-               (match local_api_res.$.success! true
-                    (null)
-               )
-               (call relay ("op" "return") [local_api_res.$.error!])
-            )
+        (call relay ("aqua-ipfs" "set_local_api_multiaddr") [local_api_multiaddr] local_api_res)
+        (xor
+           (match local_api_res.$.success! true
+                (null)
+           )
+           (call relay ("op" "return") [local_api_res.$.error!])
         )
-        (seq
-            (call relay ("aqua-ipfs" "set_external_api_multiaddr") [external_api_multiaddr] external_api_res)
-            (xor
-               (match external_api_res.$.success! true
-                  (call relay ("op" "return") [true])
-               )
-               (call relay ("op" "return") [external_api_res.$.error!])
-            )
+    )
+    (seq
+        (call relay ("aqua-ipfs" "set_external_api_multiaddr") [external_api_multiaddr] external_api_res)
+        (xor
+           (match external_api_res.$.success! true
+              (call relay ("op" "return") [true])
+           )
+           (call relay ("op" "return") [external_api_res.$.error!])
         )
     )
 )
