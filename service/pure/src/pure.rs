@@ -308,13 +308,6 @@ pub fn set_external_swarm_multiaddr(multiaddr: String) -> IpfsResult {
         }
 
         multiaddr.push(peer_id);
-
-        let set_result =
-            ipfs_set_external_swarm_multiaddr(multiaddr.to_string(), local_maddr, config.timeout);
-        if !set_result.success {
-            return set_result;
-        }
-
         config.external_swarm_multiaddr = Some(multiaddr);
         write_config(config)
     };
@@ -354,11 +347,4 @@ extern "C" {
 
     #[link_name = "get_peer_id"]
     pub fn ipfs_get_peer_id(local_multiaddr: String, timeout_sec: u64) -> IpfsGetPeerIdResult;
-
-    #[link_name = "set_external_swarm_multiaddr"]
-    pub fn ipfs_set_external_swarm_multiaddr(
-        swarm_multiaddr: String,
-        api_multiaddr: String,
-        timeout_sec: u64,
-    ) -> IpfsResult;
 }
