@@ -1,0 +1,72 @@
+name: Run tests with workflow_call
+
+on:
+  workflow_call:
+    inputs:
+      rust-peer-image:
+        description: "rust-peer image tag"
+        type: string
+        default: "fluencelabs/fluence:minimal"
+
+env:
+  RUST_PEER_IMAGE: "${{ inputs.rust-peer-image }}"
+
+jobs:
+  aqua-ipfs:
+    name: "Run tests"
+    runs-on: builder
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Import secrets
+        uses: hashicorp/vault-action@v2.4.3
+        with:
+          url: https://vault.fluence.dev
+          path: jwt/github
+          role: ci
+          method: jwt
+          jwtGithubAudience: "https://github.com/fluencelabs"
+          jwtTtl: 300
+          secrets: |
+            kv/docker-registry/basicauth/ci username | DOCKER_USERNAME ;
+            kv/docker-registry/basicauth/ci password | DOCKER_PASSWORD
+
+      - name: Checkout aqua-ipfs
+        uses: actions/checkout@v3
+
+      - name: Setup Rust toolchain
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+
+      - name: Install marine
+        uses: baptiste0928/cargo-install@v1.3.0
+        with:
+          crate: marine
+
+      - name: Build aqua-ipfs
+        working-directory: ./service
+        run: ./build.sh
+
+      - name: Install cargo-nextest
+        uses: baptiste0928/cargo-install@v1.3.0
+        with:
+          crate: cargo-nextest
+          version: 0.9.22
+
+      - name: Run cargo nextest
+        working-directory: ./service
+        env:
+          NEXTEST_RETRIES: 10
+          NEXTEST_TEST_THREADS: 10
+        run: cargo nextest run --release --all-features --no-fail-fast
+
+      - name: Create distribution package
+        run: ./builtin-package/package.sh
+
+      - name: Upload aqua-ipfs
+        uses: actions/upload-artifact@v3
+        with:
+          name: aqua-ipfs
+          path: aqua-ipfs.tar.gz
