@@ -1,0 +1,42 @@
+name: Run tests
+
+on:
+  pull_request:
+    paths-ignore:
+      - "**.md"
+
+  push:
+    branches:
+      - "master"
+
+concurrency:
+  group: "${{ github.workflow }}-${{ github.ref }}"
+  cancel-in-progress: true
+
+jobs:
+  aqua-ipfs:
+    uses: ./.github/workflows/tests.yml
+
+  lints:
+    name: Lints
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+
+      - name: Setup rust toolchain
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+
+      - name: Run cargo fmt
+        uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+          args: --all --manifest-path service/Cargo.toml -- --check
+
+      - name: Run cargo clippy
+        uses: actions-rs/cargo@v1
+        with:
+          command: clippy
+          args: -Z unstable-options --all --manifest-path service/Cargo.toml
+        continue-on-error: true # do not fail for now
