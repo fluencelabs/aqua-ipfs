@@ -136,10 +136,32 @@ pub fn put(file_path: String) -> IpfsPutResult {
 }
 
 #[marine]
+pub fn dag_put(file_path: String) -> IpfsPutResult {
+    log::info!("dag_put called with {:?}", file_path);
+    let timeout = load_config().timeout;
+    let local_maddr = load_local_api_multiaddr().map(|m| m.to_string());
+    if local_maddr.is_ok() {
+        ipfs_dag_put(file_path, local_maddr.unwrap(), timeout)
+    } else {
+        local_maddr.into()
+    }
+}
+
+#[marine]
 pub fn get(hash: String) -> IpfsGetResult {
     let local_maddr = load_local_api_multiaddr().map(|m| m.to_string());
     if local_maddr.is_ok() {
         get_from(hash, local_maddr.unwrap())
+    } else {
+        local_maddr.into()
+    }
+}
+
+#[marine]
+pub fn dag_get(hash: String) -> IpfsGetResult {
+    let local_maddr = load_local_api_multiaddr().map(|m| m.to_string());
+    if local_maddr.is_ok() {
+        dag_get_from(hash, local_maddr.unwrap())
     } else {
         local_maddr.into()
     }
@@ -157,8 +179,32 @@ pub fn get_from(hash: String, external_multiaddr: String) -> IpfsGetResult {
     }
 
     let particle_vault_path = format!("/tmp/vault/{}", particle_id);
+    println!("particle_vault_path {}", particle_vault_path);
     let path = format!("{}/{}", particle_vault_path, hash);
     let get_result = ipfs_get(hash, path.clone(), external_multiaddr, timeout);
+
+    if get_result.success {
+        Ok(path).into()
+    } else {
+        Err(eyre::eyre!(get_result.error)).into()
+    }
+}
+
+#[marine]
+pub fn dag_get_from(hash: String, external_multiaddr: String) -> IpfsGetResult {
+    log::info!("get from called with hash: {}", hash);
+    let config = load_config();
+    let timeout = config.timeout;
+
+    let particle_id = marine_rs_sdk::get_call_parameters().particle_id;
+    if Multiaddr::from_str(&external_multiaddr).is_err() {
+        return Err(eyre::eyre!("invalid multiaddr: {}", external_multiaddr)).into();
+    }
+
+    let particle_vault_path = format!("/tmp/vault/{}", particle_id);
+    println!("particle_vault_path {}", particle_vault_path);
+    let path = format!("{}/{}", particle_vault_path, hash);
+    let get_result = ipfs_dag_get(hash, path.clone(), external_multiaddr, timeout);
 
     if get_result.success {
         Ok(path).into()
@@ -336,9 +382,22 @@ extern "C" {
     #[link_name = "put"]
     pub fn ipfs_put(file_path: String, api_multiaddr: String, timeout_sec: u64) -> IpfsPutResult;
 
+    /// DAG put provided file to ipfs, return ipfs hash of the file.
+    #[link_name = "dag_put"]
+    pub fn ipfs_dag_put(file_path: String, api_multiaddr: String, timeout_sec: u64) -> IpfsPutResult;
+
     /// Get file from ipfs by hash.
     #[link_name = "get"]
     pub fn ipfs_get(
+        hash: String,
+        file_path: String,
+        api_multiaddr: String,
+        timeout_sec: u64,
+    ) -> IpfsResult;
+
+    /// Get file from ipfs by hash using DAG get.
+    #[link_name = "dag_get"]
+    pub fn ipfs_dag_get(
         hash: String,
         file_path: String,
         api_multiaddr: String,

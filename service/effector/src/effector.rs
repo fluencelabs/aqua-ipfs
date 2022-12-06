@@ -96,6 +96,36 @@ pub fn put(file_path: String, api_multiaddr: String, timeout_sec: u64) -> IpfsPu
         .into()
 }
 
+/// DAG put input to IPFS and return its hash.
+#[marine]
+pub fn dag_put(file_path: String, api_multiaddr: String, timeout_sec: u64) -> IpfsPutResult {
+    log::info!("put called with file path {}", file_path);
+
+    if !std::path::Path::new(&file_path).exists() {
+        return IpfsPutResult {
+            success: false,
+            error: format!("path {} doesn't exist", file_path),
+            hash: "".to_string(),
+        };
+    }
+
+    let args = vec![
+        String::from("dag"),
+        String::from("put"),
+        String::from("--input-codec"),
+        String::from("raw"),
+        String::from(file_path)
+    ];
+
+    let cmd = make_cmd_args(args, api_multiaddr, timeout_sec);
+
+    log::info!("ipfs put args {:?}", cmd);
+
+    unwrap_mounted_binary_result(ipfs(cmd))
+        .map(|res| res.trim().to_string())
+        .into()
+}
+
 /// Get file by provided hash from IPFS, saves it to a temporary file and returns a path to it.
 #[marine]
 pub fn get(hash: String, file_path: String, api_multiaddr: String, timeout_sec: u64) -> IpfsResult {
@@ -107,6 +137,29 @@ pub fn get(hash: String, file_path: String, api_multiaddr: String, timeout_sec: 
         inject_vault_host_path(file_path),
         hash,
     ];
+    let cmd = make_cmd_args(args, api_multiaddr, timeout_sec);
+
+    log::info!("ipfs get args {:?}", cmd);
+
+    unwrap_mounted_binary_result(ipfs(cmd))
+        .map(|output| {
+            log::info!("ipfs get output: {}", output);
+        })
+        .into()
+}
+
+/// Get content by provided hash from IPFS.
+#[marine]
+pub fn dag_get(hash: String, file_path: String, api_multiaddr: String, timeout_sec: u64) -> IpfsResult{
+    log::info!("get called with hash {}", hash);
+
+    let args = vec![
+        String::from("dag"),
+        String::from("get"),
+        inject_vault_host_path(file_path),
+        hash,
+    ];
+
     let cmd = make_cmd_args(args, api_multiaddr, timeout_sec);
 
     log::info!("ipfs get args {:?}", cmd);

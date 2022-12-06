@@ -21,6 +21,9 @@ data IpfsResult:
 
 service Ipfs("aqua-ipfs"):
   connect(multiaddr: string) -> IpfsResult
+  dag_get(hash: string) -> IpfsGetResult
+  dag_get_from(hash: string, external_multiaddr: string) -> IpfsGetResult
+  dag_put(file_path: string) -> IpfsPutResult
   get(hash: string) -> IpfsGetResult
   get_external_api_multiaddr() -> IpfsMultiaddrResult
   get_external_swarm_multiaddr() -> IpfsMultiaddrResult
@@ -30,4 +33,4 @@ service Ipfs("aqua-ipfs"):
   set_external_api_multiaddr(multiaddr: string) -> IpfsResult
   set_external_swarm_multiaddr(multiaddr: string) -> IpfsResult
   set_local_api_multiaddr(multiaddr: string) -> IpfsResult
-  set_timeout(timeout_sec: u64)
+  set_timeout(timeout_sec: u64)  
