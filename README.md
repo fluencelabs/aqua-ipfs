@@ -29,14 +29,31 @@ func install_scheduled_script_from_ipfs_to_peer(from: PeerId, to: PeerId, cid: s
 ## Documentation
 See [aqua-ipfs in Aqua Book](https://fluence.dev/docs/aqua-book/libraries/aqua-ipfs).
 
-## How to use it in TypeScript
-There's a simple example in [example](/example/index.ts)
-
 ## Directory structure
 - `aqua` Aqua API of AquaIPFS. See [aqua/README](/aqua/README.md)
 - `service` contains Rust service that implements all the IPFS calls by using `ipfs` cli mounted binary
 - `example` A simple example of how to use ipfs adapter from TypeScript
 - `local-network` contains Docker Compose YAML config to run a local Fluence network of 3 nodes
+
+## How to use it in TypeScript
+There's a simple example in [example](/example/index.ts)
+
+## How to run it in MREPL
+First, you would need to install mrepl via `cargo install mrepl`
+
+After that, here's an example
+```
+cd service
+mrepl
+new Config.toml
+call ipfs_pure set_local_api_multiaddr ["/ip4/134.209.186.43/tcp/5001/p2p/12D3KooWEhCqQ9NBnmtSfNeXSNfhgccmH86xodkCUxZNEXab6pkw"]
+
+call ipfs_pure set_external_api_multiaddr ["/ip4/134.209.186.43/tcp/5001/p2p/12D3KooWEhCqQ9NBnmtSfNeXSNfhgccmH86xodkCUxZNEXab6pkw"]
+
+call ipfs_pure get_from ["QmfBRabun4FpaHV4wVXtnqtopUTro93XJHiWhNZscViCaq", "/ip4/134.209.186.43/tcp/5001/p2p/12D3KooWEhCqQ9NBnmtSfNeXSNfhgccmH86xodkCUxZNEXab6pkw"]
+```
+
+You can use `interface` and `help` inside mrepl to further discover what's possible.
 
 # Contribution
 Contributions are welcome!
