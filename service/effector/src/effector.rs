@@ -112,7 +112,7 @@ pub fn dag_put(file_path: String, api_multiaddr: String, timeout_sec: u64) -> Ip
     let args = vec![
         String::from("dag"),
         String::from("put"),
-        String::from("--input-codec"),
+        String::from("--input-codec="),
         String::from("raw"),
         String::from(file_path)
     ];
