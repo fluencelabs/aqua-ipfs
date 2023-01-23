@@ -685,6 +685,7 @@ version = "0.1.0"
 dependencies = [
  "eyre",
  "fluence-fork-parity-multiaddr",
+ "itertools",
  "log",
  "marine-rs-sdk 0.6.15",
  "marine-rs-sdk-test",

@@ -1,5 +1,10 @@
 module Ipfs declares *
 
+data IpfsCatResult:
+  success: bool
+  error: string
+  contents: string
+
 data IpfsGetResult:
   success: bool
   error: string
@@ -20,6 +25,8 @@ data IpfsResult:
   error: string
 
 service Ipfs("aqua-ipfs"):
+  cat(hash: string) -> IpfsCatResult
+  cat_from(hash: string, external_multiaddr: string) -> IpfsCatResult
   connect(multiaddr: string) -> IpfsResult
   get(hash: string) -> IpfsGetResult
   get_external_api_multiaddr() -> IpfsMultiaddrResult
@@ -30,4 +37,4 @@ service Ipfs("aqua-ipfs"):
   set_external_api_multiaddr(multiaddr: string) -> IpfsResult
   set_external_swarm_multiaddr(multiaddr: string) -> IpfsResult
   set_local_api_multiaddr(multiaddr: string) -> IpfsResult
-  set_timeout(timeout_sec: u64)
+  set_timeout(timeout_sec: u64)  

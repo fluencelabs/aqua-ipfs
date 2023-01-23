@@ -154,11 +154,11 @@ pub fn get_from(hash: String, external_multiaddr: String) -> IpfsGetResult {
     let config = load_config();
     let timeout = config.timeout;
 
-    let particle_id = marine_rs_sdk::get_call_parameters().particle_id;
     if Multiaddr::from_str(&external_multiaddr).is_err() {
         return Err(eyre::eyre!("invalid multiaddr: {}", external_multiaddr)).into();
     }
 
+    let particle_id = marine_rs_sdk::get_call_parameters().particle_id;
     let particle_vault_path = format!("/tmp/vault/{}", particle_id);
     let path = format!("{}/{}", particle_vault_path, hash);
     let get_result = ipfs_get(hash, path.clone(), external_multiaddr, timeout);
@@ -168,6 +168,29 @@ pub fn get_from(hash: String, external_multiaddr: String) -> IpfsGetResult {
     } else {
         Err(eyre::eyre!(get_result.error)).into()
     }
+}
+
+#[marine]
+pub fn cat(hash: String) -> IpfsCatResult {
+    let local_maddr = load_local_api_multiaddr().map(|m| m.to_string());
+    if local_maddr.is_ok() {
+        cat_from(hash, local_maddr.unwrap())
+    } else {
+        local_maddr.into()
+    }
+}
+
+#[marine]
+pub fn cat_from(hash: String, external_multiaddr: String) -> IpfsCatResult {
+    log::info!("cat_from called with hash: {}", hash);
+    let config = load_config();
+    let timeout = config.timeout;
+
+    if Multiaddr::from_str(&external_multiaddr).is_err() {
+        return Err(eyre::eyre!("invalid multiaddr: {}", external_multiaddr)).into();
+    }
+
+    ipfs_cat(hash, external_multiaddr, timeout)
 }
 
 #[marine]
