@@ -6,7 +6,7 @@ alias PeerId: string
 alias CID: string
 alias Path: string
 
--- Download file from remote IPFS node to Fluence node and then 
+-- Download file from remote IPFS node to Fluence node and then
 -- put that file to local IPFS node, effectively caching it on the local IPFS node.
 --
 -- Arguments:
@@ -19,7 +19,7 @@ alias Path: string
 --  Path on the node's local filesystem. It will be available only during single particle execution.
 --
 -- Errors:
---  If Ipfs.get_from or Ipfs.put fails, nil is returned. 
+--  If Ipfs.get_from or Ipfs.put fails, nil is returned.
 --  Errors are reported to the `error` callback.
 func get_and_cache(
     node: PeerId,
@@ -49,14 +49,17 @@ func get_and_cache(
 -- path should exist & be available to `aqua-ipfs`
 func put(node: PeerId, path: string) -> IpfsPutResult:
     on node:
-        result <- Ipfs.put(path)
-    <- result
+        <- Ipfs.put(path)
 
 -- Download file `cid` from IPFS node `from` and save it to `node`
 func get_from(node: PeerId, cid: CID, from: Multiaddr) -> IpfsGetResult:
     on node:
-        result <- Ipfs.get_from(cid, from)
-    <- result
+        <- Ipfs.get_from(cid, from)
+
+-- Download file `cid` from IPFS node `from` and save it to `node`
+func cat_from(node: PeerId, cid: CID, from: Multiaddr) -> IpfsCatResult:
+    on node:
+        <- Ipfs.cat_from(cid, from)
 
 -- Set timeout for IPFS calls in `aqua-ipfs`
 func set_timeout(node: PeerId, timeout_sec: u64):
@@ -66,17 +69,14 @@ func set_timeout(node: PeerId, timeout_sec: u64):
 -- Get externally available multiaddress of IPFS's HTTP RPC endpoint (usually on port 5001)
 func get_external_api_multiaddr(node: PeerId) -> IpfsMultiaddrResult:
     on node:
-        result <- Ipfs.get_external_api_multiaddr()
-    <- result
+        <- Ipfs.get_external_api_multiaddr()
 
 -- Get externally available multiaddress of IPFS's Swarm endpoint (usually on port 4001)
 func get_external_swarm_multiaddr(node: PeerId) -> IpfsMultiaddrResult:
     on node:
-        result <- Ipfs.get_external_swarm_multiaddr()
-    <- result
+        <- Ipfs.get_external_swarm_multiaddr()
 
 -- Get local multiaddress of IPFS's HTTP RPC endpoint (usually on port 5001)
 func get_local_api_multiaddr(node: PeerId) -> IpfsMultiaddrResult:
     on node:
-        result <- Ipfs.get_local_api_multiaddr()
-    <- result
+        <- Ipfs.get_local_api_multiaddr()

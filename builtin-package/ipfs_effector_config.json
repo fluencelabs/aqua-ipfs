@@ -2,7 +2,7 @@
   "name": "ipfs_effector",
   "mounted_binaries":
   {
-    "ipfs": "/usr/bin/ipfs"
+    "ipfs": "/opt/homebrew/bin/ipfs"
   },
   "mem_page_count": 1,
   "preopened_files": [
