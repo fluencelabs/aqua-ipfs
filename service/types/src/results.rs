@@ -133,3 +133,27 @@ impl From<Result<String>> for IpfsMultiaddrResult {
         }
     }
 }
+
+#[marine]
+pub struct IpfsCatResult {
+    pub success: bool,
+    pub error: String,
+    pub contents: String,
+}
+
+impl From<Result<String>> for IpfsCatResult {
+    fn from(result: Result<String>) -> Self {
+        match result {
+            Ok(contents) => Self {
+                success: true,
+                error: "".to_string(),
+                contents,
+            },
+            Err(err) => Self {
+                success: false,
+                error: err.to_string(),
+                contents: "".to_string(),
+            },
+        }
+    }
+}

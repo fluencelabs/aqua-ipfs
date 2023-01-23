@@ -16,7 +16,7 @@
 
 #![allow(improper_ctypes)]
 
-use types::{IpfsGetPeerIdResult, IpfsPutResult, IpfsResult};
+use types::{IpfsCatResult, IpfsGetPeerIdResult, IpfsPutResult, IpfsResult};
 
 use marine_rs_sdk::marine;
 use marine_rs_sdk::module_manifest;
@@ -96,7 +96,7 @@ pub fn put(file_path: String, api_multiaddr: String, timeout_sec: u64) -> IpfsPu
         .into()
 }
 
-/// Get file by provided hash from IPFS, saves it to a temporary file and returns a path to it.
+/// Get file by provided hash from IPFS, save it to a `file_path, and return that path
 #[marine]
 pub fn get(hash: String, file_path: String, api_multiaddr: String, timeout_sec: u64) -> IpfsResult {
     log::info!("get called with hash {}", hash);
@@ -135,7 +135,22 @@ pub fn get_peer_id(api_multiaddr: String, timeout_sec: u64) -> IpfsGetPeerIdResu
     };
 
     result
-        .map_err(|e| eyre::eyre!("get_peer_id: {:?}", e))
+        .map_err(|e| eyre::eyre!("get_peer_id error: {:?}", e))
+        .into()
+}
+
+/// Cat file by provided hash from IPFS,
+#[marine]
+pub fn cat(hash: String, api_multiaddr: String, timeout_sec: u64) -> IpfsCatResult {
+    log::info!("cat called with hash {}", hash);
+
+    let args = vec![String::from("cat"), hash];
+    let cmd = make_cmd_args(args, api_multiaddr, timeout_sec);
+
+    log::info!("ipfs cat args {:?}", cmd);
+
+    unwrap_mounted_binary_result(ipfs(cmd))
+        .map_err(|e| eyre::eyre!("ipfs cat error: {:?}", e))
         .into()
 }
 

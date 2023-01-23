@@ -16,7 +16,10 @@
 
 #![allow(improper_ctypes)]
 
-use types::{IpfsGetPeerIdResult, IpfsGetResult, IpfsMultiaddrResult, IpfsPutResult, IpfsResult};
+use types::{
+    IpfsCatResult, IpfsGetPeerIdResult, IpfsGetResult, IpfsMultiaddrResult, IpfsPutResult,
+    IpfsResult,
+};
 
 use marine_rs_sdk::marine;
 use marine_rs_sdk::module_manifest;
@@ -347,4 +350,8 @@ extern "C" {
 
     #[link_name = "get_peer_id"]
     pub fn ipfs_get_peer_id(local_multiaddr: String, timeout_sec: u64) -> IpfsGetPeerIdResult;
+
+    /// Get file from ipfs by hash.
+    #[link_name = "cat"]
+    pub fn ipfs_cat(hash: String, api_multiaddr: String, timeout_sec: u64) -> IpfsCatResult;
 }
