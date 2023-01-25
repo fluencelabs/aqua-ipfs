@@ -49,6 +49,16 @@ jobs:
         with:
           ref: ${{ fromJson(needs.release-please.outputs.pr).headBranchName }}
 
+      - name: Get version
+        id: version
+        run: |
+          version="$(jq -r '.[]' .github/release-please/manifest.json)"
+          echo "version=${version}" >> $GITHUB_OUTPUT
+
+      - name: Set version in service
+        working-directory: service
+        run: cargo set-version ${{ steps.version.outputs.version }}
+
       - name: Set version in aqua
         working-directory: aqua
         run: npm version ${{ steps.version.outputs.version }}
