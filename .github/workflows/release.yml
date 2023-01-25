@@ -1,140 +1,211 @@
-name: "publish-release"
+name: "release"
 
 on:
   push:
-    tags:
-      - "v*"
+    branches:
+      - "main"
+
+concurrency:
+  group: "${{ github.workflow }}-${{ github.ref }}"
 
 jobs:
-  release:
-    name: "Publish"
-    runs-on: builder
+  release-please:
+    runs-on: ubuntu-latest
+
+    outputs:
+      release-created: ${{ steps.release.outputs['release_created'] }}
+      tag-name: ${{ steps.release.outputs['tag_name'] }}
+      version: ${{ steps.release.outputs['version'] }}
+      pr: ${{ steps.release.outputs['pr'] }}
 
     steps:
-      - name: Checkout sources
+      - name: Run release-please
+        id: release
+        uses: google-github-actions/release-please-action@v3
+        with:
+          token: ${{ secrets.FLUENCEBOT_RELEASE_PLEASE_PAT }}
+          command: manifest
+          config-file: .github/release-please/config.json
+          manifest-file: .github/release-please/manifest.json
+
+      - name: Show output from release-please
+        if: steps.release.outputs.releases_created
+        env:
+          RELEASE_PLEASE_OUTPUT: ${{ toJSON(steps.release.outputs) }}
+        run: echo "${RELEASE_PLEASE_OUTPUT}" | jq
+
+  bump-version:
+    if: needs.release-please.outputs.pr != null
+    runs-on: builder
+    needs:
+      - release-please
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ fromJson(needs.release-please.outputs.pr).headBranchName }}
+
+      - name: Get version
+        id: version
+        run: |
+          version="$(jq -r '.[]' .github/release-please/manifest.json)"
+          echo "version=${version}" >> $GITHUB_OUTPUT
+
+      - name: Set version in service
+        working-directory: service
+        run: cargo set-version ${{ steps.version.outputs.version }}
+
+      - name: Set version in aqua
+        working-directory: aqua
+        run: npm version ${{ steps.version.outputs.version }}
+
+      - name: Commit version bump
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "chore: Bump aqua-ipfs version to ${{ steps.version.outputs.version }}"
+          branch: ${{ fromJson(needs.release-please.outputs.pr).headBranchName }}
+          commit_user_name: fluencebot
+          commit_user_email: devops@fluence.one
+          commit_author: fluencebot <devops@fluence.one>
+
+  aqua-ipfs:
+    runs-on: builder
+
+    needs: release-please
+    if: needs.release-please.outputs.release-created
+
+    permissions:
+      contents: write
+      id-token: write
+
+    steps:
+      - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Set env
-        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
-
-      - uses: actions/setup-java@v2
+      - name: Import secrets
+        uses: hashicorp/vault-action@v2.4.3
         with:
-          distribution: 'adopt'
-          java-version: '11'
+          url: https://vault.fluence.dev
+          path: jwt/github
+          role: ci
+          method: jwt
+          jwtGithubAudience: "https://github.com/fluencelabs"
+          jwtTtl: 300
+          exportToken: false
+          secrets: |
+            kv/npmjs/fluencebot token | NODE_AUTH_TOKEN
 
-      - name: Cache npm
-        uses: actions/cache@v2
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-v03-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-v03-
-
-      - uses: actions/setup-node@v2
-        with:
-          node-version: "15"
-          registry-url: "https://registry.npmjs.org"
-
-      - name: Setup rust toolchain
+      - name: Setup Rust toolchain
         uses: actions-rust-lang/setup-rust-toolchain@v1
 
-      - name: Install marine
+      - name: Install Marine
         uses: baptiste0928/cargo-install@v1.3.0
         with:
           crate: marine
 
-      - name: Build aqua-ipfs
-        working-directory: ./service
+      - name: Build service
         run: ./build.sh
+        working-directory: service
 
-      - name: Create distribution package
-        run: |
-          ./builtin-package/package.sh
-
-      - name: Check Aqua compiles
-        working-directory: ./aqua
-        run: |
-          npm i
-          npm run build
-
-      - name: Build Changelog
-        id: changelog
-        uses: mikepenz/release-changelog-builder-action@v1
+      - name: Setup node
+        uses: actions/setup-node@v3
         with:
-          configuration: ".github/workflows/changelog_config.json"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          node-version: "16"
+          registry-url: "https://registry.npmjs.org"
+          cache-dependency-path: "aqua/package-lock.json"
+          cache: "npm"
 
-      - name: Release to GitHub
-        id: release
-        uses: softprops/action-gh-release@v1
-        with:
-          name: aqua-ipfs ${{ env.RELEASE_VERSION }}
-          tag_name: ${{ env.RELEASE_VERSION }}
-          files: |
-            ./aqua-ipfs.tar.gz
-          body: ${{steps.changelog.outputs.changelog}}
-          draft: false
-          prerelease: false
-          fail_on_unmatched_files: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: npm i
+        working-directory: aqua
 
-      - name: Publish Aqua API to NPM
-        run: |
-          npm version ${{ env.RELEASE_VERSION }}
-          npm publish --access public
-        env:
-            NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        working-directory: ./aqua
+      - run: npm run build
+        working-directory: aqua
+
+      - name: Publish to NPM registry
+        run: npm publish --access public
+        working-directory: aqua
+
+      - name: Create builtin distribution package
+        run: ./builtin-package/package.sh
 
       - name: Calculate SHA256
+        id: sha
         run: |
-          du -hs ./aqua-ipfs.tar.gz
-          echo $(sha256sum ./aqua-ipfs.tar.gz)
-          echo "SHA256=$(sha256sum ./aqua-ipfs.tar.gz | awk '{ print $1 }')" >> $GITHUB_ENV
+          # Calculate sha256
+          du -hs aqua-ipfs.tar.gz
+          sha256sum aqua-ipfs.tar.gz
+          sha=($(sha256sum aqua-ipfs.tar.gz))
+          echo "sha256=${sha}" >> $GITHUB_OUTPUT
 
-      - name: Get tar.gz URL
-        id: package-url
-        uses: actions/github-script@v4
+      - name: Upload aqua-ipfs package
+        if: needs.release-please.outputs.release-created
+        uses: softprops/action-gh-release@v1
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          result-encoding: string
-          script: |
-            try {
-                let assets = await github.repos.listReleaseAssets({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  release_id: "${{ steps.release.outputs.id }}",
-                });
-                console.dir(assets);
-                let package = assets.data.find((a) => a.name === 'aqua-ipfs.tar.gz');
-                let url = package.browser_download_url;
-                console.log("URL: " + url);
-                return url;
-            } catch (e) {
-              console.log("Err: " + e);
-              throw e;
-            }
+          files: aqua-ipfs.tar.gz
+          tag_name: ${{ needs.release-please.outputs.tag-name }}
 
       - name: Update version in node-distro repo
+        if: needs.release-please.outputs.release-created
         uses: benc-uk/workflow-dispatch@v1
         with:
           workflow: update_service
           repo: fluencelabs/node-distro
-          ref: 'main'
+          ref: "main"
           token: ${{ secrets.PERSONAL_TOKEN }}
           inputs: '{
             "name": "aqua-ipfs",
-            "version": "${{ env.RELEASE_VERSION }}",
-            "url": "${{ steps.package-url.outputs.result }}",
-            "sha256": "${{ env.SHA256 }}"
+            "version": "${{ needs.release-please.outputs.version }}",
+            "url": "https://github.com/fluencelabs/aqua-ipfs/releases/download/${{ needs.release-please.outputs.tag-name }}/aqua-ipfs.tar.gz",
+            "sha256": "${{ steps.sha.outputs.sha256 }}"
           }'
 
-      - name: Log notice
-        uses: actions/github-script@v4
+  slack:
+    if: always()
+    name: "Notify"
+    runs-on: ubuntu-latest
+
+    needs:
+      - release-please
+      - aqua-ipfs
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - uses: lwhiteley/dependent-jobs-result-check@v1
+        id: status
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-              console.dir(core);
-              core.info("aqua-ipfs was updated to ${{ env.RELEASE_VERSION }} in node-distro repo");
+          statuses: failure
+          dependencies: ${{ toJSON(needs) }}
+
+      - name: Log output
+        run: |
+          echo "statuses:" "${{ steps.status.outputs.statuses }}"
+          echo "jobs:" "${{ steps.status.outputs.jobs }}"
+          echo "found any?:" "${{ steps.status.outputs.found }}"
+
+      - name: Import secrets
+        uses: hashicorp/vault-action@v2.4.3
+        with:
+          url: https://vault.fluence.dev
+          path: jwt/github
+          role: ci
+          method: jwt
+          jwtGithubAudience: "https://github.com/fluencelabs"
+          jwtTtl: 300
+          exportToken: false
+          secrets: |
+            kv/slack/release-please webhook | SLACK_WEBHOOK_URL
+
+      - uses: ravsamhq/notify-slack-action@v2
+        if: steps.status.outputs.found == 'true'
+        with:
+          status: "failure"
+          notification_title: "*{workflow}* has {status_message}"
+          message_format: "${{ steps.status.outputs.jobs }} {status_message} in <{repo_url}|{repo}>"
+          footer: "<{run_url}>"
