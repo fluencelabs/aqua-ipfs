@@ -1,0 +1,12 @@
+{
+  "bootstrap-sha": "54d655a85bae41c14c5cf415799a142262c8c063",
+  "release-type": "simple",
+  "bump-minor-pre-major": true,
+  "bump-patch-for-minor-pre-major": true,
+  "packages": {
+    ".": {
+      "package-name": "aqua-ipfs",
+      "component": "aqua-ipfs"
+    }
+  }
+}
