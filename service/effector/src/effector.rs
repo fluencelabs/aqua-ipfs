@@ -34,6 +34,7 @@ pub fn main() {
         .unwrap();
 }
 
+/// Run `ipfs` mounted binary with the specified arguments
 fn run_ipfs(cmd: Vec<String>) -> Result<String> {
     let result = ipfs(cmd.clone());
 
@@ -46,15 +47,15 @@ fn run_ipfs(cmd: Vec<String>) -> Result<String> {
 }
 
 #[inline]
-fn get_timeout_string(timeout: u64) -> String {
-    format!("{}s", timeout)
+fn format_timeout(timeout_sec: u64) -> String {
+    format!("{}s", timeout_sec)
 }
 
 fn make_cmd_args(args: Vec<String>, api_multiaddr: String, timeout_sec: u64) -> Vec<String> {
     args.into_iter()
         .chain(vec![
             String::from("--timeout"),
-            get_timeout_string(timeout_sec),
+            format_timeout(timeout_sec),
             String::from("--api"),
             api_multiaddr,
         ])
