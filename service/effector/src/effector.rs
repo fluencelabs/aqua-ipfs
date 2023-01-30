@@ -16,14 +16,14 @@
 
 #![allow(improper_ctypes)]
 
-use types::{IpfsGetPeerIdResult, IpfsPutResult, IpfsResult};
-
+use eyre::{Result, WrapErr};
 use marine_rs_sdk::marine;
 use marine_rs_sdk::module_manifest;
 use marine_rs_sdk::MountedBinaryResult;
 use marine_rs_sdk::WasmLoggerBuilder;
 
-use eyre::{Result, WrapErr};
+use itertools::Itertools;
+use types::{IpfsCatResult, IpfsGetPeerIdResult, IpfsPutResult, IpfsResult};
 
 module_manifest!();
 
@@ -34,25 +34,28 @@ pub fn main() {
         .unwrap();
 }
 
-fn unwrap_mounted_binary_result(result: MountedBinaryResult) -> Result<String> {
+/// Run `ipfs` mounted binary with the specified arguments
+fn run_ipfs(cmd: Vec<String>) -> Result<String> {
+    let result = ipfs(cmd.clone());
+
     result
         .into_std()
         .ok_or(eyre::eyre!(
             "stdout or stderr contains non valid UTF8 string"
         ))?
-        .map_err(|e| eyre::eyre!("ipfs cli call failed: {}", e))
+        .map_err(|e| eyre::eyre!("ipfs cli call failed \n{:?}: {}", cmd.iter().join("  "), e))
 }
 
 #[inline]
-fn get_timeout_string(timeout: u64) -> String {
-    format!("{}s", timeout)
+fn format_timeout(timeout_sec: u64) -> String {
+    format!("{}s", timeout_sec)
 }
 
 fn make_cmd_args(args: Vec<String>, api_multiaddr: String, timeout_sec: u64) -> Vec<String> {
     args.into_iter()
         .chain(vec![
             String::from("--timeout"),
-            get_timeout_string(timeout_sec),
+            format_timeout(timeout_sec),
             String::from("--api"),
             api_multiaddr,
         ])
@@ -66,7 +69,7 @@ pub fn connect(multiaddr: String, api_multiaddr: String, timeout_sec: u64) -> Ip
     let args = vec![String::from("swarm"), String::from("connect"), multiaddr];
     let cmd = make_cmd_args(args, api_multiaddr, timeout_sec);
 
-    unwrap_mounted_binary_result(ipfs(cmd)).map(|_| ()).into()
+    run_ipfs(cmd).map(|_| ()).into()
 }
 
 /// Put file from specified path to IPFS and return its hash.
@@ -91,12 +94,10 @@ pub fn put(file_path: String, api_multiaddr: String, timeout_sec: u64) -> IpfsPu
 
     log::info!("ipfs put args {:?}", cmd);
 
-    unwrap_mounted_binary_result(ipfs(cmd))
-        .map(|res| res.trim().to_string())
-        .into()
+    run_ipfs(cmd).map(|res| res.trim().to_string()).into()
 }
 
-/// Get file by provided hash from IPFS, saves it to a temporary file and returns a path to it.
+/// Get file by provided hash from IPFS, save it to a `file_path, and return that path
 #[marine]
 pub fn get(hash: String, file_path: String, api_multiaddr: String, timeout_sec: u64) -> IpfsResult {
     log::info!("get called with hash {}", hash);
@@ -111,7 +112,7 @@ pub fn get(hash: String, file_path: String, api_multiaddr: String, timeout_sec: 
 
     log::info!("ipfs get args {:?}", cmd);
 
-    unwrap_mounted_binary_result(ipfs(cmd))
+    run_ipfs(cmd)
         .map(|output| {
             log::info!("ipfs get output: {}", output);
         })
@@ -123,7 +124,7 @@ pub fn get_peer_id(api_multiaddr: String, timeout_sec: u64) -> IpfsGetPeerIdResu
     let result: Result<String> = try {
         let cmd = make_cmd_args(vec![String::from("id")], api_multiaddr, timeout_sec);
 
-        let result = unwrap_mounted_binary_result(ipfs(cmd))?;
+        let result = run_ipfs(cmd)?;
         let result: serde_json::Value =
             serde_json::from_str(&result).wrap_err("ipfs response parsing failed")?;
         result
@@ -135,7 +136,22 @@ pub fn get_peer_id(api_multiaddr: String, timeout_sec: u64) -> IpfsGetPeerIdResu
     };
 
     result
-        .map_err(|e| eyre::eyre!("get_peer_id: {:?}", e))
+        .map_err(|e| eyre::eyre!("get_peer_id error: {:?}", e))
+        .into()
+}
+
+/// Cat file by provided hash from IPFS,
+#[marine]
+pub fn cat(hash: String, api_multiaddr: String, timeout_sec: u64) -> IpfsCatResult {
+    log::info!("cat called with hash {}", hash);
+
+    let args = vec![String::from("cat"), hash];
+    let cmd = make_cmd_args(args, api_multiaddr, timeout_sec);
+
+    log::info!("ipfs cat args {:?}", cmd);
+
+    run_ipfs(cmd)
+        .map_err(|e| eyre::eyre!("ipfs cat error: {:?}", e))
         .into()
 }
 
