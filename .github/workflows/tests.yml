@@ -2,14 +2,6 @@ name: Run tests with workflow_call
 
 on:
   workflow_call:
-    inputs:
-      rust-peer-image:
-        description: "rust-peer image tag"
-        type: string
-        default: "fluencelabs/fluence:minimal"
-
-env:
-  RUST_PEER_IMAGE: "${{ inputs.rust-peer-image }}"
 
 jobs:
   aqua-ipfs:
@@ -48,6 +40,12 @@ jobs:
       - name: Build aqua-ipfs
         working-directory: ./service
         run: ./build.sh
+
+      # - name: Run cargo clippy
+      #   uses: actions-rs/cargo@v1
+      #   with:
+      #     command: clippy
+      #     args: -Z unstable-options --all --manifest-path service/Cargo.toml
 
       - name: Install cargo-nextest
         uses: baptiste0928/cargo-install@v1.3.0
