@@ -33,10 +33,3 @@ jobs:
         with:
           command: fmt
           args: --all --manifest-path service/Cargo.toml -- --check
-
-      - name: Run cargo clippy
-        uses: actions-rs/cargo@v1
-        with:
-          command: clippy
-          args: -Z unstable-options --all --manifest-path service/Cargo.toml
-        continue-on-error: true # do not fail for now
