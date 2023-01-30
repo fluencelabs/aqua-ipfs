@@ -55,9 +55,25 @@ jobs:
           version="$(jq -r '.[]' .github/release-please/manifest.json)"
           echo "version=${version}" >> $GITHUB_OUTPUT
 
+      - name: Setup Rust toolchain
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+
+      - name: Install cargo-edit
+        uses: baptiste0928/cargo-install@v1.3.0
+        with:
+          crate: cargo-edit
+
       - name: Set version in service
         working-directory: service
         run: cargo set-version ${{ steps.version.outputs.version }}
+
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: "16"
+          registry-url: "https://registry.npmjs.org"
+          cache-dependency-path: "aqua/package-lock.json"
+          cache: "npm"
 
       - name: Set version in aqua
         working-directory: aqua
