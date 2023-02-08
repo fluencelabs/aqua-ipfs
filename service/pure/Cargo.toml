@@ -15,7 +15,7 @@ multiaddr = { version = "0.11.2", package = "fluence-fork-parity-multiaddr" }
 log = "0.4.14"
 eyre = "0.6.5"
 toml = "0.5.8"
-serde = "1.0.118"
+serde = "1.0.152"
 bs58 = "0.4.0"
 
 types = { path = "../types" }
