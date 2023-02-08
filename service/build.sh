@@ -9,7 +9,6 @@ cd effector
 marine build --release
 
 cd ../pure
-cargo update --aggressive
 marine build --release
 
 cd ..
