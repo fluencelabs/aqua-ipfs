@@ -1,6 +1,6 @@
 [package]
 name = "ipfs-pure"
-version = "0.1.0"
+version = "0.5.9"
 authors = ["Fluence Labs"]
 edition = "2018"
 publish = false
