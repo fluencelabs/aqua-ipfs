@@ -1,12 +1,18 @@
 # Aqua IPFS bindings
-Native IPFS integration to Aqua language. Orchestrate IPFS file transfer with Aqua scripts.
 
-## Quick installation with @fluencelabs/cli
+[![npm](https://img.shields.io/npm/v/@fluencelabs/aqua-ipfs)](https://www.npmjs.com/package/@fluencelabs/aqua-ipfs)
+
+Aqua-ipfs is a native [IPFS](https://ipfs.tech/) integration to [Aqua](https://fluence.dev/docs/aqua-book/introduction) language. It lets one call the API of an IPFS daemon, e.g., to transfer files between peers & services or to orchestrate IPFS nodes.
+
+## Quick Installation and Usage
+
+First, make sure you have [Fluence CLI](https://github.com/fluencelabs/fluence-cli) installed. After this, installation is as simple as:
+
 ```
 fluence dep npm i @fluencelabs/aqua-ipfs
 ```
 
-## Quick Aqua example
+Next, run:
 
 ```
 import "@fluencelabs/aqua-ipfs/ipfs-api.aqua"
@@ -26,22 +32,9 @@ func install_scheduled_script_from_ipfs_to_peer(from: PeerId, to: PeerId, cid: s
   <- script_id
 ```
 
-## Documentation
-See [aqua-ipfs in Aqua Book](https://fluence.dev/docs/aqua-book/libraries/aqua-ipfs).
+To run it in Marine REPL (mrepl), one needs to install `mrepl` via `cargo install mrepl`
+first. After that:
 
-## Directory structure
-- `aqua` Aqua API of AquaIPFS. See [aqua/README](/aqua/README.md)
-- `service` contains Rust service that implements all the IPFS calls by using `ipfs` cli mounted binary
-- `example` A simple example of how to use ipfs adapter from TypeScript
-- `local-network` contains Docker Compose YAML config to run a local Fluence network of 3 nodes
-
-## How to use it in TypeScript
-There's a simple example in [example](/example/index.ts)
-
-## How to run it in MREPL
-First, you would need to install mrepl via `cargo install mrepl`
-
-After that, here's an example
 ```
 cd service
 mrepl
@@ -53,9 +46,36 @@ call ipfs_pure set_external_api_multiaddr ["/ip4/134.209.186.43/tcp/5001/p2p/12D
 call ipfs_pure get_from ["QmfBRabun4FpaHV4wVXtnqtopUTro93XJHiWhNZscViCaq", "/ip4/134.209.186.43/tcp/5001/p2p/12D3KooWEhCqQ9NBnmtSfNeXSNfhgccmH86xodkCUxZNEXab6pkw"]
 ```
 
-You can use `interface` and `help` inside mrepl to further discover what's possible.
+You can use `interface` and `help` inside `mrepl` to further discover what's possible.
 
-# Contribution
-Contributions are welcome!
+A simple example of using `aqua-ipfs` in TypeScript is available [here](./example/index.ts).
 
-`aqua-ipfs` integrates with IPFS by using `ipfs` CLI, so it's possible to expose virtually any IPFS API to Aqua. Feel free to open an issue or contribute APIs and patterns you find useful.
+
+## Documentation
+
+Comprehensive documentation including API and usage examples can be found in [Aqua Book](https://fluence.dev/docs/aqua-book/libraries/aqua-ipfs).
+
+
+## Repository Structure
+
+- [**aqua**](./aqua) is Aqua API of Aqua-ipfs. See its [README](./aqua/README.md) for details.
+- [**builtin-package**](./builtin-package) Files necessary to use Aqua-ipfs on peers
+- [**example**](./example) A simple example of how to use IPFS adapter from TypeScript
+- [**local-network**](./local-network) contains Docker Compose YAML config to run a local Fluence network of 3 nodes
+- [**service**](./service) contains Rust service that implements all IPFS calls by using `ipfs` CLI mounted binary
+
+
+## Support
+
+Please, file an [issue](https://github.com/fluencelabs/aqua-ipfs/issues) if you find a bug. You can also contact us at [Discord](https://discord.com/invite/5qSnPZKh7u) or [Telegram](https://t.me/fluence_project).  We will do our best to resolve the issue ASAP.
+
+
+## Contributing
+
+Any interested person is welcome to contribute to the project. Please, make sure you read and follow some basic [rules](./CONTRIBUTING.md).
+
+
+## License
+
+All software code is copyright (c) Fluence Labs, Inc. under the [Apache-2.0](./LICENSE) license.
+
