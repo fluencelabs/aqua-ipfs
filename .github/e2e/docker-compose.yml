@@ -1,6 +1,6 @@
 services:
   rust-peer:
-    image: ${RUST_PEER_IMAGE:-fluencelabs/fluence:minimal}
+    image: ${RUST_PEER_IMAGE:-fluencelabs/rust-peer:minimal}
     ports:
       - 7771:7771
       - 9991:9991
