@@ -20,3 +20,4 @@ builtin-package/*.wasm
 .bic_cache
 
 aqua-ipfs.tar.gz
+**/ipfs-service/*
