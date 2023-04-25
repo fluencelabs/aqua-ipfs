@@ -143,6 +143,16 @@ jobs:
         run: npm publish --access public
         working-directory: aqua
 
+      - name: Publish to crates.io
+        working-directory: ./service
+        run: |
+          cargo ws publish \
+            --no-git-commit \
+            --allow-dirty \
+            --from-git \
+            --skip-published \
+            --yes
+
       - name: Create builtin distribution package
         run: ./builtin-package/package.sh
 
