@@ -32,7 +32,7 @@ use std::fs;
 use std::str::FromStr;
 
 const CONFIG_FILE_PATH: &str = "/tmp/multiaddr_config";
-const DEFAULT_TIMEOUT_SEC: u64 = 1u64;
+const DEFAULT_TIMEOUT_SEC: u64 = 10u64;
 module_manifest!();
 
 pub fn main() {
