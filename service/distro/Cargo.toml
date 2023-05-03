@@ -1,6 +1,6 @@
 [package]
 name = "aqua-ipfs-distro"
-version = "0.5.12"
+version = "0.5.11"
 description = "distribution of aqua ipfs service"
 edition = "2021"
 build = "build.rs"
