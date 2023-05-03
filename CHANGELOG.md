@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.5.12](https://github.com/fluencelabs/aqua-ipfs/compare/aqua-ipfs-v0.5.11...aqua-ipfs-v0.5.12) (2023-05-03)
+
+
+### Features
+
+* **release:** continue if publishing fails ([#78](https://github.com/fluencelabs/aqua-ipfs/issues/78)) ([ceb8805](https://github.com/fluencelabs/aqua-ipfs/commit/ceb88050f40292fa49eb195d31f25e254d9f426b))
+
+
+### Bug Fixes
+
+* **config:** set default timeout to 10s ([#75](https://github.com/fluencelabs/aqua-ipfs/issues/75)) ([8030d4d](https://github.com/fluencelabs/aqua-ipfs/commit/8030d4d306dd800435d006ddc7a81ad286a3c859))
+
 ## [0.5.11](https://github.com/fluencelabs/aqua-ipfs/compare/aqua-ipfs-v0.5.10...aqua-ipfs-v0.5.11) (2023-04-24)
 
 
