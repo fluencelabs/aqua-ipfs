@@ -144,6 +144,7 @@ jobs:
       - name: Publish to NPM registry
         run: npm publish --access public
         working-directory: aqua
+        continue-on-error: true
 
       - name: Publish to crates.io
         working-directory: ./service
@@ -154,6 +155,7 @@ jobs:
             --from-git \
             --skip-published \
             --yes
+        continue-on-error: true
 
       - name: Create builtin distribution package
         run: ./builtin-package/package.sh
