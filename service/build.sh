@@ -19,4 +19,4 @@ cp target/wasm32-wasi/release/ipfs_pure.wasm artifacts/
 marine aqua artifacts/ipfs_pure.wasm -s Ipfs -i aqua-ipfs >../aqua/ipfs.aqua
 
 mkdir -p distro/ipfs-service
-cp -v artifacts/ipfs_effector.wasm artifacts/ipfs_pure.wasm Config.toml distro/ipfs-service
+cp -v artifacts/ipfs_effector.wasm artifacts/ipfs_pure.wasm artifacts/Config.toml distro/ipfs-service

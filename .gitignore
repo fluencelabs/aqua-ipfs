@@ -12,6 +12,7 @@ example/generated/**
 .idea
 
 service/artifacts/*
+!service/artifacts/Config.toml
 builtin-package/*.wasm
 
 **/node_modules

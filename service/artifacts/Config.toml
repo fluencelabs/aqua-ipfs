@@ -1,4 +1,4 @@
-modules_dir = "artifacts/"
+modules_dir = "."
 
 [[module]]
     name = "ipfs_effector"
@@ -6,12 +6,12 @@ modules_dir = "artifacts/"
     logger_enabled = true
 
     [module.mounted_binaries]
-    ipfs = "/opt/homebrew/bin/ipfs"
+    ipfs = "/usr/bin/ipfs"
 
     [module.wasi]
-    envs = { "/tmp/vault" = "/tmp" }
+    preopend_files = ["tmp"]
+    mapped_dirs = { "tmp" = "." }
 
 [[module]]
     name = "ipfs_pure"
-    mem_pages_count = 100
     logger_enabled = true
