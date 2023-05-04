@@ -1,5 +1,3 @@
-modules_dir = "."
-
 [[module]]
     name = "ipfs_effector"
     mem_pages_count = 100
