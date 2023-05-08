@@ -149,9 +149,11 @@ jobs:
       - name: Publish to NPM registry
         run: npm publish --access public
         working-directory: aqua
+        continue-on-error: true
 
       - name: Publish to crates.io
         working-directory: ./service
+        continue-on-error: true
         run: |
           cargo ws publish \
             --no-git-commit \
