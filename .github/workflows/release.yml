@@ -163,8 +163,6 @@ jobs:
 
       - name: Install ipfs
         uses: nahsi/setup-ipfs@v1
-        with:
-          version: 0.14.0
 
       - name: Create builtin distribution package
         run: ./builtin-package/package.sh
