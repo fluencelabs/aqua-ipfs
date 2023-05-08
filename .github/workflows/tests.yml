@@ -62,6 +62,7 @@ jobs:
         uses: nahsi/setup-ipfs@v1
         with:
           version: 0.14.0
+          run: ipfs init
 
       - name: Create distribution package
         run: ./builtin-package/package.sh
