@@ -58,6 +58,9 @@ jobs:
           NEXTEST_TEST_THREADS: 10
         run: cargo nextest run --release --all-features --no-fail-fast
 
+      - name: Install ipfs
+        uses: nahsi/setup-ipfs@v1
+
       - name: Create distribution package
         run: ./builtin-package/package.sh
 
