@@ -6,7 +6,7 @@ cd "$(dirname "$0")"
 PACKAGE_DIR="$(pwd)/../aqua-ipfs"
 
 (
-    rm -rf $PACKAGE_DIR
+    rm -rf $PACKAGE_DIR/*
     mkdir -p $PACKAGE_DIR
 )
 
