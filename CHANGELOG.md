@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.13](https://github.com/fluencelabs/aqua-ipfs/compare/aqua-ipfs-v0.5.12...aqua-ipfs-v0.5.13) (2023-05-08)
+
+
+### Features
+
+* **builtin-package:** use new blueprint ([#81](https://github.com/fluencelabs/aqua-ipfs/issues/81)) ([4ce8e8b](https://github.com/fluencelabs/aqua-ipfs/commit/4ce8e8bce7f9d0b4ea046b73391f3b5199ab02a6))
+
 ## [0.5.12](https://github.com/fluencelabs/aqua-ipfs/compare/aqua-ipfs-v0.5.11...aqua-ipfs-v0.5.12) (2023-05-03)
 
 
