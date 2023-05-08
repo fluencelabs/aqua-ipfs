@@ -63,9 +63,6 @@ jobs:
         with:
           version: 0.14.0
 
-      - name: Init ipfs
-        run: ipfs init
-
       - name: Create distribution package
         run: ./builtin-package/package.sh
 
