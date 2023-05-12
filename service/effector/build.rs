@@ -22,14 +22,14 @@ fn main() {
             "ipfs_put".to_string(),
             ServiceDescription {
                 config_path: "tests/Config_put.toml".to_string(),
-                modules_dir: Some("../artifacts".to_string()),
+                modules_dir: None,
             },
         ),
         (
             "ipfs_error".to_string(),
             ServiceDescription {
                 config_path: "tests/Config_error.toml".to_string(),
-                modules_dir: Some("../artifacts".to_string()),
+                modules_dir: None,
             },
         ),
     ];
