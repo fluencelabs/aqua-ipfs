@@ -1,4 +1,4 @@
-modules_dir = "artifacts/"
+modules_dir = "../../artifacts/"
 
 [[module]]
 name = "ipfs_effector"
@@ -6,4 +6,4 @@ mem_pages_count = 100
 logger_enabled = true
 
 [module.mounted_binaries]
-ipfs = "./tests/ipfs_error"
+ipfs = "ipfs_error"
