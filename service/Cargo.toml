@@ -3,4 +3,5 @@ members = [
   "effector",
   "pure",
   "distro",
+  "types",
 ]
