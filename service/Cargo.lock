@@ -126,6 +126,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "771fe0050b883fcc3ea2359b1a96bcfbc090b7116eae7c3c512c7a083fdf23d3"
 
 [[package]]
+name = "bs58"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f5353f36341f7451062466f0b755b96ac3a9547e4d7f6b70d603fc721a7d7896"
+dependencies = [
+ "tinyvec",
+]
+
+[[package]]
 name = "built"
 version = "0.5.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -694,7 +703,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "06228daafbf129ef49806f15779857012c01d49658930d086498e78f12191da7"
 dependencies = [
  "arrayref",
- "bs58",
+ "bs58 0.4.0",
  "byteorder",
  "data-encoding",
  "multihash",
@@ -949,7 +958,7 @@ dependencies = [
 name = "ipfs-pure"
 version = "0.5.13"
 dependencies = [
- "bs58",
+ "bs58 0.5.0",
  "eyre",
  "fluence-fork-parity-multiaddr",
  "log",
