@@ -28,6 +28,9 @@ service Ipfs("aqua-ipfs"):
   cat(hash: string) -> IpfsCatResult
   cat_from(hash: string, external_multiaddr: string) -> IpfsCatResult
   connect(multiaddr: string) -> IpfsResult
+  dag_get(hash: string) -> IpfsGetResult
+  dag_get_from(hash: string, external_multiaddr: string) -> IpfsGetResult
+  dag_put(file_path: string) -> IpfsPutResult
   get(hash: string) -> IpfsGetResult
   get_external_api_multiaddr() -> IpfsMultiaddrResult
   get_external_swarm_multiaddr() -> IpfsMultiaddrResult

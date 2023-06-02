@@ -139,6 +139,19 @@ pub fn put(file_path: String) -> IpfsPutResult {
 }
 
 #[marine]
+pub fn dag_put(file_path: String) -> IpfsPutResult {
+    log::info!("dag put called with {:?}", file_path);
+    let timeout = load_config().timeout;
+    let local_maddr = load_local_api_multiaddr().map(|m| m.to_string());
+    if local_maddr.is_ok() {
+        ipfs_dag_put(file_path, local_maddr.unwrap(), timeout)
+    } else {
+        local_maddr.into()
+    }
+}
+
+
+#[marine]
 pub fn get(hash: String) -> IpfsGetResult {
     let local_maddr = load_local_api_multiaddr().map(|m| m.to_string());
     if local_maddr.is_ok() {
@@ -162,6 +175,38 @@ pub fn get_from(hash: String, external_multiaddr: String) -> IpfsGetResult {
     let particle_vault_path = format!("/tmp/vault/{}", particle_id);
     let path = format!("{}/{}", particle_vault_path, hash);
     let get_result = ipfs_get(hash, path.clone(), external_multiaddr, timeout);
+
+    if get_result.success {
+        Ok(path).into()
+    } else {
+        Err(eyre::eyre!(get_result.error)).into()
+    }
+}
+
+#[marine]
+pub fn dag_get(hash: String) -> IpfsGetResult {
+    let local_maddr = load_local_api_multiaddr().map(|m| m.to_string());
+    if local_maddr.is_ok() {
+        dag_get_from(hash, local_maddr.unwrap())
+    } else {
+        local_maddr.into()
+    }
+}
+
+#[marine]
+pub fn dag_get_from(hash: String, external_multiaddr: String) -> IpfsGetResult {
+    log::info!("dag_get_from called with hash: {}", hash);
+    let config = load_config();
+    let timeout = config.timeout;
+
+    if Multiaddr::from_str(&external_multiaddr).is_err() {
+        return Err(eyre::eyre!("invalid multiaddr: {}", external_multiaddr)).into();
+    }
+
+    let particle_id = marine_rs_sdk::get_call_parameters().particle_id;
+    let particle_vault_path = format!("/tmp/vault/{}", particle_id);
+    let path = format!("{}/{}", particle_vault_path, hash);
+    let get_result = ipfs_dag_get(hash, path.clone(), external_multiaddr, timeout);
 
     if get_result.success {
         Ok(path).into()
@@ -210,7 +255,7 @@ pub fn set_external_api_multiaddr(multiaddr: String) -> IpfsResult {
         return eyre::Result::<()>::Err(eyre::eyre!(
             "only service creator can set external api multiaddr"
         ))
-        .into();
+            .into();
     }
 
     let config = load_config();
@@ -266,7 +311,7 @@ pub fn set_local_api_multiaddr(multiaddr: String) -> IpfsResult {
         return eyre::Result::<()>::Err(eyre::eyre!(
             "only service creator can set local api multiaddr"
         ))
-        .into();
+            .into();
     }
 
     let result: eyre::Result<()> = try {
@@ -294,7 +339,7 @@ pub fn set_external_swarm_multiaddr(multiaddr: String) -> IpfsResult {
         return eyre::Result::<()>::Err(eyre::eyre!(
             "external swarm multiaddr can only be set once"
         ))
-        .into();
+            .into();
     }
 
     let call_parameters = marine_rs_sdk::get_call_parameters();
@@ -302,7 +347,7 @@ pub fn set_external_swarm_multiaddr(multiaddr: String) -> IpfsResult {
         return eyre::Result::<()>::Err(eyre::eyre!(
             "only service creator can set external swarm multiaddr"
         ))
-        .into();
+            .into();
     }
 
     let result: eyre::Result<()> = try {
@@ -362,9 +407,22 @@ extern "C" {
     #[link_name = "put"]
     pub fn ipfs_put(file_path: String, api_multiaddr: String, timeout_sec: u64) -> IpfsPutResult;
 
+    /// Put provided dag to ipfs, return ipfs hash of the dag.
+    #[link_name = "dag_put"]
+    pub fn ipfs_dag_put(dag: String, api_multiaddr: String, timeout_sec: u64) -> IpfsPutResult;
+
     /// Get file from ipfs by hash.
     #[link_name = "get"]
     pub fn ipfs_get(
+        hash: String,
+        file_path: String,
+        api_multiaddr: String,
+        timeout_sec: u64,
+    ) -> IpfsResult;
+
+    // Get dag from ipfs by hash.
+    #[link_name = "dag_get"]
+    pub fn ipfs_dag_get(
         hash: String,
         file_path: String,
         api_multiaddr: String,

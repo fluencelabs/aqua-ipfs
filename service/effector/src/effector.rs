@@ -16,6 +16,7 @@
 
 #![allow(improper_ctypes)]
 
+use std::fs;
 use eyre::{Result, WrapErr};
 use marine_rs_sdk::marine;
 use marine_rs_sdk::module_manifest;
@@ -26,6 +27,9 @@ use itertools::Itertools;
 use types::{IpfsCatResult, IpfsGetPeerIdResult, IpfsPutResult, IpfsResult};
 
 module_manifest!();
+
+/// Default chunk size for `ipfs add` command to produce stable CIDs.
+const CHUCK_SIZE: usize = 262144;
 
 pub fn main() {
     WasmLoggerBuilder::new()
@@ -89,6 +93,8 @@ pub fn put(file_path: String, api_multiaddr: String, timeout_sec: u64) -> IpfsPu
         String::from("add"),
         String::from("-Q"),
         inject_vault_host_path(file_path),
+        String::from("--cid-version=1"),
+        format!("--chunker=size-{}", CHUCK_SIZE),
     ];
     let cmd = make_cmd_args(args, api_multiaddr, timeout_sec);
 
@@ -97,7 +103,32 @@ pub fn put(file_path: String, api_multiaddr: String, timeout_sec: u64) -> IpfsPu
     run_ipfs(cmd).map(|res| res.trim().to_string()).into()
 }
 
-/// Get file by provided hash from IPFS, save it to a `file_path, and return that path
+/// Put dag from specified path to IPFS and return its hash.
+#[marine]
+pub fn dag_put(file_path: String, api_multiaddr: String, timeout_sec: u64) -> IpfsPutResult {
+    log::info!("dag_put called with file path {}", file_path);
+
+    if !std::path::Path::new(&file_path).exists() {
+        return IpfsPutResult {
+            success: false,
+            error: format!("path {} doesn't exist", file_path),
+            hash: "".to_string(),
+        };
+    }
+
+    let args = vec![
+        String::from("dag"),
+        String::from("put"),
+        inject_vault_host_path(file_path),
+    ];
+    let cmd = make_cmd_args(args, api_multiaddr, timeout_sec);
+
+    log::info!("ipfs dag put args {:?}", cmd);
+
+    run_ipfs(cmd).map(|res| res.trim().to_string()).into()
+}
+
+/// Get file by provided hash from IPFS, save it to a `file_path`, and return that path
 #[marine]
 pub fn get(hash: String, file_path: String, api_multiaddr: String, timeout_sec: u64) -> IpfsResult {
     log::info!("get called with hash {}", hash);
@@ -116,6 +147,31 @@ pub fn get(hash: String, file_path: String, api_multiaddr: String, timeout_sec: 
         .map(|output| {
             log::info!("ipfs get output: {}", output);
         })
+        .into()
+}
+
+/// Get dag by provided hash from IPFS, save it to a `file_path`, and return that path
+#[marine]
+pub fn dag_get(hash: String, file_path: String, api_multiaddr: String, timeout_sec: u64) -> IpfsResult {
+    log::info!("dag_get called with hash {}", hash);
+
+    let args = vec![
+        String::from("dag"),
+        String::from("get"),
+        hash,
+    ];
+    let cmd = make_cmd_args(args, api_multiaddr, timeout_sec);
+
+    log::info!("ipfs dag get args {:?}", cmd);
+
+    let result: Result<()> = try {
+        let dag = run_ipfs(cmd)?;
+        fs::write(inject_vault_host_path(file_path), dag)?
+    };
+
+    result
+        .map(|_| ())
+        .map_err(|e| eyre::eyre!("dag_get error: {:?}", e))
         .into()
 }
 
