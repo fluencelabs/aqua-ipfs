@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.14](https://github.com/fluencelabs/aqua-ipfs/compare/aqua-ipfs-v0.5.13...aqua-ipfs-v0.5.14) (2023-06-09)
+
+
+### Bug Fixes
+
+* distro crate config and modules names ([#82](https://github.com/fluencelabs/aqua-ipfs/issues/82)) ([cfecf86](https://github.com/fluencelabs/aqua-ipfs/commit/cfecf86ab59cf1fad5e880240705ec5bb0a09c6e))
+
 ## [0.5.13](https://github.com/fluencelabs/aqua-ipfs/compare/aqua-ipfs-v0.5.12...aqua-ipfs-v0.5.13) (2023-05-08)
 
 
