@@ -162,8 +162,6 @@ pub fn dag_get(hash: String, file_path: String, api_multiaddr: String, timeout_s
     ];
     let cmd = make_cmd_args(args, api_multiaddr, timeout_sec);
 
-    log::info!("ipfs dag get args {:?}", cmd);
-
     let result: Result<()> = try {
         let dag = run_ipfs(cmd)?;
         fs::write(inject_vault_host_path(file_path), dag)?

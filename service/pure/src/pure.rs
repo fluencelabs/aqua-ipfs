@@ -431,8 +431,4 @@ extern "C" {
 
     #[link_name = "get_peer_id"]
     pub fn ipfs_get_peer_id(local_multiaddr: String, timeout_sec: u64) -> IpfsGetPeerIdResult;
-
-    /// Get file from ipfs by hash.
-    #[link_name = "cat"]
-    pub fn ipfs_cat(hash: String, api_multiaddr: String, timeout_sec: u64) -> IpfsCatResult;
 }
