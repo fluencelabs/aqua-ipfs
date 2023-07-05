@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.15](https://github.com/fluencelabs/aqua-ipfs/compare/aqua-ipfs-v0.5.14...aqua-ipfs-v0.5.15) (2023-07-05)
+
+
+### Bug Fixes
+
+* **aqua:** compile aqua with flox and fix for new aqua ([#95](https://github.com/fluencelabs/aqua-ipfs/issues/95)) ([68a2ca7](https://github.com/fluencelabs/aqua-ipfs/commit/68a2ca7a54f227426f8c8c5932c9b86c1b9a2cf5))
+* **ci:** use unstable nox image ([#93](https://github.com/fluencelabs/aqua-ipfs/issues/93)) ([77ebe81](https://github.com/fluencelabs/aqua-ipfs/commit/77ebe8179a08f99c9593d7d1305551355491e060))
+
 ## [0.5.14](https://github.com/fluencelabs/aqua-ipfs/compare/aqua-ipfs-v0.5.13...aqua-ipfs-v0.5.14) (2023-06-09)
 
 
