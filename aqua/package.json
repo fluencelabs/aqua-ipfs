@@ -10,7 +10,7 @@
   },
   "scripts": {
     "generate-aqua": "../service/build.sh",
-    "compile-aqua": "fluence aqua -i . -o ./target/typescript",
+    "compile-aqua": "fluence aqua -i . -o ./target/typescript --air",
     "build": "npm run compile-aqua"
   },
   "repository": {
