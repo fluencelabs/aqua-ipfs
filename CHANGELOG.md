@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.17](https://github.com/fluencelabs/aqua-ipfs/compare/aqua-ipfs-v0.5.16...aqua-ipfs-v0.5.17) (2023-07-10)
+
+
+### Bug Fixes
+
+* **ci:** fix compilation for release ([#98](https://github.com/fluencelabs/aqua-ipfs/issues/98)) ([24f68a0](https://github.com/fluencelabs/aqua-ipfs/commit/24f68a054c580e9144e5a434c739fdaa503674eb))
+
 ## [0.5.16](https://github.com/fluencelabs/aqua-ipfs/compare/aqua-ipfs-v0.5.15...aqua-ipfs-v0.5.16) (2023-07-06)
 
 
