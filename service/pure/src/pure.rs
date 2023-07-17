@@ -415,7 +415,7 @@ extern "C" {
     pub fn ipfs_get(
         hash: String,
         file_path: String,
-        api_multiaddr: String
+        api_multiaddr: String,
         timeout_sec: u64,
     ) -> IpfsResult;
 
