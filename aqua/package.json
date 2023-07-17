@@ -1,6 +1,6 @@
 {
   "name": "@fluencelabs/aqua-ipfs",
-  "version": "0.5.13",
+  "version": "0.5.17",
   "description": "Aqua IPFS library",
   "files": [
     "*.aqua"
@@ -10,7 +10,7 @@
   },
   "scripts": {
     "generate-aqua": "../service/build.sh",
-    "compile-aqua": "aqua -i . -o ./target/typescript",
+    "compile-aqua": "fluence aqua -i . --dry",
     "build": "npm run compile-aqua"
   },
   "repository": {
@@ -31,6 +31,6 @@
   },
   "homepage": "https://github.com/fluencelabs/aqua-ipfs#readme",
   "devDependencies": {
-    "@fluencelabs/aqua": "0.10.3"
+    "@fluencelabs/cli": "0.5.3"
   }
 }

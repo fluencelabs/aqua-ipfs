@@ -10,7 +10,7 @@ pub use build_info::PKG_VERSION as VERSION;
 
 pub fn modules() -> std::collections::HashMap<&'static str, &'static [u8]> {
     maplit::hashmap! {
-        "facade" => IPFS_FACADE,
-        "effector" => IPFS_EFFECTOR,
+        "ipfs_pure" => IPFS_FACADE,
+        "ipfs_effector" => IPFS_EFFECTOR,
     }
 }

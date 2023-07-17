@@ -1,5 +1,34 @@
 # Changelog
 
+## [0.5.17](https://github.com/fluencelabs/aqua-ipfs/compare/aqua-ipfs-v0.5.16...aqua-ipfs-v0.5.17) (2023-07-10)
+
+
+### Bug Fixes
+
+* **ci:** fix compilation for release ([#98](https://github.com/fluencelabs/aqua-ipfs/issues/98)) ([24f68a0](https://github.com/fluencelabs/aqua-ipfs/commit/24f68a054c580e9144e5a434c739fdaa503674eb))
+
+## [0.5.16](https://github.com/fluencelabs/aqua-ipfs/compare/aqua-ipfs-v0.5.15...aqua-ipfs-v0.5.16) (2023-07-06)
+
+
+### Bug Fixes
+
+* **ci:** use node 18 ([#96](https://github.com/fluencelabs/aqua-ipfs/issues/96)) ([513c2cf](https://github.com/fluencelabs/aqua-ipfs/commit/513c2cfc3f6a9aa92f0d4bdad39568744e28f481))
+
+## [0.5.15](https://github.com/fluencelabs/aqua-ipfs/compare/aqua-ipfs-v0.5.14...aqua-ipfs-v0.5.15) (2023-07-05)
+
+
+### Bug Fixes
+
+* **aqua:** compile aqua with flox and fix for new aqua ([#95](https://github.com/fluencelabs/aqua-ipfs/issues/95)) ([68a2ca7](https://github.com/fluencelabs/aqua-ipfs/commit/68a2ca7a54f227426f8c8c5932c9b86c1b9a2cf5))
+* **ci:** use unstable nox image ([#93](https://github.com/fluencelabs/aqua-ipfs/issues/93)) ([77ebe81](https://github.com/fluencelabs/aqua-ipfs/commit/77ebe8179a08f99c9593d7d1305551355491e060))
+
+## [0.5.14](https://github.com/fluencelabs/aqua-ipfs/compare/aqua-ipfs-v0.5.13...aqua-ipfs-v0.5.14) (2023-06-09)
+
+
+### Bug Fixes
+
+* distro crate config and modules names ([#82](https://github.com/fluencelabs/aqua-ipfs/issues/82)) ([cfecf86](https://github.com/fluencelabs/aqua-ipfs/commit/cfecf86ab59cf1fad5e880240705ec5bb0a09c6e))
+
 ## [0.5.13](https://github.com/fluencelabs/aqua-ipfs/compare/aqua-ipfs-v0.5.12...aqua-ipfs-v0.5.13) (2023-05-08)
 
 

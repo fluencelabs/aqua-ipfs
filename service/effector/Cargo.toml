@@ -1,6 +1,6 @@
 [package]
 name = "ipfs-effector"
-version = "0.5.13"
+version = "0.5.17"
 authors = ["Fluence Labs"]
 edition = "2018"
 publish = false
