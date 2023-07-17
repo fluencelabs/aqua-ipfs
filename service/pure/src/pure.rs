@@ -150,7 +150,6 @@ pub fn dag_put(file_path: String) -> IpfsPutResult {
     }
 }
 
-
 #[marine]
 pub fn get(hash: String) -> IpfsGetResult {
     let local_maddr = load_local_api_multiaddr().map(|m| m.to_string());
@@ -255,7 +254,7 @@ pub fn set_external_api_multiaddr(multiaddr: String) -> IpfsResult {
         return eyre::Result::<()>::Err(eyre::eyre!(
             "only service creator can set external api multiaddr"
         ))
-            .into();
+        .into();
     }
 
     let config = load_config();
@@ -311,7 +310,7 @@ pub fn set_local_api_multiaddr(multiaddr: String) -> IpfsResult {
         return eyre::Result::<()>::Err(eyre::eyre!(
             "only service creator can set local api multiaddr"
         ))
-            .into();
+        .into();
     }
 
     let result: eyre::Result<()> = try {
@@ -339,7 +338,7 @@ pub fn set_external_swarm_multiaddr(multiaddr: String) -> IpfsResult {
         return eyre::Result::<()>::Err(eyre::eyre!(
             "external swarm multiaddr can only be set once"
         ))
-            .into();
+        .into();
     }
 
     let call_parameters = marine_rs_sdk::get_call_parameters();
@@ -347,7 +346,7 @@ pub fn set_external_swarm_multiaddr(multiaddr: String) -> IpfsResult {
         return eyre::Result::<()>::Err(eyre::eyre!(
             "only service creator can set external swarm multiaddr"
         ))
-            .into();
+        .into();
     }
 
     let result: eyre::Result<()> = try {
@@ -416,7 +415,7 @@ extern "C" {
     pub fn ipfs_get(
         hash: String,
         file_path: String,
-        api_multiaddr: String,
+        api_multiaddr: String
         timeout_sec: u64,
     ) -> IpfsResult;
 

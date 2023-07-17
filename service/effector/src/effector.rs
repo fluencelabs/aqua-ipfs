@@ -16,12 +16,12 @@
 
 #![allow(improper_ctypes)]
 
-use std::fs;
 use eyre::{Result, WrapErr};
 use marine_rs_sdk::marine;
 use marine_rs_sdk::module_manifest;
 use marine_rs_sdk::MountedBinaryResult;
 use marine_rs_sdk::WasmLoggerBuilder;
+use std::fs;
 
 use itertools::Itertools;
 use types::{IpfsCatResult, IpfsGetPeerIdResult, IpfsPutResult, IpfsResult};
@@ -152,14 +152,15 @@ pub fn get(hash: String, file_path: String, api_multiaddr: String, timeout_sec: 
 
 /// Get dag by provided hash from IPFS, save it to a `file_path`, and return that path
 #[marine]
-pub fn dag_get(hash: String, file_path: String, api_multiaddr: String, timeout_sec: u64) -> IpfsResult {
+pub fn dag_get(
+    hash: String,
+    file_path: String,
+    api_multiaddr: String,
+    timeout_sec: u64,
+) -> IpfsResult {
     log::info!("dag_get called with hash {}", hash);
 
-    let args = vec![
-        String::from("dag"),
-        String::from("get"),
-        hash,
-    ];
+    let args = vec![String::from("dag"), String::from("get"), hash];
     let cmd = make_cmd_args(args, api_multiaddr, timeout_sec);
 
     let result: Result<()> = try {
