@@ -40,6 +40,7 @@ jobs:
       - snapshot
     uses: fluencelabs/nox/.github/workflows/build.yml@master
     with:
+      path: crates/system-services/Cargo.toml
       cargo-dependencies: |
         [
           {
@@ -48,7 +49,6 @@ jobs:
             "registry": "fluence",
           }
         ]
-      path:  crates/system-services/Cargo.toml
 
   nox-snapshot:
     name: "nox"
