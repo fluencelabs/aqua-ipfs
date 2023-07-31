@@ -40,7 +40,7 @@ jobs:
       - snapshot
     uses: fluencelabs/nox/.github/workflows/build.yml@master
     with:
-      cargo-dependencies: |
+      cargo-dependencies:
         [
           {
             "package": "aqua-ipfs-distro",
