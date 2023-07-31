@@ -46,9 +46,9 @@ jobs:
             "package": "aqua-ipfs-distro",
             "version": "=${{ needs.snapshot.outputs.cargo-version }}",
             "registry": "fluence",
-            "path": "crates/system-services/Cargo.toml",
           }
         ]
+      path:  crates/system-services/Cargo.toml
 
   nox-snapshot:
     name: "nox"
