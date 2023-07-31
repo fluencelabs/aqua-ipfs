@@ -81,11 +81,11 @@ func cat_from(node: PeerId, cid: CID, from: Multiaddr) -> IpfsCatResult:
         result <- Ipfs.cat_from(cid, from)
     <- result
 
--- Return contents of the dag `cid` from IPFS node `from`
-func dag_cat_from(node: PeerId, cid: CID, from: Multiaddr) -> IpfsCatResult:
-    on node:
-        result <- Ipfs.dag_cat_from(cid, from)
-    <- result
+-- -- Return contents of the dag `cid` from IPFS node `from`
+-- func dag_cat_from(node: PeerId, cid: CID, from: Multiaddr) -> IpfsCatResult:
+--     on node:
+--         result <- Ipfs.dag_cat_from(cid, from)
+--     <- result
 
 -- Set timeout for IPFS calls in `aqua-ipfs`
 func set_timeout(node: PeerId, timeout_sec: u64):
