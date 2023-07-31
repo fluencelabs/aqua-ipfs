@@ -15,6 +15,10 @@ on:
         description: "GitHub ref to checkout to"
         type: string
         default: "main"
+      flox-version:
+        description: "@fluencelabs/flox version"
+        type: string
+        default: "null"
 
 env:
   CI: true
