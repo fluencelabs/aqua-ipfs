@@ -40,13 +40,13 @@ jobs:
       - snapshot
     uses: fluencelabs/nox/.github/workflows/build.yml@master
     with:
-      cargo-dependencies:
+      cargo-dependencies: |
         [
           {
             "package": "aqua-ipfs-distro",
             "version": "=${{ needs.snapshot.outputs.cargo-version }}",
             "manifest": "crates/system-services/Cargo.toml",
-            "registry": "fluence",
+            "registry": "fluence"
           }
         ]
 
