@@ -46,7 +46,7 @@ jobs:
             "package": "aqua-ipfs-distro",
             "version": "=${{ needs.snapshot.outputs.cargo-version }}",
             "registry": "fluence",
-            "manifest": "crates/system-services/Cargo.toml",
+            "path": "crates/system-services/Cargo.toml",
           }
         ]
 
