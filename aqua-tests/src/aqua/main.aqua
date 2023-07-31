@@ -1,0 +1,19 @@
+aqua Main
+
+import "@fluencelabs/aqua-lib/builtin.aqua"
+import "@fluencelabs/aqua-ipfs/ipfs-api.aqua"
+export dag_get, dag_put, get_peer_id, get_external_api_multiaddr, get_local_api_multiaddr, load_blueprint_from_vault
+
+func get_peer_id() -> PeerId:
+  <- INIT_PEER_ID
+
+service MyDist("dist"):
+    load_blueprint(path: string) -> string
+
+func load_blueprint_from_vault(node: string, cid: string) -> string:
+    on node:
+        dag <- dag_get(node, cid)
+        blueprint <- MyDist.load_blueprint(dag.path)
+    <- blueprint
+
+

@@ -49,40 +49,22 @@ jobs:
           }
         ]
 
-  # nox-snapshot:
-  #   name: "nox"
-  #   needs:
-  #     - nox
+  nox-snapshot:
+    name: "nox"
+    needs:
+      - nox
 
-  #   uses: fluencelabs/nox/.github/workflows/container.yml@master
-  #   with:
-  #     image-name: "docker.fluence.dev/spell"
-  #     flavour: "minimal"
-  #     nox-sha: "${{ needs.nox.outputs.nox-sha }}"
+    uses: fluencelabs/nox/.github/workflows/container.yml@master
+    with:
+      image-name: "docker.fluence.dev/aqua-ipfs"
+      flavour: "minimal"
+      nox-sha: "${{ needs.nox.outputs.nox-sha }}"
 
-  # nox-tests:
-  #   name: "nox"
-  #   needs:
-  #     - snapshot
-  #     - aqua-ipfs
-
-  #   uses: fluencelabs/nox/.github/workflows/tests.yml@master
-  #   with:
-  #     cargo-dependencies: |
-  #       [
-  #         {
-  #           "package": "aqua-ipfs-distro",
-  #           "version": "=${{ needs.aqua-ipfs.outputs.cargo-version }}",
-  #           "manifest": "crates/system-services/Cargo.toml",
-  #           "registry": "fluence"
-  #         }
-  #       ]
-
-  # aqua-tests:
-  #   name: "spell"
-  #   needs:
-  #     - nox-snapshot
-  #   uses: ./.github/workflows/tests.yml
-  #   with:
-  #     ref: ${{ github.ref }}
-  #     nox-image: "${{ needs.nox-snapshot.outputs.nox-image }}"
+  aqua-ipfs-tests:
+    name: "aqua-ipfs"
+    needs:
+      - nox-snapshot
+    uses: ./.github/workflows/tests.yml
+    with:
+      ref: ${{ github.ref }}
+      nox-image: "${{ needs.nox-snapshot.outputs.nox-image }}"

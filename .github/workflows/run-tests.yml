@@ -14,8 +14,40 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  aqua-ipfs:
-    uses: ./.github/workflows/tests.yml
+  tests:
+    name: "cargo nextest"
+    runs-on: builder
+
+    steps:
+      - name: Setup Rust toolchain
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+
+      - name: Setup marine
+        uses: fluencelabs/setup-marine@v1
+
+      - name: Install cargo-nextest
+        uses: baptiste0928/cargo-install@v1.3.0
+        with:
+          crate: cargo-nextest
+          version: 0.9.22
+
+      - name: Build aqua-ipfs
+        working-directory: ./service
+        run: ./build.sh
+
+      - name: Run cargo nextest
+        working-directory: ./service
+        env:
+          NEXTEST_RETRIES: 10
+          NEXTEST_TEST_THREADS: 10
+        run: cargo nextest run --release --all-features --no-fail-fast
+
+      - name: Run cargo clippy
+        uses: actions-rs/cargo@v1
+        with:
+          command: clippy
+          args: -Z unstable-options --all --manifest-path service/Cargo.toml
+
 
   lints:
     name: Lints
