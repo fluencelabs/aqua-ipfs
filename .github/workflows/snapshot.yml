@@ -46,7 +46,7 @@ jobs:
         uses: fluencelabs/github-actions/cargo-set-dependency@main
         with:
           dependencies: ${{ inputs.cargo-dependencies }}
-          path: service/distro/
+          path: service
 
       - name: Download marine artifact
         id: marine
