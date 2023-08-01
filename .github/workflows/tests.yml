@@ -118,6 +118,9 @@ jobs:
         run: npx fluence dependency npm install
         working-directory: aqua-tests
 
+      - name: Install ipfs
+        uses: nahsi/setup-ipfs@v1
+
       - name: Run aqua tests
         env:
           FLUENCE_USER_DIR: "${{ github.workspace }}/tmp/.fluence"
