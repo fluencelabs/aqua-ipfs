@@ -35,6 +35,9 @@ jobs:
           repository: fluencelabs/aqua-ipfs
           ref: ${{ inputs.ref }}
 
+      - name: Setup rust toolchain
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+
       - name: Set dependencies
         if: inputs.cargo-dependencies != 'null'
         uses: fluencelabs/github-actions/cargo-set-dependency@main
