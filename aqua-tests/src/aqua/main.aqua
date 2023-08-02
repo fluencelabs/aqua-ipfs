@@ -16,4 +16,3 @@ func load_blueprint_from_vault(node: string, cid: string) -> string:
         blueprint <- MyDist.load_blueprint(dag.path)
     <- blueprint
 
-
