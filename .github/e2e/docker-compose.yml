@@ -15,8 +15,6 @@ services:
       - --local
       # 12D3KooWBM3SdXWqGaawQDGQ6JprtwswEg3FWGvGhmgmMez1vRbR
       - -k=hK62afickoeP2uZbmSkAYXxxqP8ozq16VRN7qfTP719EHC5V5tjrtW57BSjUr8GvsEXmJRbtejUWyPZ2rZMyQdq
-    volumes:
-      - ../../aqua-ipfs:/builtins/aqua-ipfs
 
   ipfs:
     image: ipfs/kubo:latest
