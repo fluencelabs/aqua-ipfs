@@ -118,11 +118,11 @@ pub fn dag_put(file_path: String, api_multiaddr: String, timeout_sec: u64) -> Ip
 
 /// Get file by provided hash from IPFS, save it to a `file_path`, and return that path
 #[marine]
-pub fn get(hash: String, file_path: String, api_multiaddr: String, timeout_sec: u64) -> IpfsResult {
+pub fn get(hash: String, file_path: &str, api_multiaddr: String, timeout_sec: u64) -> IpfsResult {
     let args = vec![
         String::from("get"),
         String::from("-o"),
-        inject_vault_host_path(file_path),
+        inject_vault_host_path(file_path.to_string()),
         hash,
     ];
     let cmd = make_cmd_args(args, api_multiaddr, timeout_sec);
@@ -134,7 +134,7 @@ pub fn get(hash: String, file_path: String, api_multiaddr: String, timeout_sec: 
 #[marine]
 pub fn dag_get(
     hash: String,
-    file_path: String,
+    file_path: &str,
     api_multiaddr: String,
     timeout_sec: u64,
 ) -> IpfsResult {
@@ -143,7 +143,7 @@ pub fn dag_get(
 
     let result: Result<()> = try {
         let dag = run_ipfs(cmd)?;
-        fs::write(inject_vault_host_path(file_path), dag)?
+        fs::write(inject_vault_host_path(file_path.to_string()), dag)?
     };
 
     result

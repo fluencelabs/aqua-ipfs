@@ -170,7 +170,7 @@ pub fn get_from(hash: String, external_multiaddr: String) -> IpfsGetResult {
     let particle_id = marine_rs_sdk::get_call_parameters().particle_id;
     let particle_vault_path = format!("/tmp/vault/{}", particle_id);
     let path = format!("{}/{}", particle_vault_path, hash);
-    let get_result = ipfs_get(hash, path.clone(), external_multiaddr, timeout);
+    let get_result = ipfs_get(hash, &path, external_multiaddr, timeout);
 
     if get_result.success {
         Ok(path).into()
@@ -201,7 +201,7 @@ pub fn dag_get_from(hash: String, external_multiaddr: String) -> IpfsGetResult {
     let particle_id = marine_rs_sdk::get_call_parameters().particle_id;
     let particle_vault_path = format!("/tmp/vault/{}", particle_id);
     let path = format!("{}/{}", particle_vault_path, hash);
-    let get_result = ipfs_dag_get(hash, path.clone(), external_multiaddr, timeout);
+    let get_result = ipfs_dag_get(hash, &path, external_multiaddr, timeout);
 
     if get_result.success {
         Ok(path).into()
@@ -409,7 +409,7 @@ extern "C" {
     #[link_name = "get"]
     pub fn ipfs_get(
         hash: String,
-        file_path: String,
+        file_path: &str,
         api_multiaddr: String,
         timeout_sec: u64,
     ) -> IpfsResult;
@@ -418,7 +418,7 @@ extern "C" {
     #[link_name = "dag_get"]
     pub fn ipfs_dag_get(
         hash: String,
-        file_path: String,
+        file_path: &str,
         api_multiaddr: String,
         timeout_sec: u64,
     ) -> IpfsResult;
