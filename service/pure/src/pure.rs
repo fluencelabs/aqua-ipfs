@@ -128,7 +128,6 @@ pub fn connect(multiaddr: String) -> IpfsResult {
 
 #[marine]
 pub fn put(file_path: String) -> IpfsPutResult {
-    log::info!("put called with {:?}", file_path);
     let timeout = load_config().timeout;
     let local_maddr = load_local_api_multiaddr().map(|m| m.to_string());
     if local_maddr.is_ok() {
@@ -140,7 +139,6 @@ pub fn put(file_path: String) -> IpfsPutResult {
 
 #[marine]
 pub fn dag_put(file_path: String) -> IpfsPutResult {
-    log::info!("dag put called with {:?}", file_path);
     let timeout = load_config().timeout;
     let local_maddr = load_local_api_multiaddr().map(|m| m.to_string());
     if local_maddr.is_ok() {
@@ -162,7 +160,6 @@ pub fn get(hash: String) -> IpfsGetResult {
 
 #[marine]
 pub fn get_from(hash: String, external_multiaddr: String) -> IpfsGetResult {
-    log::info!("get from called with hash: {}", hash);
     let config = load_config();
     let timeout = config.timeout;
 
@@ -194,7 +191,6 @@ pub fn dag_get(hash: String) -> IpfsGetResult {
 
 #[marine]
 pub fn dag_get_from(hash: String, external_multiaddr: String) -> IpfsGetResult {
-    log::info!("dag_get_from called with hash: {}", hash);
     let config = load_config();
     let timeout = config.timeout;
 
@@ -226,7 +222,6 @@ pub fn cat(hash: String) -> IpfsCatResult {
 
 #[marine]
 pub fn cat_from(hash: String, external_multiaddr: String) -> IpfsCatResult {
-    log::info!("cat_from called with hash: {}", hash);
     let config = load_config();
     let timeout = config.timeout;
 

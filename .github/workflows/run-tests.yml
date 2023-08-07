@@ -41,7 +41,6 @@ jobs:
       - name: Run cargo nextest
         working-directory: ./service
         env:
-          NEXTEST_RETRIES: 10
           NEXTEST_TEST_THREADS: 10
         run: cargo nextest run --release --all-features --no-fail-fast
 

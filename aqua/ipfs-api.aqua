@@ -59,6 +59,7 @@ func dag_put(node: PeerId, path: string) -> IpfsPutResult:
         result <- Ipfs.dag_put(path)
     <- result
 
+-- Returns file path of the dag `cid` from local cache of IPFS node `node`
 func dag_get(node: PeerId, cid: CID) -> IpfsGetResult:
     on node:
        result <- Ipfs.dag_get(cid)
@@ -70,6 +71,7 @@ func get_from(node: PeerId, cid: CID, from: Multiaddr) -> IpfsGetResult:
         result <- Ipfs.get_from(cid, from)
     <- result
 
+-- Return contents of the dag `cid` from IPFS node `from` and save it to `node`
 func dag_get_from(node: PeerId, cid: CID, from: Multiaddr) -> IpfsGetResult:
     on node:
        result <- Ipfs.dag_get_from(cid, from)
@@ -80,12 +82,6 @@ func cat_from(node: PeerId, cid: CID, from: Multiaddr) -> IpfsCatResult:
     on node:
         result <- Ipfs.cat_from(cid, from)
     <- result
-
--- -- Return contents of the dag `cid` from IPFS node `from`
--- func dag_cat_from(node: PeerId, cid: CID, from: Multiaddr) -> IpfsCatResult:
---     on node:
---         result <- Ipfs.dag_cat_from(cid, from)
---     <- result
 
 -- Set timeout for IPFS calls in `aqua-ipfs`
 func set_timeout(node: PeerId, timeout_sec: u64):

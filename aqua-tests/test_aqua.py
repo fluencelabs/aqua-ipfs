@@ -7,8 +7,7 @@ import inspect
 from config import get_local
 
 delegator.run("npx fluence dep npm i", block=True)
-default_peers = json.loads(delegator.run(
-    f"node ./getDefaultPeers.js", block=True).out)
+default_peers = json.loads(delegator.run(f"node ./getDefaultPeers.js", block=True).out)
 
 
 def get_relays():
@@ -20,7 +19,7 @@ def get_relays():
             env = "testnet"
         peers = [peer["multiaddr"] for peer in default_peers[env]]
 
-    assert len(peers) != 0
+    assert len(peers) != 0, "No relays found"
     return peers
 
 
@@ -39,12 +38,11 @@ def get_random_relay():
 def get_random_peer_id():
     return get_random_list_item(peer_ids)
 
-def run_aqua(func, args, relay=get_random_relay()):
 
+def run_aqua(func, args, relay=get_random_relay()):
     # "a" : arg1, "b" : arg2 .....
     data = {chr(97 + i): arg for (i, arg) in enumerate(args)}
-    call = f"{func}(" + ", ".join([chr(97 + i)
-                                   for i in range(0, len(args))]) + ")"
+    call = f"{func}(" + ", ".join([chr(97 + i) for i in range(0, len(args))]) + ")"
     # inspect.stack method inspects the current execution stack as the name suggests
     # it's possible to infer that the minus 39th element of the stack always contains info
     # about the test function that is currently running. The third element is the function's name
@@ -63,7 +61,7 @@ def run_aqua(func, args, relay=get_random_relay()):
     if len(c.err.strip()) != 0:
         print(f"{particle_id}\n{c.err}")
 
-    result = '\n'.join(lines[1:])
+    result = "\n".join(lines[1:])
 
     try:
         result = json.loads(result)
@@ -73,8 +71,6 @@ def run_aqua(func, args, relay=get_random_relay()):
         print(result)
         return result
 
-def get_peer_id():
-    return run_aqua("get_peer_id", [])
 
 def put_dag(api, data):
     with tempfile.NamedTemporaryFile() as tmp:
@@ -102,14 +98,23 @@ def test_put_get_dag():
 """
     relay_multiaddr = get_random_relay()
     relay_peer_id = relay_multiaddr.split("/")[-1]
-    ext_api_endpoint = run_aqua("get_external_api_multiaddr", [relay_peer_id], relay=relay_multiaddr)
+    ext_api_endpoint = run_aqua(
+        "get_external_api_multiaddr", [relay_peer_id], relay=relay_multiaddr
+    )
     assert ext_api_endpoint["success"] == True
     cid = put_dag(ext_api_endpoint["multiaddr"], dag)
     assert cid != ""
 
-    blueprint = run_aqua("load_blueprint_from_vault", [relay_peer_id, cid], relay=relay_multiaddr)
+    blueprint = run_aqua(
+        "load_blueprint_from_vault", [relay_peer_id, cid], relay=relay_multiaddr
+    )
 
     assert blueprint["name"] == "ipfs_pure"
-    assert blueprint["dependencies"][0]["/"] == "bafkreibrmbfv7ab4dokljanddvq5nah66cdody2biusqgqlfqduwn4avdi"
-    assert blueprint["dependencies"][1]["/"] == "bafybeicovoqrw75mskauoaknyxpla7xadtv5m2lphlrtjdj7dlacm6wawi"
-
+    assert (
+        blueprint["dependencies"][0]["/"]
+        == "bafkreibrmbfv7ab4dokljanddvq5nah66cdody2biusqgqlfqduwn4avdi"
+    )
+    assert (
+        blueprint["dependencies"][1]["/"]
+        == "bafybeicovoqrw75mskauoaknyxpla7xadtv5m2lphlrtjdj7dlacm6wawi"
+    )
