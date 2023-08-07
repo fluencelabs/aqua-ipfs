@@ -7,7 +7,6 @@ services:
     environment:
       - FLUENCE_ENV_AQUA_IPFS_EXTERNAL_API_MULTIADDR=/dns/localhost/tcp/5001
       - FLUENCE_ENV_AQUA_IPFS_LOCAL_API_MULTIADDR=/dns4/ipfs/tcp/5001
-      - FLUENCE_ENV_CONNECTOR_JOIN_ALL_DEALS=false
     command:
       - --aqua-pool-size=2
       - -t=7771
