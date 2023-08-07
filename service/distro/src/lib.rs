@@ -1,6 +1,6 @@
-pub const IPFS_EFFECTOR: &'static [u8] = include_bytes!("../ipfs-service/ipfs_effector.wasm");
-pub const IPFS_FACADE: &'static [u8] = include_bytes!("../ipfs-service/ipfs_pure.wasm");
-pub const CONFIG: &'static [u8] = include_bytes!("../ipfs-service/Config.toml");
+pub const IPFS_EFFECTOR: &[u8] = include_bytes!("../ipfs-service/ipfs_effector.wasm");
+pub const IPFS_FACADE: &[u8] = include_bytes!("../ipfs-service/ipfs_pure.wasm");
+pub const CONFIG: &[u8] = include_bytes!("../ipfs-service/Config.toml");
 
 pub mod build_info {
     include!(concat!(env!("OUT_DIR"), "/built.rs"));

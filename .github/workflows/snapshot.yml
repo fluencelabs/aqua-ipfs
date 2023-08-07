@@ -1,0 +1,92 @@
+name: Build snapshot
+
+on:
+  workflow_call:
+    inputs:
+      cargo-dependencies:
+        description: "Cargo dependencies map"
+        type: string
+        default: "null"
+      ref:
+        description: "git ref to checkout to"
+        type: string
+        default: "main"
+    outputs:
+      cargo-version:
+        description: "Cargo snapshot version"
+        value: ${{ jobs.snapshot.outputs.version }}
+
+jobs:
+  snapshot:
+    name: "Build and test crates"
+    runs-on: builder
+    timeout-minutes: 60
+
+    outputs:
+      version: "${{ steps.snapshot.outputs.version }}"
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          repository: fluencelabs/aqua-ipfs
+          ref: ${{ inputs.ref }}
+
+      - name: Setup rust toolchain
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          cache: false
+
+      - name: Set dependencies
+        if: inputs.cargo-dependencies != 'null'
+        uses: fluencelabs/github-actions/cargo-set-dependency@main
+        with:
+          dependencies: ${{ inputs.cargo-dependencies }}
+          path: service
+
+      - name: Download marine artifact
+        id: marine
+        uses: actions/download-artifact@v3
+        continue-on-error: true
+        with:
+          name: marine
+          path: ~/.local/bin
+
+      - name: Make marine executable
+        if: steps.marine.outcome == 'success'
+        run: chmod +x ~/.local/bin/marine
+
+      - name: Setup marine
+        if: steps.marine.outcome == 'failure'
+        uses: fluencelabs/setup-marine@v1
+
+      - name: Build and package aqua-ipfs
+        working-directory: ./service
+        run: ./build.sh
+
+      - name: Import secrets
+        uses: hashicorp/vault-action@v2.5.0
+        with:
+          url: https://vault.fluence.dev
+          path: jwt/github
+          role: ci
+          method: jwt
+          jwtGithubAudience: "https://github.com/fluencelabs"
+          jwtTtl: 300
+          exportToken: false
+          secrets: |
+            kv/cargo-registry/users/ci token | CARGO_REGISTRIES_FLUENCE_TOKEN
+
+      - name: Generate snapshot version
+        id: version
+        uses: fluencelabs/github-actions/generate-snapshot-id@main
+
+      - name: Publish crate snapshots
+        id: snapshot
+        uses: fluencelabs/github-actions/cargo-publish-snapshot@main
+        with:
+          id: ${{ steps.version.outputs.id }}
+          path: service/distro

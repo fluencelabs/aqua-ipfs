@@ -52,10 +52,29 @@ func put(node: PeerId, path: string) -> IpfsPutResult:
         result <- Ipfs.put(path)
     <- result
 
+-- Upload file `path` as a dag to IPFS node running on `node`
+-- path should exist & be available to `aqua-ipfs`
+func dag_put(node: PeerId, path: string) -> IpfsPutResult:
+    on node:
+        result <- Ipfs.dag_put(path)
+    <- result
+
+-- Returns file path of the dag `cid` from local cache of IPFS node `node`
+func dag_get(node: PeerId, cid: CID) -> IpfsGetResult:
+    on node:
+       result <- Ipfs.dag_get(cid)
+    <- result
+
 -- Download file `cid` from IPFS node `from` and save it to `node`
 func get_from(node: PeerId, cid: CID, from: Multiaddr) -> IpfsGetResult:
     on node:
         result <- Ipfs.get_from(cid, from)
+    <- result
+
+-- Return contents of the dag `cid` from IPFS node `from` and save it to `node`
+func dag_get_from(node: PeerId, cid: CID, from: Multiaddr) -> IpfsGetResult:
+    on node:
+       result <- Ipfs.dag_get_from(cid, from)
     <- result
 
 -- Return contents of the file `cid` from IPFS node `from`

@@ -21,11 +21,15 @@ use marine_rs_sdk::marine;
 use marine_rs_sdk::module_manifest;
 use marine_rs_sdk::MountedBinaryResult;
 use marine_rs_sdk::WasmLoggerBuilder;
+use std::fs;
 
 use itertools::Itertools;
 use types::{IpfsCatResult, IpfsGetPeerIdResult, IpfsPutResult, IpfsResult};
 
 module_manifest!();
+
+/// Default chunk size for `ipfs add` command to produce stable CIDs.
+const CHUCK_SIZE: usize = 262144;
 
 pub fn main() {
     WasmLoggerBuilder::new()
@@ -64,8 +68,6 @@ fn make_cmd_args(args: Vec<String>, api_multiaddr: String, timeout_sec: u64) -> 
 
 #[marine]
 pub fn connect(multiaddr: String, api_multiaddr: String, timeout_sec: u64) -> IpfsResult {
-    log::info!("connect called with multiaddr {}", multiaddr);
-
     let args = vec![String::from("swarm"), String::from("connect"), multiaddr];
     let cmd = make_cmd_args(args, api_multiaddr, timeout_sec);
 
@@ -75,8 +77,6 @@ pub fn connect(multiaddr: String, api_multiaddr: String, timeout_sec: u64) -> Ip
 /// Put file from specified path to IPFS and return its hash.
 #[marine]
 pub fn put(file_path: String, api_multiaddr: String, timeout_sec: u64) -> IpfsPutResult {
-    log::info!("put called with file path {}", file_path);
-
     if !std::path::Path::new(&file_path).exists() {
         return IpfsPutResult {
             success: false,
@@ -89,33 +89,66 @@ pub fn put(file_path: String, api_multiaddr: String, timeout_sec: u64) -> IpfsPu
         String::from("add"),
         String::from("-Q"),
         inject_vault_host_path(file_path),
+        String::from("--cid-version=1"),
+        format!("--chunker=size-{}", CHUCK_SIZE),
     ];
     let cmd = make_cmd_args(args, api_multiaddr, timeout_sec);
-
-    log::info!("ipfs put args {:?}", cmd);
-
     run_ipfs(cmd).map(|res| res.trim().to_string()).into()
 }
 
-/// Get file by provided hash from IPFS, save it to a `file_path, and return that path
+/// Put dag from specified path to IPFS and return its hash.
 #[marine]
-pub fn get(hash: String, file_path: String, api_multiaddr: String, timeout_sec: u64) -> IpfsResult {
-    log::info!("get called with hash {}", hash);
+pub fn dag_put(file_path: String, api_multiaddr: String, timeout_sec: u64) -> IpfsPutResult {
+    if !std::path::Path::new(&file_path).exists() {
+        return IpfsPutResult {
+            success: false,
+            error: format!("path {} doesn't exist", file_path),
+            hash: "".to_string(),
+        };
+    }
 
+    let args = vec![
+        String::from("dag"),
+        String::from("put"),
+        inject_vault_host_path(file_path),
+    ];
+    let cmd = make_cmd_args(args, api_multiaddr, timeout_sec);
+    run_ipfs(cmd).map(|res| res.trim().to_string()).into()
+}
+
+/// Get file by provided hash from IPFS, save it to a `file_path`, and return that path
+#[marine]
+pub fn get(hash: String, file_path: &str, api_multiaddr: String, timeout_sec: u64) -> IpfsResult {
     let args = vec![
         String::from("get"),
         String::from("-o"),
-        inject_vault_host_path(file_path),
+        inject_vault_host_path(file_path.to_string()),
         hash,
     ];
     let cmd = make_cmd_args(args, api_multiaddr, timeout_sec);
 
-    log::info!("ipfs get args {:?}", cmd);
+    run_ipfs(cmd).map(drop).into()
+}
 
-    run_ipfs(cmd)
-        .map(|output| {
-            log::info!("ipfs get output: {}", output);
-        })
+/// Get dag by provided hash from IPFS, save it to a `file_path`, and return that path
+#[marine]
+pub fn dag_get(
+    hash: String,
+    file_path: &str,
+    api_multiaddr: String,
+    timeout_sec: u64,
+) -> IpfsResult {
+    let args = vec![String::from("dag"), String::from("get"), hash];
+    let cmd = make_cmd_args(args, api_multiaddr, timeout_sec);
+
+    let result: Result<()> = try {
+        let dag = run_ipfs(cmd)?;
+        fs::write(inject_vault_host_path(file_path.to_string()), dag)?
+    };
+
+    result
+        .map(|_| ())
+        .map_err(|e| eyre::eyre!("dag_get error: {:?}", e))
         .into()
 }
 
@@ -143,12 +176,8 @@ pub fn get_peer_id(api_multiaddr: String, timeout_sec: u64) -> IpfsGetPeerIdResu
 /// Cat file by provided hash from IPFS,
 #[marine]
 pub fn cat(hash: String, api_multiaddr: String, timeout_sec: u64) -> IpfsCatResult {
-    log::info!("cat called with hash {}", hash);
-
     let args = vec![String::from("cat"), hash];
     let cmd = make_cmd_args(args, api_multiaddr, timeout_sec);
-
-    log::info!("ipfs cat args {:?}", cmd);
 
     run_ipfs(cmd)
         .map_err(|e| eyre::eyre!("ipfs cat error: {:?}", e))

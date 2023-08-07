@@ -1,0 +1,12 @@
+aqua Main
+
+import Dist from "@fluencelabs/aqua-lib/builtin.aqua"
+import "@fluencelabs/aqua-ipfs/ipfs-api.aqua"
+export get_external_api_multiaddr, load_blueprint_from_vault
+
+func load_blueprint_from_vault(node: string, cid: string) -> string:
+    on node:
+        dag <- dag_get(node, cid)
+        blueprint <- Dist.load_blueprint(dag.path)
+    <- blueprint
+

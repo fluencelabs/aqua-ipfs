@@ -1,11 +1,11 @@
 services:
-  rust-peer:
-    image: ${RUST_PEER_IMAGE:-fluencelabs/nox:unstable_minimal}
+  nox:
+    image: ${NOX_IMAGE:-fluencelabs/nox:unstable_minimal}
     ports:
       - 7771:7771
       - 9991:9991
     environment:
-      - FLUENCE_ENV_AQUA_IPFS_EXTERNAL_API_MULTIADDR=/dns4/ipfs/tcp/5001
+      - FLUENCE_ENV_AQUA_IPFS_EXTERNAL_API_MULTIADDR=/ip4/127.0.0.1/tcp/5001
       - FLUENCE_ENV_AQUA_IPFS_LOCAL_API_MULTIADDR=/dns4/ipfs/tcp/5001
     command:
       - --aqua-pool-size=2
@@ -14,8 +14,6 @@ services:
       - --local
       # 12D3KooWBM3SdXWqGaawQDGQ6JprtwswEg3FWGvGhmgmMez1vRbR
       - -k=hK62afickoeP2uZbmSkAYXxxqP8ozq16VRN7qfTP719EHC5V5tjrtW57BSjUr8GvsEXmJRbtejUWyPZ2rZMyQdq
-    volumes:
-      - ../../aqua-ipfs:/.fluence/v1/builtins/aqua-ipfs
 
   ipfs:
     image: ipfs/kubo:latest
