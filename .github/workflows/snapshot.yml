@@ -47,21 +47,10 @@ jobs:
           dependencies: ${{ inputs.cargo-dependencies }}
           path: service
 
-      - name: Download marine artifact
-        id: marine
-        uses: actions/download-artifact@v3
-        continue-on-error: true
-        with:
-          name: marine
-          path: ~/.local/bin
-
-      - name: Make marine executable
-        if: steps.marine.outcome == 'success'
-        run: chmod +x ~/.local/bin/marine
-
       - name: Setup marine
-        if: steps.marine.outcome == 'failure'
         uses: fluencelabs/setup-marine@v1
+        with:
+          artifact-name: marine
 
       - name: Build and package aqua-ipfs
         working-directory: ./service
