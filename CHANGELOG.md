@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.19](https://github.com/fluencelabs/aqua-ipfs/compare/aqua-ipfs-v0.5.18...aqua-ipfs-v0.5.19) (2023-09-22)
+
+
+### Bug Fixes
+
+* **ci:** bump cargo-install version ([9ed3419](https://github.com/fluencelabs/aqua-ipfs/commit/9ed34194fe8515b69f50dfb557ecb9f67c62bb92))
+
 ## [0.5.18](https://github.com/fluencelabs/aqua-ipfs/compare/aqua-ipfs-v0.5.17...aqua-ipfs-v0.5.18) (2023-09-22)
 
 
