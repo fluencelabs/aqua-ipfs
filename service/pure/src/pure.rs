@@ -239,11 +239,6 @@ pub fn get_external_api_multiaddr() -> IpfsMultiaddrResult {
 
 #[marine]
 pub fn set_external_api_multiaddr(multiaddr: String) -> IpfsResult {
-    if load_external_api_multiaddr().is_ok() {
-        return eyre::Result::<()>::Err(eyre::eyre!("external api multiaddr can only be set once"))
-            .into();
-    }
-
     let call_parameters = marine_rs_sdk::get_call_parameters();
     if call_parameters.init_peer_id != call_parameters.service_creator_peer_id {
         return eyre::Result::<()>::Err(eyre::eyre!(
@@ -295,11 +290,6 @@ pub fn get_local_api_multiaddr() -> IpfsMultiaddrResult {
 
 #[marine]
 pub fn set_local_api_multiaddr(multiaddr: String) -> IpfsResult {
-    if load_local_api_multiaddr().is_ok() {
-        return eyre::Result::<()>::Err(eyre::eyre!("local api multiaddr can only be set once"))
-            .into();
-    }
-
     let call_parameters = marine_rs_sdk::get_call_parameters();
     if call_parameters.init_peer_id != call_parameters.service_creator_peer_id {
         return eyre::Result::<()>::Err(eyre::eyre!(
@@ -329,13 +319,6 @@ pub fn get_external_swarm_multiaddr() -> IpfsMultiaddrResult {
 
 #[marine]
 pub fn set_external_swarm_multiaddr(multiaddr: String) -> IpfsResult {
-    if load_config().external_swarm_multiaddr.is_some() {
-        return eyre::Result::<()>::Err(eyre::eyre!(
-            "external swarm multiaddr can only be set once"
-        ))
-        .into();
-    }
-
     let call_parameters = marine_rs_sdk::get_call_parameters();
     if call_parameters.init_peer_id != call_parameters.service_creator_peer_id {
         return eyre::Result::<()>::Err(eyre::eyre!(
