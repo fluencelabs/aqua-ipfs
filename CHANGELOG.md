@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.20](https://github.com/fluencelabs/aqua-ipfs/compare/aqua-ipfs-v0.5.19...aqua-ipfs-v0.5.20) (2023-09-22)
+
+
+### Bug Fixes
+
+* bump distro version ([#105](https://github.com/fluencelabs/aqua-ipfs/issues/105)) ([0c48bec](https://github.com/fluencelabs/aqua-ipfs/commit/0c48bec52ab5cff3259a3f85ec381b5668d954f1))
+
 ## [0.5.19](https://github.com/fluencelabs/aqua-ipfs/compare/aqua-ipfs-v0.5.18...aqua-ipfs-v0.5.19) (2023-09-22)
 
 
