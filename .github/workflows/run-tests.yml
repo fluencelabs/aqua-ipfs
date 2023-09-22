@@ -32,6 +32,7 @@ jobs:
         uses: baptiste0928/cargo-install@v2.0.0
         with:
           crate: cargo-nextest
+          version: 0.9.22
 
       - name: Build aqua-ipfs
         working-directory: ./service
