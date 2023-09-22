@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.18](https://github.com/fluencelabs/aqua-ipfs/compare/aqua-ipfs-v0.5.17...aqua-ipfs-v0.5.18) (2023-09-22)
+
+
+### Features
+
+* allow reconfigure multiaddrs ([#103](https://github.com/fluencelabs/aqua-ipfs/issues/103)) ([d620b14](https://github.com/fluencelabs/aqua-ipfs/commit/d620b148aa5902090b63971f4ddcd3c4adb2183a))
+* support ipfs dag + e2e tests [NET-476] ([#91](https://github.com/fluencelabs/aqua-ipfs/issues/91)) ([1dd30ba](https://github.com/fluencelabs/aqua-ipfs/commit/1dd30ba0ace5f35de7a8db5c71d56c7e167a4de6))
+
 ## [0.5.17](https://github.com/fluencelabs/aqua-ipfs/compare/aqua-ipfs-v0.5.16...aqua-ipfs-v0.5.17) (2023-07-10)
 
 
