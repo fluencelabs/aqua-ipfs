@@ -7,7 +7,7 @@
   "enabledManagers": ["cargo", "npm", "github-actions", "pip_requirements"],
   "rangeStrategy": "pin",
   "schedule": "every weekend",
-  "respectLatest": true,
+  "respectLatest": false,
   "packageRules": [
     {
       "matchManagers": ["cargo", "npm"],
