@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.24](https://github.com/fluencelabs/aqua-ipfs/compare/aqua-ipfs-v0.5.23...aqua-ipfs-v0.5.24) (2023-11-15)
+
+
+### Features
+
+* update toolchain and deps ([#116](https://github.com/fluencelabs/aqua-ipfs/issues/116)) ([b99d790](https://github.com/fluencelabs/aqua-ipfs/commit/b99d790d71f452e3eb00eda39ac3d9cada7f7fb8))
+
 ## [0.5.23](https://github.com/fluencelabs/aqua-ipfs/compare/aqua-ipfs-v0.5.22...aqua-ipfs-v0.5.23) (2023-11-15)
 
 
