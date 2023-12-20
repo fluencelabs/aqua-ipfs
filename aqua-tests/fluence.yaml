@@ -4,5 +4,6 @@
 
 # Documentation: https://github.com/fluencelabs/fluence-cli/tree/main/docs/configs/fluence.md
 
-version: 2
+version: 5
+
 aquaInputPath: src/aqua/main.aqua
