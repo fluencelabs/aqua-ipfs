@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.25](https://github.com/fluencelabs/aqua-ipfs/compare/aqua-ipfs-v0.5.24...aqua-ipfs-v0.5.25) (2023-12-20)
+
+
+### Bug Fixes
+
+* tests ([1d55067](https://github.com/fluencelabs/aqua-ipfs/commit/1d550679653864d5ea8d5951113f258c415a0527))
+* **tests:** update package-lock to fix marine-js not found on fluence run ([#123](https://github.com/fluencelabs/aqua-ipfs/issues/123)) ([1d55067](https://github.com/fluencelabs/aqua-ipfs/commit/1d550679653864d5ea8d5951113f258c415a0527))
+
 ## [0.5.24](https://github.com/fluencelabs/aqua-ipfs/compare/aqua-ipfs-v0.5.23...aqua-ipfs-v0.5.24) (2023-11-15)
 
 
