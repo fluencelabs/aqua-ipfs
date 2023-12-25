@@ -50,6 +50,33 @@ jobs:
           command: clippy
           args: -Z unstable-options --all --manifest-path service/Cargo.toml
 
+  npm-build:
+    name: "Check if npm run build works"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+          registry-url: "https://registry.npmjs.org"
+          # cache-dependency-path: "aqua/package-lock.json"
+          # cache: "npm"
+
+      - name: Setup fcli
+        uses: fluencelabs/setup-fluence@v1
+        with:
+          version: stable
+
+      - run: npm ci
+        working-directory: aqua
+
+      - run: npm run build
+        working-directory: aqua
+
 
   lints:
     name: Lints
