@@ -124,7 +124,6 @@ jobs:
         uses: baptiste0928/cargo-install@v2.0.0
         with:
           crate: cargo-workspaces
-          version: v0.2.37
 
       - name: Setup marine
         uses: fluencelabs/setup-marine@v1
