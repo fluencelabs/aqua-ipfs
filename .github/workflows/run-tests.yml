@@ -50,6 +50,25 @@ jobs:
           command: clippy
           args: -Z unstable-options --all --manifest-path service/Cargo.toml
 
+  npm-build:
+    name: "Check if npm run build works"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+          registry-url: "https://registry.npmjs.org"
+          cache-dependency-path: "aqua/package-lock.json"
+          cache: "npm"
+
+      - run: npm i
+        working-directory: aqua
+
+      - run: npm run build
+        working-directory: aqua
+
 
   lints:
     name: Lints
