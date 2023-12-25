@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.26](https://github.com/fluencelabs/aqua-ipfs/compare/aqua-ipfs-v0.5.25...aqua-ipfs-v0.5.26) (2023-12-25)
+
+
+### Features
+
+* update marine sdk's and configs ([#122](https://github.com/fluencelabs/aqua-ipfs/issues/122)) ([6db2393](https://github.com/fluencelabs/aqua-ipfs/commit/6db239348299451d5c3f3a2687fe53fae6b922c7))
+
 ## [0.5.25](https://github.com/fluencelabs/aqua-ipfs/compare/aqua-ipfs-v0.5.24...aqua-ipfs-v0.5.25) (2023-12-20)
 
 
