@@ -10,7 +10,7 @@ name = "ipfs_pure"
 path = "src/main.rs"
 
 [dependencies]
-marine-rs-sdk = { version = "0.10.1", features = ["logger"] }
+marine-rs-sdk = { version = "0.10.2", features = ["logger"] }
 multiaddr = { version = "0.11.2", package = "fluence-fork-parity-multiaddr" }
 log = "0.4.14"
 eyre = "0.6.8"
@@ -21,7 +21,7 @@ bs58 = "0.5.0"
 types = { path = "../types" }
 
 [dev-dependencies]
-marine-rs-sdk-test = "0.11.0"
+marine-rs-sdk-test = "0.12.0"
 
 [build-dependencies]
-marine-rs-sdk-test = "0.11.0"
+marine-rs-sdk-test = "0.12.0"
