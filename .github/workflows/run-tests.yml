@@ -55,6 +55,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: diagnose
+        run: |
+          pwd
+          ls -l
+
       - name: Setup node
         uses: actions/setup-node@v3
         with:
