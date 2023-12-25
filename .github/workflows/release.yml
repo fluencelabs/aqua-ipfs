@@ -141,7 +141,12 @@ jobs:
           cache-dependency-path: "aqua/package-lock.json"
           cache: "npm"
 
-      - run: npm i
+      - name: Setup fcli
+        uses: fluencelabs/setup-fluence@v1
+        with:
+          version: stable
+
+      - run: npm ci
         working-directory: aqua
 
       - run: npm run build
