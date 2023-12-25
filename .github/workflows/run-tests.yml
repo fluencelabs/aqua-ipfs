@@ -52,7 +52,7 @@ jobs:
 
   npm-build:
     name: "Check if npm run build works"
-    runs-on: builder
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout sources
@@ -65,6 +65,11 @@ jobs:
           registry-url: "https://registry.npmjs.org"
           # cache-dependency-path: "aqua/package-lock.json"
           # cache: "npm"
+
+      - name: Setup fcli
+        uses: fluencelabs/setup-fluence@v1
+        with:
+          version: main
 
       - run: npm ci
         working-directory: aqua
