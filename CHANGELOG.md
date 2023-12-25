@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.5.26](https://github.com/fluencelabs/aqua-ipfs/compare/aqua-ipfs-v0.5.25...aqua-ipfs-v0.5.26) (2023-12-25)
+
+
+### Features
+
+* update marine sdk's and configs ([#122](https://github.com/fluencelabs/aqua-ipfs/issues/122)) ([6db2393](https://github.com/fluencelabs/aqua-ipfs/commit/6db239348299451d5c3f3a2687fe53fae6b922c7))
+
+
+### Bug Fixes
+
+* **build:** fix npm build, add check for that ([#132](https://github.com/fluencelabs/aqua-ipfs/issues/132)) ([e6749d1](https://github.com/fluencelabs/aqua-ipfs/commit/e6749d1f05b1ad4ebf3aa4c3c166758e3288635e))
+* **deps:** rust toolchain 2023-12-06; cargo-workspaces 0.2.44 ([#126](https://github.com/fluencelabs/aqua-ipfs/issues/126)) ([f096a4e](https://github.com/fluencelabs/aqua-ipfs/commit/f096a4efb46d5c24513745c7bea376e88fea9631))
+* **release:** use fcli installer ([#134](https://github.com/fluencelabs/aqua-ipfs/issues/134)) ([812fa12](https://github.com/fluencelabs/aqua-ipfs/commit/812fa12506edca84c12a14dc1547c01182297d56))
+
 ## [0.5.25](https://github.com/fluencelabs/aqua-ipfs/compare/aqua-ipfs-v0.5.24...aqua-ipfs-v0.5.25) (2023-12-20)
 
 
