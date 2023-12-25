@@ -69,7 +69,7 @@ jobs:
       - name: Setup fcli
         uses: fluencelabs/setup-fluence@v1
         with:
-          version: main
+          version: stable
 
       - run: npm ci
         working-directory: aqua
