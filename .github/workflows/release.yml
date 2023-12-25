@@ -133,11 +133,11 @@ jobs:
         run: ./build.sh
         working-directory: service
 
-      - name: Setup node
-        uses: actions/setup-node@v3
-        with:
-          node-version: "18"
-          registry-url: "https://registry.npmjs.org"
+      # - name: Setup node
+      #   uses: actions/setup-node@v3
+      #   with:
+      #     node-version: "18"
+      #     registry-url: "https://registry.npmjs.org"
           # cache-dependency-path: "aqua/package-lock.json"
           # cache: "npm"
           #
