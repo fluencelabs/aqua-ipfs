@@ -64,10 +64,10 @@ jobs:
           # cache: "npm"
 
       - run: npm i
-        working-directory: aqua
+        working-directory: ./aqua
 
       - run: npm run build
-        working-directory: aqua
+        working-directory: ./aqua
 
 
   lints:
