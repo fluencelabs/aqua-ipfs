@@ -1,6 +1,6 @@
 [package]
 name = "types"
-version = "0.5.26"
+version = "0.5.25"
 edition = "2018"
 publish = false
 
