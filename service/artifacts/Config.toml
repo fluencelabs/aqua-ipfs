@@ -1,3 +1,5 @@
+total_memory_limit = "Infinity"
+
 [[module]]
     name = "ipfs_effector"
     mem_pages_count = 100
