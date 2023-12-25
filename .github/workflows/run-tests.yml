@@ -52,7 +52,7 @@ jobs:
 
   npm-build:
     name: "Check if npm run build works"
-    runs-on: ubuntu-latest
+    runs-on: builder
 
     steps:
       - name: Checkout sources
