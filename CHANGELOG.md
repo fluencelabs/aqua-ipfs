@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.27](https://github.com/fluencelabs/aqua-ipfs/compare/aqua-ipfs-v0.5.26...aqua-ipfs-v0.5.27) (2023-12-26)
+
+
+### Bug Fixes
+
+* add memory limit into distro config ([#135](https://github.com/fluencelabs/aqua-ipfs/issues/135)) ([9994067](https://github.com/fluencelabs/aqua-ipfs/commit/999406708f958374e6ce43673f550e18bf651d80))
+
 ## [0.5.26](https://github.com/fluencelabs/aqua-ipfs/compare/aqua-ipfs-v0.5.25...aqua-ipfs-v0.5.26) (2023-12-25)
 
 
