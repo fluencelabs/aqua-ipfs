@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.5.28](https://github.com/fluencelabs/aqua-ipfs/compare/aqua-ipfs-v0.5.27...aqua-ipfs-v0.5.28) (2023-12-27)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @fluencelabs/aqua-lib to v0.9.0 ([#139](https://github.com/fluencelabs/aqua-ipfs/issues/139)) ([e5e1e17](https://github.com/fluencelabs/aqua-ipfs/commit/e5e1e170dd8405cc720998e8522969e9248c73fb))
+* **deps:** update dependency @fluencelabs/fluence-network-environment to v1.1.2 ([#113](https://github.com/fluencelabs/aqua-ipfs/issues/113)) ([f184b1f](https://github.com/fluencelabs/aqua-ipfs/commit/f184b1fff68e84a7e987fa0afe56fb231ed62e6d))
+* **deps:** update rust crate marine-rs-sdk-test to 0.12.1 ([#137](https://github.com/fluencelabs/aqua-ipfs/issues/137)) ([b98b9b1](https://github.com/fluencelabs/aqua-ipfs/commit/b98b9b17e28ac61578d4abf5cf5489bfe2a17541))
+
 ## [0.5.27](https://github.com/fluencelabs/aqua-ipfs/compare/aqua-ipfs-v0.5.26...aqua-ipfs-v0.5.27) (2023-12-26)
 
 

@@ -58,7 +58,7 @@ checksum = "a4668cab20f66d8d020e1fbc0ebe47217433c1b6c8f2040faf858554e394ace6"
 
 [[package]]
 name = "aqua-ipfs-distro"
-version = "0.5.27"
+version = "0.5.28"
 dependencies = [
  "built",
  "maplit",
@@ -1018,7 +1018,7 @@ checksum = "bffb4def18c48926ccac55c1223e02865ce1a821751a95920448662696e7472c"
 
 [[package]]
 name = "ipfs-effector"
-version = "0.5.27"
+version = "0.5.28"
 dependencies = [
  "eyre",
  "fluence-fork-parity-multiaddr",
@@ -1032,7 +1032,7 @@ dependencies = [
 
 [[package]]
 name = "ipfs-pure"
-version = "0.5.27"
+version = "0.5.28"
 dependencies = [
  "bs58 0.5.0",
  "eyre",
@@ -2318,7 +2318,7 @@ checksum = "42ff0bf0c66b8238c6f3b578df37d0b7848e55df8577b3f74f92a69acceeb825"
 
 [[package]]
 name = "types"
-version = "0.5.27"
+version = "0.5.28"
 dependencies = [
  "eyre",
  "marine-rs-sdk",
