@@ -20,7 +20,7 @@ itertools = "0.12.0"
 types = { path = "../types" }
 
 [dev-dependencies]
-marine-rs-sdk-test = "0.12.0"
+marine-rs-sdk-test = "0.12.1"
 
 [build-dependencies]
-marine-rs-sdk-test = "0.12.0"
+marine-rs-sdk-test = "0.12.1"
