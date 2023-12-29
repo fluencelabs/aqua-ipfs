@@ -10,7 +10,7 @@ include = [ "/src", "/ipfs-service", "build.rs", "Cargo.toml" ]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-maplit = "1.0.2"
+maplit = "=1.0.2"
 
 [build-dependencies]
-built = "0.7.0"
+built = "=0.7.0"
