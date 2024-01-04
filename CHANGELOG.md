@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.29](https://github.com/fluencelabs/aqua-ipfs/compare/aqua-ipfs-v0.5.28...aqua-ipfs-v0.5.29) (2024-01-04)
+
+
+### Features
+
+* **aqua-ipfs:** Use `aqua` keyword instead of `module` ([#153](https://github.com/fluencelabs/aqua-ipfs/issues/153)) ([d973633](https://github.com/fluencelabs/aqua-ipfs/commit/d9736332dcbe7b2389c650157d2c8a84b7386939))
+
 ## [0.5.28](https://github.com/fluencelabs/aqua-ipfs/compare/aqua-ipfs-v0.5.27...aqua-ipfs-v0.5.28) (2023-12-27)
 
 
