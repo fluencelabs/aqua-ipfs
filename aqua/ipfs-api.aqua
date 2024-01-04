@@ -1,4 +1,4 @@
-aqua IpfsApi
+aqua IpfsApi declares *
 
 export get_and_cache
 export put, dag_put, dag_get, get_from, dag_get_from, cat_from
