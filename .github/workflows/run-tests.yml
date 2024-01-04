@@ -29,7 +29,7 @@ jobs:
         uses: fluencelabs/setup-marine@v1
 
       - name: Install cargo-nextest
-        uses: baptiste0928/cargo-install@v2.0.0
+        uses: baptiste0928/cargo-install@v2.2.0
         with:
           crate: cargo-nextest
           version: 0.9.22
