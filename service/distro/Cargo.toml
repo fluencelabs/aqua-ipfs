@@ -13,4 +13,4 @@ include = [ "/src", "/ipfs-service", "build.rs", "Cargo.toml" ]
 maplit = "1.0.2"
 
 [build-dependencies]
-built = "0.7.0"
+built = "0.7.1"
