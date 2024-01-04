@@ -1,4 +1,12 @@
+aqua IpfsApi declares *
+
+export get_and_cache
+export put, dag_put, dag_get, get_from, dag_get_from, cat_from
+export set_timeout, get_external_api_multiaddr
+export get_external_swarm_multiaddr, get_local_api_multiaddr
+
 import "@fluencelabs/aqua-lib/builtin.aqua"
+
 import "ipfs.aqua"
 
 alias Multiaddr: string

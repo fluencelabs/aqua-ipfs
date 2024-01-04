@@ -1,4 +1,4 @@
-module Ipfs declares *
+aqua Ipfs declares *
 
 data IpfsCatResult:
   success: bool
