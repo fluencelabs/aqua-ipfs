@@ -13,16 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { Fluence, testNet, Relay } from "@fluencelabs/js-client";
 
 import { put, get_from, set_timeout } from "./generated/export";
-import { Fluence } from "@fluencelabs/fluence";
-import { Node, testNet } from "@fluencelabs/fluence-network-environment";
 
 const { create, urlSource } = require("ipfs-http-client");
 const all = require("it-all");
 const uint8ArrayConcat = require("uint8arrays/concat");
 
-let local: Node[] = [
+let local: Relay[] = [
   {
     peerId: "12D3KooWHBG9oaVx4i3vi6c1rSBUm7MLBmyGmmbHoZ23pmjDCnvK",
     multiaddr:
@@ -40,7 +39,7 @@ let local: Node[] = [
   },
 ];
 
-async function main(environment: Node[]) {
+async function main(environment: Relay[]) {
   // setLogLevel('DEBUG');
   await Fluence.start({ connectTo: environment[1] });
   console.log(
@@ -91,7 +90,7 @@ async function main(environment: Node[]) {
 }
 
 let args = process.argv.slice(2);
-var environment: Node[];
+var environment: Relay[];
 if (args.length >= 1 && args[0] == "local") {
   environment = local;
   console.log("📘 Will connect to local nodes");
