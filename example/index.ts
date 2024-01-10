@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Fluence, stage, Relay } from "@fluencelabs/js-client";
+import { Fluence, testNet, Relay } from "@fluencelabs/js-client";
 
 import { put, get_from, set_timeout } from "./generated/export.js";
 
@@ -37,7 +37,7 @@ async function main(environment: Relay[]) {
   const ipfs = await create({ url: IPFS_MULTIADDR });
   console.log("📗 Created IPFS HTTP Client");
 
-  const content = "Hello from Fluence!";
+  const content = "Hola, Fluence!";
   const encoder = new TextEncoder();
 
   const added = await ipfs.add(encoder.encode(content));
@@ -78,7 +78,7 @@ async function main(environment: Relay[]) {
   await ipfs.stop();
 }
 
-main(stage)
+main(testNet)
   .then(() => process.exit(0))
   .catch((error) => {
     console.error(error);
