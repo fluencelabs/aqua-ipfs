@@ -17,7 +17,8 @@
     "@fluencelabs/aqua-ipfs": "^0.5.29",
     "@fluencelabs/aqua-lib": "^0.9.0",
     "@fluencelabs/js-client": "^0.4.2",
-    "ipfs-http-client": "^50.1.2",
+    "@helia/unixfs": "^2.0.0",
+    "helia": "^3.0.0",
     "it-all": "^1.0.5",
     "uint8arrays": "^2.1.5"
   },

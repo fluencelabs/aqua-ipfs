@@ -13,96 +13,71 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Fluence, testNet, Relay } from "@fluencelabs/js-client";
+import { Fluence, stage, Relay } from "@fluencelabs/js-client";
 
 import { put, get_from, set_timeout } from "./generated/export.js";
 
-import { create, urlSource } from 'ipfs-http-client';
-import all from 'it-all';
-import uint8ArrayConcat from 'uint8arrays/concat.js';
+import { createHelia } from "helia";
+import { unixfs } from "@helia/unixfs";
+import all from "it-all";
+import uint8ArrayConcat from "uint8arrays/concat.js";
 
-let local: Relay[] = [
-  {
-    peerId: "12D3KooWHBG9oaVx4i3vi6c1rSBUm7MLBmyGmmbHoZ23pmjDCnvK",
-    multiaddr:
-      "/ip4/127.0.0.1/tcp/9990/ws/p2p/12D3KooWHBG9oaVx4i3vi6c1rSBUm7MLBmyGmmbHoZ23pmjDCnvK",
-  },
-  {
-    peerId: "12D3KooWRABanQHUn28dxavN9ZS1zZghqoZVAYtFpoN7FdtoGTFv",
-    multiaddr:
-      "/ip4/127.0.0.1/tcp/9991/ws/p2p/12D3KooWRABanQHUn28dxavN9ZS1zZghqoZVAYtFpoN7FdtoGTFv",
-  },
-  {
-    peerId: "12D3KooWFpQ7LHxcC9FEBUh3k4nSCC12jBhijJv3gJbi7wsNYzJ5",
-    multiaddr:
-      "/ip4/127.0.0.1/tcp/9992/ws/p2p/12D3KooWFpQ7LHxcC9FEBUh3k4nSCC12jBhijJv3gJbi7wsNYzJ5",
-  },
-];
+// Multi address of the IPFS node
+// we will work with in Fluence Network
+const IPFS_MULTIADDR = "/dns4/ipfs.fluence.dev/tcp/5001";
 
+/**
+ * @param environment - array of network nodes (two are needed)
+ * @note Pass addresses of local nodes to experiment locally
+ */
 async function main(environment: Relay[]) {
-  // setLogLevel('DEBUG');
-  await Fluence.connect(environment[1]);
+  const relay = environment[0];
+  const node = environment[1];
 
+  const helia = await createHelia();
+  console.log("📗 Created Helia Node");
+
+  const fs = unixfs(helia);
+  console.log("📗 Created UnixFS");
+
+  const content = "Hello, Fluence!";
+  const encoder = new TextEncoder();
+
+  const cid = await fs.addBytes(encoder.encode(content));
+  console.log("📗 Uploaded content, got CID:", cid.toString());
+
+  let stream = await fs.cat(cid);
+  let data = uint8ArrayConcat(await all(stream));
+  const decoder = new TextDecoder();
+  console.log("📗 Retrieved content: ", decoder.decode(data));
+
+  await Fluence.connect(relay);
   const client = Fluence.getClient();
 
   console.log(
-    "📗 created a fluence peer %s with relay %s",
+    "📗 Created a Fluence Peer %s with Relay %s",
     client.getPeerId(),
     client.getRelayPeerId()
   );
 
-  let ipfsAddr = "https://stage.fluence.dev:15001";
-  let ipfsMultiaddr =
-    "/ip4/134.209.186.43/tcp/5001/p2p/12D3KooWEhCqQ9NBnmtSfNeXSNfhgccmH86xodkCUxZNEXab6pkw";
-  const ipfs = create(ipfsAddr);
-  console.log("📗 created ipfs client");
-
-  await ipfs.id();
-  console.log("📗 connected to ipfs");
-
-  let source = urlSource(
-    "https://images.adsttc.com/media/images/5ecd/d4ac/b357/65c6/7300/009d/large_jpg/02C.jpg?1590547607"
-  );
-  const file = await ipfs.add(source);
-  console.log("📗 uploaded file:", file);
-
-  let files = await ipfs.get(file.cid);
-  for await (const file of files) {
-    const content = uint8ArrayConcat(await all((file).content));
-    console.log("📗 downloaded file of length ", content.length);
-  }
-
   // default IPFS timeout is 1 sec, set to 10 secs to retrieve file from remote node
-  await set_timeout(environment[2].peerId, 10);
+  await set_timeout(node.peerId, 10);
+  console.log("📘 Ipfs.set_timeout");
 
-  console.log("📘 file hash: ", file.cid);
-  let getResult = await get_from(
-    environment[2].peerId,
-    file.cid.toString(),
-    ipfsMultiaddr,
-    { ttl: 10000 }
-  );
+  let getResult = await get_from(node.peerId, cid.toString(), IPFS_MULTIADDR, {
+    ttl: 20000,
+  });
   console.log("📘 Ipfs.get", getResult);
 
-  let putResult = await put(environment[2].peerId, getResult.path, {
-    ttl: 10000,
+  let putResult = await put(node.peerId, getResult.path, {
+    ttl: 20000,
   });
   console.log("📘 Ipfs.put", putResult);
 
-  return;
+  await helia.stop();
 }
 
-let args = process.argv.slice(2);
-var environment: Relay[];
-if (args.length >= 1 && args[0] == "local") {
-  environment = local;
-  console.log("📘 Will connect to local nodes");
-} else {
-  environment = testNet;
-  console.log("📘 Will connect to testNet");
-}
-
-main(environment)
+main(stage)
   .then(() => process.exit(0))
   .catch((error) => {
     console.error(error);
