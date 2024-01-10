@@ -18,7 +18,7 @@ import { Fluence, testNet, Relay } from "@fluencelabs/js-client";
 import { put, get_from, set_timeout } from "./generated/export.js";
 
 import { multiaddr } from "@multiformats/multiaddr";
-import { create } from "ipfs-http-client";
+import { create } from "kubo-rpc-client";
 import all from "it-all";
 import uint8ArrayConcat from "uint8arrays/concat.js";
 
