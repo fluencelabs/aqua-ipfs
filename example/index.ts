@@ -15,11 +15,11 @@
  */
 import { Fluence, testNet, Relay } from "@fluencelabs/js-client";
 
-import { put, get_from, set_timeout } from "./generated/export";
+import { put, get_from, set_timeout } from "./generated/export.js";
 
-const { create, urlSource } = require("ipfs-http-client");
-const all = require("it-all");
-const uint8ArrayConcat = require("uint8arrays/concat");
+import { create, urlSource } from 'ipfs-http-client';
+import all from 'it-all';
+import uint8ArrayConcat from 'uint8arrays/concat.js';
 
 let local: Relay[] = [
   {
@@ -54,7 +54,7 @@ async function main(environment: Relay[]) {
   let ipfsAddr = "https://stage.fluence.dev:15001";
   let ipfsMultiaddr =
     "/ip4/134.209.186.43/tcp/5001/p2p/12D3KooWEhCqQ9NBnmtSfNeXSNfhgccmH86xodkCUxZNEXab6pkw";
-  const ipfs = create(ipfsAddr);
+  const ipfs = create(ipfsAddr as any);
   console.log("📗 created ipfs client");
 
   await ipfs.id();
@@ -68,7 +68,7 @@ async function main(environment: Relay[]) {
 
   let files = await ipfs.get(file.cid);
   for await (const file of files) {
-    const content = uint8ArrayConcat(await all(file.content));
+    const content = uint8ArrayConcat(await all((file as any).content as any));
     console.log("📗 downloaded file of length ", content.length);
   }
 

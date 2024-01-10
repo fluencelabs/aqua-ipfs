@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "name": "ipfs-aqua-example",
   "version": "1.0.0",
   "description": "A simple example of how to use ipfs-aqua in TS",
