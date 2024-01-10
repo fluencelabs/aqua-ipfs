@@ -41,11 +41,14 @@ let local: Relay[] = [
 
 async function main(environment: Relay[]) {
   // setLogLevel('DEBUG');
-  await Fluence.start({ connectTo: environment[1] });
+  await Fluence.connect(environment[1]);
+
+  const client = Fluence.getClient();
+
   console.log(
     "📗 created a fluence peer %s with relay %s",
-    Fluence.getStatus().peerId,
-    Fluence.getStatus().relayPeerId
+    client.getPeerId(),
+    client.getRelayPeerId()
   );
 
   let ipfsAddr = "https://stage.fluence.dev:15001";
