@@ -54,7 +54,7 @@ async function main(environment: Relay[]) {
   let ipfsAddr = "https://stage.fluence.dev:15001";
   let ipfsMultiaddr =
     "/ip4/134.209.186.43/tcp/5001/p2p/12D3KooWEhCqQ9NBnmtSfNeXSNfhgccmH86xodkCUxZNEXab6pkw";
-  const ipfs = create(ipfsAddr as any);
+  const ipfs = create(ipfsAddr);
   console.log("📗 created ipfs client");
 
   await ipfs.id();
@@ -68,7 +68,7 @@ async function main(environment: Relay[]) {
 
   let files = await ipfs.get(file.cid);
   for await (const file of files) {
-    const content = uint8ArrayConcat(await all((file as any).content as any));
+    const content = uint8ArrayConcat(await all((file).content));
     console.log("📗 downloaded file of length ", content.length);
   }
 
