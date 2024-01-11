@@ -1,6 +1,6 @@
 {
   "name": "@fluencelabs/aqua-ipfs",
-  "version": "0.5.29",
+  "version": "0.5.30",
   "description": "Aqua IPFS library",
   "files": [
     "*.aqua"
