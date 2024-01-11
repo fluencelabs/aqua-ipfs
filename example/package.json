@@ -1,10 +1,11 @@
 {
+  "type": "module",
   "name": "ipfs-aqua-example",
   "version": "1.0.0",
   "description": "A simple example of how to use ipfs-aqua in TS",
   "main": "index.js",
   "scripts": {
-    "compile-aqua": "aqua -i aqua -o generated",
+    "compile-aqua": "fluence aqua -i aqua -o generated",
     "prebuild": "npm run compile-aqua",
     "build": "tsc",
     "start": "node dist/index.js",
@@ -13,12 +14,11 @@
   "author": "Fluence Labs",
   "license": "MIT",
   "dependencies": {
-    "@fluencelabs/aqua-ipfs": "file:../aqua",
+    "@fluencelabs/aqua-ipfs": "^0.5.29",
     "@fluencelabs/aqua-lib": "^0.9.0",
-    "@fluencelabs/aqua": "0.7.4-322",
-    "@fluencelabs/fluence": "^0.23.0",
-    "@fluencelabs/fluence-network-environment": "^1.1.2",
-    "ipfs-http-client": "^50.1.2",
+    "@fluencelabs/js-client": "^0.4.2",
+    "kubo-rpc-client": "^3.0.2",
+    "@multiformats/multiaddr": "^12.1.1",
     "it-all": "^1.0.5",
     "uint8arrays": "^2.1.5"
   },

@@ -1,8 +1,8 @@
 # Run example on TestNet
-While in `example` directory, `npm start` will run `index.ts` against Fluence TestNet
+While in `example` directory, `npm run start` will run `index.ts` against Fluence TestNet
 
 # Run example locally
-1. Go to `local-network` 
-2. Run `docker compose up -d` to start Fluence cluster of 3 nodes
-3. Go back to `../example`
-4. Run `npm run start:local`
+To run example locally:
+1. Spin up local environment through [Fluence CLI](https://github.com/fluencelabs/cli)'s `local` command
+2. Pass local fluence peers multi addresses to `main` in `index.ts`
+3. (Optional) Change `IPFS_MULTIADDR` to address of your preferred IPFS node

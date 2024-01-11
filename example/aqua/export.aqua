@@ -1,3 +1,4 @@
-module Exports
+aqua Exports
+
 import put, get_from, set_timeout from "@fluencelabs/aqua-ipfs/ipfs-api.aqua"
 export put, get_from, set_timeout
