@@ -23,11 +23,11 @@ import all from "it-all";
 import uint8ArrayConcat from "uint8arrays/concat.js";
 
 // Multi address of the IPFS node
-// we will work with in Fluence Network
+// we will work with through the Fluence Network
 const IPFS_MULTIADDR = multiaddr("/dns4/ipfs.fluence.dev/tcp/5001");
 
 /**
- * @param environment - array of network nodes (two are needed)
+ * @param environment - array of fluence network nodes (two are needed)
  * @note Pass addresses of local nodes to experiment locally
  */
 async function main(environment: Relay[]) {
