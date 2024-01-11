@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.30](https://github.com/fluencelabs/aqua-ipfs/compare/aqua-ipfs-v0.5.29...aqua-ipfs-v0.5.30) (2024-01-11)
+
+
+### Bug Fixes
+
+* **aqua-ipfs:** Update example ([#159](https://github.com/fluencelabs/aqua-ipfs/issues/159)) ([32238f1](https://github.com/fluencelabs/aqua-ipfs/commit/32238f18c2df5edfe39a43c051bf4f08d76721f4))
+
 ## [0.5.29](https://github.com/fluencelabs/aqua-ipfs/compare/aqua-ipfs-v0.5.28...aqua-ipfs-v0.5.29) (2024-01-04)
 
 
