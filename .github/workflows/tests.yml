@@ -117,7 +117,7 @@ jobs:
       - name: Install fluence deps
         env:
           FLUENCE_USER_DIR: "${{ github.workspace }}/tmp/.fluence"
-        run: npx fluence dependency npm install
+        run: npx fluence dep install
         working-directory: aqua-tests
 
       - name: Install ipfs
