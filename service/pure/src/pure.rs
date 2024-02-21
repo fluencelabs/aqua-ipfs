@@ -24,6 +24,7 @@ use types::{
 use marine_rs_sdk::marine;
 use marine_rs_sdk::module_manifest;
 use marine_rs_sdk::WasmLoggerBuilder;
+use marine_rs_sdk::ParticleParameters;
 
 use eyre::WrapErr;
 use multiaddr::{multihash::Multihash, Multiaddr, Protocol};
@@ -110,6 +111,10 @@ pub fn get_peer_id(api_multiaddr: String, timeout: u64) -> eyre::Result<Protocol
     ))
 }
 
+fn vault_path(particle: &ParticleParameters) -> String {
+    format!("/tmp/vault/{}-{}", particle.id, particle.token)
+}
+
 #[marine]
 pub fn connect(multiaddr: String) -> IpfsResult {
     if Multiaddr::from_str(&multiaddr).is_err() {
@@ -167,8 +172,8 @@ pub fn get_from(hash: String, external_multiaddr: String) -> IpfsGetResult {
         return Err(eyre::eyre!("invalid multiaddr: {}", external_multiaddr)).into();
     }
 
-    let particle_id = marine_rs_sdk::get_call_parameters().particle_id;
-    let particle_vault_path = format!("/tmp/vault/{}", particle_id);
+    let particle = marine_rs_sdk::get_call_parameters().particle;
+    let particle_vault_path = vault_path(&particle);
     let path = format!("{}/{}", particle_vault_path, hash);
     let get_result = ipfs_get(hash, &path, external_multiaddr, timeout);
 
@@ -198,8 +203,8 @@ pub fn dag_get_from(hash: String, external_multiaddr: String) -> IpfsGetResult {
         return Err(eyre::eyre!("invalid multiaddr: {}", external_multiaddr)).into();
     }
 
-    let particle_id = marine_rs_sdk::get_call_parameters().particle_id;
-    let particle_vault_path = format!("/tmp/vault/{}", particle_id);
+    let particle = marine_rs_sdk::get_call_parameters().particle;
+    let particle_vault_path = vault_path(&particle);
     let path = format!("{}/{}", particle_vault_path, hash);
     let get_result = ipfs_dag_get(hash, &path, external_multiaddr, timeout);
 
@@ -240,7 +245,7 @@ pub fn get_external_api_multiaddr() -> IpfsMultiaddrResult {
 #[marine]
 pub fn set_external_api_multiaddr(multiaddr: String) -> IpfsResult {
     let call_parameters = marine_rs_sdk::get_call_parameters();
-    if call_parameters.init_peer_id != call_parameters.service_creator_peer_id {
+    if call_parameters.particle.init_peer_id != call_parameters.service_creator_peer_id {
         return eyre::Result::<()>::Err(eyre::eyre!(
             "only service creator can set external api multiaddr"
         ))
@@ -291,7 +296,7 @@ pub fn get_local_api_multiaddr() -> IpfsMultiaddrResult {
 #[marine]
 pub fn set_local_api_multiaddr(multiaddr: String) -> IpfsResult {
     let call_parameters = marine_rs_sdk::get_call_parameters();
-    if call_parameters.init_peer_id != call_parameters.service_creator_peer_id {
+    if call_parameters.particle.init_peer_id != call_parameters.service_creator_peer_id {
         return eyre::Result::<()>::Err(eyre::eyre!(
             "only service creator can set local api multiaddr"
         ))
@@ -320,7 +325,7 @@ pub fn get_external_swarm_multiaddr() -> IpfsMultiaddrResult {
 #[marine]
 pub fn set_external_swarm_multiaddr(multiaddr: String) -> IpfsResult {
     let call_parameters = marine_rs_sdk::get_call_parameters();
-    if call_parameters.init_peer_id != call_parameters.service_creator_peer_id {
+    if call_parameters.particle.init_peer_id != call_parameters.service_creator_peer_id {
         return eyre::Result::<()>::Err(eyre::eyre!(
             "only service creator can set external swarm multiaddr"
         ))
@@ -371,7 +376,7 @@ pub fn set_timeout(timeout_sec: u64) {
 }
 
 #[marine]
-#[link(wasm_import_module = "ipfs_effector")]
+#[module_import("ipfs_effector")]
 extern "C" {
     #[link_name = "connect"]
     pub fn ipfs_connect(

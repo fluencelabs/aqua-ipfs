@@ -5,3 +5,6 @@ members = [
   "distro",
   "types",
 ]
+[workspace.dependencies]
+marine-rs-sdk = { version = "0.13.0", features = ["logger"] }
+marine-rs-sdk-test = "0.14.0"
