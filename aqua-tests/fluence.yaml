@@ -4,6 +4,14 @@
 
 # Documentation: https://github.com/fluencelabs/fluence-cli/tree/main/docs/configs/fluence.md
 
-version: 5
+version: 8
 
-aquaInputPath: src/aqua/main.aqua
+aquaDependencies:
+  "@fluencelabs/aqua-lib": 0.9.1
+  "@fluencelabs/spell": 0.6.9
+
+compileAqua:
+  default:
+    input: src/aqua/main.aqua
+    output: src/compiled-aqua
+    target: ts
