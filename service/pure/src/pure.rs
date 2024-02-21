@@ -23,8 +23,8 @@ use types::{
 
 use marine_rs_sdk::marine;
 use marine_rs_sdk::module_manifest;
-use marine_rs_sdk::WasmLoggerBuilder;
 use marine_rs_sdk::ParticleParameters;
+use marine_rs_sdk::WasmLoggerBuilder;
 
 use eyre::WrapErr;
 use multiaddr::{multihash::Multihash, Multiaddr, Protocol};
