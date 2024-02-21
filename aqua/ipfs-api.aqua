@@ -10,9 +10,6 @@ import "@fluencelabs/aqua-lib/builtin.aqua"
 import "ipfs.aqua"
 
 alias Multiaddr: string
-alias PeerId: string
-alias CID: string
-alias Path: string
 
 -- Download file from remote IPFS node to Fluence node and then
 -- put that file to local IPFS node, effectively caching it on the local IPFS node.
