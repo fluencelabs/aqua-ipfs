@@ -37,7 +37,7 @@ jobs:
 
     steps:
       - name: Import secrets
-        uses: hashicorp/vault-action@v2.4.3
+        uses: hashicorp/vault-action@v2.8.1
         with:
           url: https://vault.fluence.dev
           path: jwt/github
@@ -98,7 +98,7 @@ jobs:
         run: docker pull $NOX_IMAGE
 
       - name: Run nox network
-        uses: isbang/compose-action@v1.4.1
+        uses: isbang/compose-action@v1.5.1
         with:
           compose-file: ".github/e2e/docker-compose.yml"
           down-flags: "--volumes"
