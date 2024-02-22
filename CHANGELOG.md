@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.6.0](https://github.com/fluencelabs/aqua-ipfs/compare/aqua-ipfs-v0.5.31...aqua-ipfs-v0.6.0) (2024-02-22)
+
+
+### ⚠ BREAKING CHANGES
+
+* Support CallParameters and Particle Vault File Format ([#165](https://github.com/fluencelabs/aqua-ipfs/issues/165))
+
+### Features
+
+* Support CallParameters and Particle Vault File Format ([#165](https://github.com/fluencelabs/aqua-ipfs/issues/165)) ([e3e89cf](https://github.com/fluencelabs/aqua-ipfs/commit/e3e89cf4d0855712ad181894c0cf5668f8798ca5))
+
 ## [0.5.31](https://github.com/fluencelabs/aqua-ipfs/compare/aqua-ipfs-v0.5.30...aqua-ipfs-v0.5.31) (2024-02-21)
 
 
