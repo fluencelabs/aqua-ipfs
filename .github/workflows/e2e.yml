@@ -40,6 +40,7 @@ jobs:
       - snapshot
     uses: fluencelabs/nox/.github/workflows/build.yml@master
     with:
+      ref: new-vault
       cargo-dependencies: |
         [
           {
