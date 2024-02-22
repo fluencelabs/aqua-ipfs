@@ -23,6 +23,6 @@
     "uint8arrays": "^2.1.5"
   },
   "devDependencies": {
-    "typescript": "^4.0.0"
+    "typescript": "^5.0.0"
   }
 }
