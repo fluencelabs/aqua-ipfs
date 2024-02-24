@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Aqua-IPFS tests",
   "dependencies": {
-    "@fluencelabs/aqua-lib": "0.10.1",
+    "@fluencelabs/aqua-lib": "0.10.2",
     "@fluencelabs/aqua-ipfs": "file:../aqua"
   },
   "scripts": {
