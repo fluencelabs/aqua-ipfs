@@ -14,15 +14,15 @@
   "author": "Fluence Labs",
   "license": "MIT",
   "dependencies": {
-    "@fluencelabs/aqua-ipfs": "^0.5.29",
-    "@fluencelabs/aqua-lib": "^0.9.0",
-    "@fluencelabs/js-client": "^0.4.2",
-    "kubo-rpc-client": "^3.0.2",
-    "@multiformats/multiaddr": "^12.1.1",
-    "it-all": "^1.0.5",
-    "uint8arrays": "^2.1.5"
+    "@fluencelabs/aqua-ipfs": "0.5.29",
+    "@fluencelabs/aqua-lib": "0.9.0",
+    "@fluencelabs/js-client": "0.4.2",
+    "kubo-rpc-client": "3.0.2",
+    "@multiformats/multiaddr": "12.1.12",
+    "it-all": "1.0.6",
+    "uint8arrays": "2.1.10"
   },
   "devDependencies": {
-    "typescript": "^4.0.0"
+    "typescript": "4.9.5"
   }
 }
