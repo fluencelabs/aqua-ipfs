@@ -11,11 +11,11 @@ path = "src/main.rs"
 
 [dependencies]
 marine-rs-sdk = { workspace = true }
-multiaddr = { version = "0.11.2", package = "fluence-fork-parity-multiaddr" }
-log = "0.4.20"
-eyre = "0.6.8"
-serde_json = "1.0.64"
-itertools = "0.12.0"
+multiaddr = { version = "=0.11.2", package = "fluence-fork-parity-multiaddr" }
+log = "=0.4.20"
+eyre = "=0.6.8"
+serde_json = "=1.0.64"
+itertools = "=0.12.0"
 
 types = { path = "../types" }
 
