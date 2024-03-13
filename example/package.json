@@ -18,7 +18,7 @@
     "@fluencelabs/aqua-lib": "^0.9.0",
     "@fluencelabs/js-client": "^0.4.2",
     "kubo-rpc-client": "^3.0.2",
-    "@multiformats/multiaddr": "^12.1.1",
+    "@multiformats/multiaddr": "^12.2.1",
     "it-all": "^1.0.5",
     "uint8arrays": "^2.1.5"
   },
