@@ -28,7 +28,7 @@
   },
   "homepage": "https://github.com/fluencelabs/aqua-ipfs",
   "devDependencies": {
-    "@fluencelabs/cli": "0.15.1",
+    "@fluencelabs/cli": "0.15.28",
     "@fluencelabs/fluence-network-environment": "1.1.2"
   }
 }
